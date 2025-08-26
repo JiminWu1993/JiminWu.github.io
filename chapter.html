@@ -2,145 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>英语时态之旅 - 游戏章节</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <style>
-        /* 章节页面特定样式 */
-        #game-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            background-color: black;
-        }
-        
-        .game-page {
-            display: none;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-        }
-        
-        .game-page.active {
-            display: block;
-        }
-        
-        .page-image {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        .text-container {
-            position: absolute;
-            bottom: 25%;
-            width: 100%;
-            padding: 15px;
-            background-color: rgba(0, 0, 0, 0.7);
-            text-align: center;
-            font-size: 18px;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .buttons-container {
-            position: absolute;
-            bottom: 10%;
-            width: 100%;
-            padding: 0 10px;
-        }
-        
-        .button-row {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 10px;
-        }
-        
-        .answer-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 5px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 30%;
-            min-height: 40px;
-            transition: all 0.3s;
-        }
-        
-        .answer-btn.selected {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-        
-        .answer-btn.correct {
-            background-color: #28a745;
-        }
-        
-        .answer-btn.incorrect {
-            background-color: #dc3545;
-        }
-        
-        .answer-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        
-        .continue-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 10;
-        }
-        
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            color: white;
-            font-size: 20px;
-        }
-        
-        /* 动画效果 */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s forwards;
-        }
-    </style>
 </head>
 <body>
-    <div id="game-container">
-        <!-- 动态加载的游戏画面将在这里显示 -->
-        <div class="loading-overlay" id="loading-overlay">
-            <div>Loading game...</div>
-        </div>
+    <!-- 游戏章节界面容器 -->
+    <div id="chapter-container">
+        <!-- 动态生成的游戏页面将在这里显示 -->
     </div>
 
     <script>
@@ -159,21 +31,23 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 游戏状态
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomId = urlParams.get('room');
-        const playerId = urlParams.get('player');
-        
+        // 全局变量
+        let currentRoomId = null;
+        let playerId = null;
         let currentPage = 2101; // 起始页面ID
+        let startTime = null;
+        let selectedAnswers = {};
         let score = 0;
         let correctAnswers = 0;
-        let startTime = Date.now();
-        let selectedAnswers = {};
-        let preloadedImages = {};
-        let playerRef = null;
-        let roomRef = null;
+        let timeSpent = 0;
+        let updateInterval = null;
 
-        // 所有页面配置
+        // 从URL获取参数
+        const urlParams = new URLSearchParams(window.location.search);
+        currentRoomId = urlParams.get('room');
+        playerId = urlParams.get('player');
+
+        // 页面配置数据
         const pageConfigs = {
             2101: {
                 image: "画面01.jpg",
@@ -360,408 +234,244 @@
                         { id: "21-3", text: "am", correct: false }
                     ]
                 ],
-                nextPage: 2213
-            },
-            2213: {
-                image: null, // 排名页面没有图片
-                text: "Game Over! Your results:",
-                buttons: [],
-                nextPage: null
+                nextPage: 2213 // 排名画面
             }
         };
 
         // 初始化游戏
         async function initGame() {
-            try {
-                // 检查必要的参数
-                if (!roomId || !playerId) {
-                    alert("Missing room or player information. Redirecting to start page.");
-                    window.location.href = "index.html";
-                    return;
-                }
-                
-                // 设置Firebase引用
-                roomRef = db.collection('rooms').doc(roomId);
-                playerRef = roomRef.collection('players').doc(playerId);
-                
-                // 检查房间是否存在
-                const roomDoc = await roomRef.get();
-                if (!roomDoc.exists) {
-                    alert("Room does not exist. Redirecting to start page.");
-                    window.location.href = "index.html";
-                    return;
-                }
-                
-                // 开始计时
-                startTime = Date.now();
-                
-                // 预加载第一张图片
-                preloadImage(pageConfigs[currentPage].image);
-                
-                // 显示第一页
-                showPage(currentPage);
-                
-                // 启动Firebase同步
-                startFirebaseSync();
-                
-                // 隐藏加载界面
-                document.getElementById('loading-overlay').style.display = 'none';
-            } catch (error) {
-                console.error('Error initializing game:', error);
-                alert('Error initializing game. Please try again.');
-            }
-        }
-
-        // 显示页面
-        function showPage(pageId) {
-            const config = pageConfigs[pageId];
-            if (!config) {
-                console.error('No configuration found for page:', pageId);
+            if (!currentRoomId || !playerId) {
+                alert("Invalid room or player information. Redirecting to home.");
+                window.location.href = "index.html";
                 return;
             }
+
+            // 开始计时
+            startTime = Date.now();
             
-            // 创建页面容器
-            const pageDiv = document.createElement('div');
-            pageDiv.id = `page-${pageId}`;
-            pageDiv.className = 'game-page active';
+            // 设置定时更新玩家数据到Firebase
+            updateInterval = setInterval(updatePlayerData, 3000);
             
-            // 添加图片（如果不是排名页面）
-            if (config.image) {
-                const img = document.createElement('img');
-                img.src = `images/${config.image}`;
-                img.className = 'page-image fade-in';
-                img.alt = `Page ${pageId}`;
-                pageDiv.appendChild(img);
+            // 加载第一个页面
+            loadPage(currentPage);
+            
+            // 预加载下一张图片
+            preloadNextImage(currentPage);
+        }
+
+        // 加载指定页面
+        function loadPage(pageId) {
+            const config = pageConfigs[pageId];
+            if (!config) {
+                console.error("Page configuration not found for:", pageId);
+                return;
             }
-            
-            // 添加文本容器
+
+            const container = document.getElementById('chapter-container');
+            container.innerHTML = '';
+
+            // 创建页面元素
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'screen active';
+            pageDiv.id = `page-${pageId}`;
+
+            // 添加背景图片
+            const img = document.createElement('img');
+            img.src = `images/${config.image}`;
+            img.alt = `Page ${pageId}`;
+            img.className = 'background-image fade-in';
+            pageDiv.appendChild(img);
+
+            // 添加文字显示区域
             const textDiv = document.createElement('div');
-            textDiv.className = 'text-container';
-            textDiv.innerHTML = `<p>${config.text}</p>`;
+            textDiv.className = 'text-display';
+            textDiv.textContent = config.text;
             pageDiv.appendChild(textDiv);
-            
-            // 添加按钮容器（如果有按钮）
+
+            // 添加按钮区域（如果有按钮）
             if (config.buttons && config.buttons.length > 0) {
-                const buttonsContainer = document.createElement('div');
-                buttonsContainer.className = 'buttons-container';
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'button-options';
                 
-                config.buttons.forEach((row, rowIndex) => {
+                config.buttons.forEach((buttonRow, rowIndex) => {
                     const rowDiv = document.createElement('div');
                     rowDiv.className = 'button-row';
                     
-                    row.forEach(btnConfig => {
+                    buttonRow.forEach(buttonConfig => {
                         const button = document.createElement('button');
-                        button.id = `${pageId}-${btnConfig.id}`;
-                        button.className = 'answer-btn';
-                        button.textContent = btnConfig.text;
-                        button.dataset.correct = btnConfig.correct;
-                        button.dataset.buttonId = btnConfig.id;
+                        button.className = 'option-btn';
+                        button.id = buttonConfig.id;
+                        button.textContent = buttonConfig.text;
                         
-                        // 如果之前已经选择过这个按钮，显示选择状态
-                        if (selectedAnswers[pageId] && selectedAnswers[pageId].buttonId === btnConfig.id) {
-                            button.classList.add('selected');
-                            if (selectedAnswers[pageId].isCorrect) {
-                                button.classList.add('correct');
-                            } else {
-                                button.classList.add('incorrect');
-                            }
-                            button.disabled = true;
-                        }
+                        // 存储正确答案信息
+                        button.dataset.correct = buttonConfig.correct;
                         
-                        button.addEventListener('click', function() {
-                            handleAnswerClick(pageId, btnConfig.id, btnConfig.correct, rowIndex);
-                        });
-                        
+                        button.addEventListener('click', () => handleOptionClick(buttonConfig.id, buttonConfig.correct, rowIndex));
                         rowDiv.appendChild(button);
                     });
                     
-                    buttonsContainer.appendChild(rowDiv);
+                    buttonContainer.appendChild(rowDiv);
                 });
                 
-                pageDiv.appendChild(buttonsContainer);
+                pageDiv.appendChild(buttonContainer);
+            }
+
+            // 添加Continue按钮
+            const continueBtn = document.createElement('button');
+            continueBtn.className = 'continue-btn';
+            continueBtn.textContent = 'Continue';
+            continueBtn.addEventListener('click', () => handleContinue(pageId, config.nextPage));
+            
+            // 初始状态下Continue按钮不可用（如果有选项需要选择）
+            if (config.buttons && config.buttons.length > 0) {
+                continueBtn.disabled = true;
             }
             
-            // 添加继续按钮（如果不是排名页面）
-            if (pageId !== 2213) {
-                const continueBtn = document.createElement('button');
-                continueBtn.id = `continue-${pageId}`;
-                continueBtn.className = 'continue-btn';
-                continueBtn.textContent = 'Continue';
-                
-                // 如果有按钮且未选择所有答案，禁用继续按钮
-                if (config.buttons && config.buttons.length > 0) {
-                    const allRowsSelected = config.buttons.every((row, rowIndex) => {
-                        return selectedAnswers[pageId] && selectedAnswers[pageId][`row-${rowIndex}`];
-                    });
-                    
-                    if (!allRowsSelected) {
-                        continueBtn.disabled = true;
-                        continueBtn.style.opacity = '0.5';
-                    }
-                }
-                
-                continueBtn.addEventListener('click', function() {
-                    goToNextPage(config.nextPage);
-                });
-                
-                pageDiv.appendChild(continueBtn);
-            } else {
-                // 排名页面特殊处理
-                showRankingPage(pageDiv);
-            }
+            pageDiv.appendChild(continueBtn);
+            container.appendChild(pageDiv);
+
+            // 更新当前页面
+            currentPage = pageId;
             
-            // 清空容器并添加新页面
-            const gameContainer = document.getElementById('game-container');
-            gameContainer.innerHTML = '';
-            gameContainer.appendChild(pageDiv);
-            
-            // 更新进度
-            updateProgress(pageId);
-            
-            // 预加载下一页的图片
-            if (config.nextPage && pageConfigs[config.nextPage] && pageConfigs[config.nextPage].image) {
-                preloadImage(pageConfigs[config.nextPage].image);
-            }
+            // 更新玩家进度
+            updateProgress();
         }
 
-        // 处理答案选择
-        function handleAnswerClick(pageId, buttonId, isCorrect, rowIndex) {
-            const button = document.getElementById(`${pageId}-${buttonId}`);
-            
-            // 禁用同一行的其他按钮
-            const rowButtons = document.querySelectorAll(`#page-${pageId} .button-row:nth-child(${rowIndex + 1}) .answer-btn`);
+        // 处理选项点击
+        function handleOptionClick(buttonId, isCorrect, rowIndex) {
+            // 禁用同一行中的所有按钮
+            const rowButtons = document.querySelectorAll(`.button-row:nth-child(${rowIndex + 1}) .option-btn`);
             rowButtons.forEach(btn => {
                 btn.disabled = true;
             });
             
             // 高亮选中的按钮
-            button.classList.add('selected');
+            const selectedButton = document.getElementById(buttonId);
+            selectedButton.classList.add('selected');
             
             if (isCorrect) {
-                button.classList.add('correct');
+                selectedButton.classList.add('correct');
                 score += 6.7;
                 correctAnswers++;
             } else {
-                button.classList.add('incorrect');
+                selectedButton.classList.add('incorrect');
             }
             
-            // 记录选择的答案
-            if (!selectedAnswers[pageId]) {
-                selectedAnswers[pageId] = {};
-            }
-            selectedAnswers[pageId][`row-${rowIndex}`] = {
-                buttonId: buttonId,
-                isCorrect: isCorrect
-            };
+            // 存储答案
+            selectedAnswers[buttonId] = isCorrect;
             
-            // 启用继续按钮（如果所有行都已选择）
-            const config = pageConfigs[pageId];
-            const allRowsSelected = config.buttons.every((row, idx) => {
-                return selectedAnswers[pageId] && selectedAnswers[pageId][`row-${idx}`];
-            });
-            
+            // 检查是否所有行都已选择，如果是则启用Continue按钮
+            const allRowsSelected = checkAllRowsSelected();
             if (allRowsSelected) {
-                const continueBtn = document.getElementById(`continue-${pageId}`);
-                if (continueBtn) {
-                    continueBtn.disabled = false;
-                    continueBtn.style.opacity = '1';
+                document.querySelector('.continue-btn').disabled = false;
+            }
+        }
+
+        // 检查是否所有行都已选择
+        function checkAllRowsSelected() {
+            const config = pageConfigs[currentPage];
+            if (!config.buttons) return true;
+            
+            for (let i = 0; i < config.buttons.length; i++) {
+                const rowButtons = document.querySelectorAll(`.button-row:nth-child(${i + 1}) .option-btn`);
+                const rowSelected = Array.from(rowButtons).some(btn => btn.classList.contains('selected'));
+                
+                if (!rowSelected) {
+                    return false;
                 }
             }
             
-            // 更新Firebase中的玩家数据
+            return true;
+        }
+
+        // 处理Continue按钮点击
+        function handleContinue(currentPageId, nextPageId) {
+            if (nextPageId === 2213) {
+                // 游戏结束，跳转到排名页面
+                finishGame();
+            } else {
+                // 加载下一页
+                loadPage(nextPageId);
+                // 预加载下一张图片
+                preloadNextImage(nextPageId);
+            }
+        }
+
+        // 预加载下一张图片
+        function preloadNextImage(pageId) {
+            const nextPageId = pageConfigs[pageId].nextPage;
+            if (nextPageId && pageConfigs[nextPageId]) {
+                const img = new Image();
+                img.src = `images/${pageConfigs[nextPageId].image}`;
+            }
+        }
+
+        // 更新玩家进度
+        function updateProgress() {
+            const pageNumber = parseInt(currentPage.toString().slice(2)); // 从2101中提取01
+            const progress = Math.round((pageNumber / 21) * 100);
+            
+            // 更新本地变量
+            timeSpent = Math.floor((Date.now() - startTime) / 1000);
+            
+            // 实时更新到Firebase
             updatePlayerData();
-        }
-
-        // 转到下一页
-        function goToNextPage(nextPageId) {
-            if (!nextPageId) {
-                // 游戏结束，跳转到排行榜
-                endGame();
-                return;
-            }
             
-            currentPage = nextPageId;
-            showPage(currentPage);
-        }
-
-        // 预加载图片
-        function preloadImage(imageName) {
-            if (!imageName || preloadedImages[imageName]) return;
-            
-            const img = new Image();
-            img.src = `images/${imageName}`;
-            preloadedImages[imageName] = true;
-        }
-
-        // 更新进度
-        function updateProgress(pageId) {
-            const pageNum = parseInt(pageId.toString().substring(1)) - 2100;
-            const progress = Math.floor((pageNum / 21) * 100);
-            
-            // 更新Firebase中的进度
-            if (playerRef) {
-                playerRef.update({
-                    progress: progress,
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                }).catch(error => {
-                    console.error('Error updating progress:', error);
-                });
-            }
+            return progress;
         }
 
         // 更新玩家数据到Firebase
         async function updatePlayerData() {
-            const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-            const accuracy = correctAnswers > 0 ? Math.round((correctAnswers / 15) * 100) / 100 : 0;
-            const totalScore = calculateTotalScore();
+            if (!currentRoomId || !playerId) return;
             
             try {
-                await playerRef.update({
-                    score: totalScore,
-                    accuracy: accuracy,
-                    timeSpent: timeSpent,
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                const progress = updateProgress();
+                
+                await db.collection('rooms').doc(currentRoomId).update({
+                    [`players.${playerId}.score`]: score,
+                    [`players.${playerId}.correctAnswers`]: correctAnswers,
+                    [`players.${playerId}.progress`]: progress,
+                    [`players.${playerId}.timeSpent`]: timeSpent,
+                    [`players.${playerId}.updatedAt`]: firebase.firestore.FieldValue.serverTimestamp()
                 });
             } catch (error) {
-                console.error('Error updating player data:', error);
+                console.error("Error updating player data:", error);
             }
         }
 
-        // 计算总分
-        function calculateTotalScore() {
-            const timeSpentMinutes = Math.floor((Date.now() - startTime) / 60000);
-            const timeScore = timeSpentMinutes * 2 + 1; // 每分钟2分，不满一分钟按1分计算
+        // 完成游戏
+        async function finishGame() {
+            // 停止定时更新
+            clearInterval(updateInterval);
             
-            let totalScore = score + timeScore;
-            return Math.min(Math.floor(totalScore), 100); // 不超过100分
-        }
-
-        // 开始Firebase同步
-        function startFirebaseSync() {
-            // 每3秒同步一次数据
-            setInterval(updatePlayerData, 3000);
-        }
-
-        // 显示排名页面
-        function showRankingPage(container) {
-            // 创建排名页面内容
-            const rankingDiv = document.createElement('div');
-            rankingDiv.className = 'ranking-container';
-            rankingDiv.innerHTML = `
-                <h2>Game Completed!</h2>
-                <div class="player-stats">
-                    <p>Your Score: <span id="final-score">${calculateTotalScore()}</span></p>
-                    <p>Accuracy: <span id="final-accuracy">${(correctAnswers / 15 * 100).toFixed(1)}%</span></p>
-                    <p>Time Spent: <span id="final-time">${formatTime(Math.floor((Date.now() - startTime) / 1000))}</span></p>
-                </div>
-                <div class="room-info">
-                    <p>Room: ${roomId}</p>
-                    <p>Players: <span id="player-count">0</span></p>
-                </div>
-                <div class="ranking-header">
-                    <h3>Top 10 Players</h3>
-                </div>
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Name</th>
-                            <th>Score</th>
-                            <th>Accuracy</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ranking-body">
-                        <!-- 排名数据将通过JavaScript动态添加 -->
-                    </tbody>
-                </table>
-            `;
+            // 计算最终分数
+            timeSpent = Math.floor((Date.now() - startTime) / 1000);
+            const timeScore = Math.ceil(timeSpent / 60) * 2;
+            let totalScore = Math.round(score - timeScore);
+            totalScore = Math.min(Math.max(totalScore, 0), 100);
             
-            container.appendChild(rankingDiv);
+            const accuracy = ((correctAnswers / 15) * 100).toFixed(1);
             
-            // 获取并显示排名数据
-            loadRankingData();
-        }
-
-        // 加载排名数据
-        async function loadRankingData() {
+            // 更新最终成绩到Firebase
             try {
-                // 获取所有玩家数据并按分数排序
-                const playersSnapshot = await roomRef.collection('players')
-                    .orderBy('score', 'desc')
-                    .limit(10)
-                    .get();
-                
-                const rankingBody = document.getElementById('ranking-body');
-                rankingBody.innerHTML = '';
-                
-                let rank = 1;
-                playersSnapshot.forEach(doc => {
-                    const player = doc.data();
-                    const row = document.createElement('tr');
-                    
-                    // 高亮显示当前玩家
-                    if (doc.id === playerId) {
-                        row.classList.add('current-player');
-                    }
-                    
-                    row.innerHTML = `
-                        <td>${rank}</td>
-                        <td>${player.nickname || 'Unknown'}</td>
-                        <td>${player.score || 0}</td>
-                        <td>${player.accuracy ? (player.accuracy * 100).toFixed(1) + '%' : '0%'}</td>
-                        <td>${formatTime(player.timeSpent || 0)}</td>
-                    `;
-                    
-                    rankingBody.appendChild(row);
-                    rank++;
+                await db.collection('rooms').doc(currentRoomId).update({
+                    [`players.${playerId}.score`]: totalScore,
+                    [`players.${playerId}.correctAnswers`]: correctAnswers,
+                    [`players.${playerId}.accuracy`]: accuracy,
+                    [`players.${playerId}.timeSpent`]: timeSpent,
+                    [`players.${playerId}.status`]: 'finished',
+                    [`players.${playerId}.finishedAt`]: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // 更新玩家数量
-                const playerCount = await roomRef.collection('players').count().get();
-                document.getElementById('player-count').textContent = playerCount.data().count;
-                
+                // 跳转到排名页面
+                window.location.href = `ranking.html?room=${currentRoomId}&player=${playerId}`;
             } catch (error) {
-                console.error('Error loading ranking data:', error);
+                console.error("Error finishing game:", error);
+                alert("Error finishing game. Please try again.");
             }
         }
 
-        // 格式化时间显示
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-        }
-
-        // 结束游戏
-        async function endGame() {
-            // 计算最终得分
-            const finalScore = calculateTotalScore();
-            const accuracy = (correctAnswers / 15 * 100).toFixed(1);
-            const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-            
-            // 更新Firebase中的玩家状态为已完成
-            try {
-                await playerRef.update({
-                    status: 'finished',
-                    score: finalScore,
-                    accuracy: accuracy,
-                    timeSpent: timeSpent,
-                    progress: 100,
-                    finishedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // 显示排名页面
-                currentPage = 2213;
-                showPage(currentPage);
-                
-            } catch (error) {
-                console.error('Error ending game:', error);
-                alert('Error saving game results. Please try again.');
-            }
-        }
-
-        // 初始化游戏
+        // 页面加载完成后初始化游戏
         window.addEventListener('load', initGame);
     </script>
 </body>
