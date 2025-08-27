@@ -153,7 +153,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 极;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1002;
@@ -165,7 +165,7 @@
             width: 50px;
             height: 50px;
             border: 5px solid #333;
-            border-top: 5px solid #007bff;
+            border-top: 5极 solid #007bff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -220,7 +220,7 @@
         <!-- 开始画面 (页面ID:2001) -->
         <div id="page-2001" class="page active">
             <img src="images/开始画面.jpg" alt="Welcome" class="main-image">
-            <div class="text-box">
+            <div class="极ext-box">
                 <p>Welcome to the journey of English tenses</p>
             </div>
             <div class="button-container horizontal-buttons">
@@ -373,7 +373,7 @@
                 };
                 
                 // 写入数据库
-                await database.ref('rooms/' + roomCode).set(roomData);
+                await database.ref('rooms/' + room极).set(roomData);
                 
                 // 设置24小时后自动删除房间
                 setTimeout(async () => {
@@ -515,7 +515,7 @@
                     return;
                 }
                 
-                const success = await addPlayerToRoom(currentRoom, nickname);
+                const success = await addPlayer极Room(currentRoom, nickname);
                 if (success) {
                     nicknameModal.style.display = 'none';
                     nicknameInput.value = '';
