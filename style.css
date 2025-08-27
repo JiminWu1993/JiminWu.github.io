@@ -1,130 +1,126 @@
-/* 通用样式 */
+/* style.css */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Microsoft YaHei", sans-serif;
 }
 
 body {
+    font-family: 'Microsoft YaHei', sans-serif;
     background-color: black;
     color: white;
     height: 100vh;
     overflow: hidden;
-    position: relative;
 }
 
-/* 屏幕容器 */
 .screen {
     display: none;
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
 }
 
 .screen.active {
     display: flex;
 }
 
-/* 背景图片 */
 .background-image {
     width: 100%;
     height: auto;
     object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
 }
 
-/* 文字容器 */
+.background-image.loaded {
+    opacity: 1;
+}
+
 .text-container {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 15px;
-    width: 100%;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-top: -4px; /* 紧贴图片底部 */
 }
 
-.text-container h1 {
-    font-size: 1.5rem;
+.text-container h1, .text-container p {
+    font-size: 18px;
     text-align: center;
+    line-height: 1.4;
 }
 
-/* 按钮容器 */
 .button-container {
-    position: fixed;
-    bottom: 70px; /* 安全距离，避免被浏览器UI遮挡 */
-    left: 0;
-    right: 0;
-    padding: 15px;
     display: flex;
-    justify-content: space-around;
-    background-color: black;
+    justify-content: space-between;
+    padding: 20px;
+    margin-top: auto;
+    margin-bottom: 60px; /* 安全距离避免被浏览器UI遮挡 */
 }
 
-/* 主要按钮样式 */
-.primary-btn {
+.action-btn {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 5px;
-    font-size: 1rem;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 16px;
     cursor: pointer;
-    min-width: 140px;
-    text-align: center;
+    flex: 1;
+    margin: 0 10px;
 }
 
-.primary-btn:active {
-    background-color: #0056b3;
-}
-
-/* 选项按钮容器 */
 .options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
     padding: 15px;
     margin-top: auto;
-    margin-bottom: 70px; /* 为Continue按钮留出空间 */
+    margin-bottom: 80px; /* 为Continue按钮留出空间 */
 }
 
 .option-row {
     display: flex;
-    justify-content: space-around;
-    gap: 10px;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }
 
 .option-btn {
-    flex: 1;
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 12px;
-    border-radius: 5px;
-    font-size: 1rem;
+    padding: 12px 0;
+    border-radius: 6px;
+    font-size: 16px;
     cursor: pointer;
+    flex: 1;
+    margin: 0 5px;
+    transition: all 0.2s;
 }
 
 .option-btn.selected {
-    background-color: #0056b3;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    opacity: 0.9;
 }
 
-.continue-btn-container {
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    right: 0;
+.option-btn.correct {
+    background-color: #28a745;
+}
+
+.option-btn.incorrect {
+    background-color: #dc3545;
+}
+
+.continue-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
     padding: 15px;
-    display: flex;
-    justify-content: center;
-    background-color: black;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 80%;
+    margin: 0 auto 20px;
+    position: fixed;
+    bottom: 70px; /* 安全距离避免被浏览器UI遮挡 */
+    left: 10%;
 }
 
-/* 模态框样式 */
 .modal {
     display: none;
     position: fixed;
@@ -134,17 +130,12 @@ body {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 1000;
-    align-items: center;
     justify-content: center;
-}
-
-.modal.active {
-    display: flex;
+    align-items: center;
 }
 
 .modal-content {
-    background-color: #007bff;
-    color: white;
+    background-color: #1a1a1a;
     padding: 20px;
     border-radius: 10px;
     width: 80%;
@@ -152,52 +143,67 @@ body {
     text-align: center;
 }
 
+.modal-content p {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
 .modal-content input {
     width: 100%;
-    padding: 10px;
-    margin: 15px 0;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 16px;
 }
 
 .modal-buttons {
     display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
+    justify-content: space-between;
 }
 
-.secondary-btn {
-    background-color: #6c757d;
+.modal-buttons button {
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 6px;
+    font-size: 16px;
     cursor: pointer;
+    flex: 1;
+    margin: 0 5px;
+}
+
+.toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #007bff;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.toast.show {
+    opacity: 1;
 }
 
 /* 排行榜样式 */
-#ranking-screen {
-    display: flex;
-    flex-direction: column;
-}
-
-.ranking-header {
+.ranking-container {
     padding: 15px;
-    background-color: #007bff;
-    text-align: center;
 }
 
 .room-info {
-    display: flex;
-    justify-content: space-around;
-}
-
-.ranking-table-container {
-    flex: 1;
-    overflow-y: auto;
+    background-color: #2a2a2a;
     padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
 .ranking-table {
@@ -208,38 +214,28 @@ body {
 .ranking-table th, .ranking-table td {
     padding: 10px;
     text-align: center;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid #333;
 }
 
 .ranking-table th {
-    background-color: #333;
-}
-
-.ranking-table tr.highlight {
     background-color: #007bff;
 }
 
-/* 淡入淡出动画 */
-.fade-in {
-    animation: fadeIn 0.5s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.ranking-table tr.highlight {
+    background-color: #004a99;
 }
 
 /* 响应式调整 */
 @media (max-height: 700px) {
-    .button-container {
+    .text-container {
+        padding: 10px;
+    }
+    
+    .button-container, .options-container {
+        padding: 10px;
+    }
+    
+    .continue-btn {
         bottom: 60px;
-    }
-    
-    .continue-btn-container {
-        bottom: 15px;
-    }
-    
-    .options-container {
-        margin-bottom: 60px;
     }
 }
