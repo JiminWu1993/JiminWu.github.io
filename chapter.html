@@ -1,4 +1,3 @@
-<!-- chapter.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +8,30 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <style>
+        /* 添加额外样式确保游戏界面正确显示 */
+        #game-container {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .option-btn:disabled {
+            opacity: 0.7;
+        }
+    </style>
 </head>
 <body>
     <div id="game-container">
@@ -41,28 +64,202 @@
         const roomCode = urlParams.get('room');
         const playerId = urlParams.get('player');
 
-        // 游戏数据
+        // 游戏数据 - 所有21个场景
         const scenes = [
-            { id: 2101, image: '画面01.jpg', text: "Arturo: Hello, I'm Arturo Valdez.", options: [] },
+            { 
+                id: 2101, 
+                image: '开始画面.jpg', 
+                text: "Arturo: Hello, I'm Arturo Valdez.", 
+                options: [] 
+            },
             { 
                 id: 2102, 
                 image: '画面02.jpg', 
                 text: "Alexa: Hi. My name (1) Alexandra Costa, but please (2) me Alexa.", 
                 options: [
                     [
-                        { text: "is", correct: true },
-                        { text: "am", correct: false },
-                        { text: "are", correct: false }
+                        { text: "is", correct: true, id: "1-1" },
+                        { text: "am", correct: false, id: "1-2" },
+                        { text: "are", correct: false, id: "1-3" }
                     ],
                     [
-                        { text: "calls", correct: false },
-                        { text: "call", correct: true },
-                        { text: "calling", correct: false }
+                        { text: "calls", correct: false, id: "2-1" },
+                        { text: "call", correct: true, id: "2-2" },
+                        { text: "calling", correct: false, id: "2-3" }
                     ]
                 ]
             },
-            // 其他场景数据...
-            { id: 2113, image: '', text: "", options: [] } // 排行榜场景
+            { 
+                id: 2103, 
+                image: '画面03.jpg', 
+                text: "Arturo: OK. Where (3) you from, Alexa?", 
+                options: [
+                    [
+                        { text: "is", correct: false, id: "3-1" },
+                        { text: "are", correct: true, id: "3-2" },
+                        { text: "am", correct: false, id: "3-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2104, 
+                image: '画面04.jpg', 
+                text: "Alexa: Brazil. How about you?", 
+                options: [] 
+            },
+            { 
+                id: 2105, 
+                image: '画面05.jpg', 
+                text: "Arturo: I'm from Mexico. I (4) here in the city now, but my family (5) in a small town near Guadalajara.", 
+                options: [
+                    [
+                        { text: "lives", correct: true, id: "4-1" },
+                        { text: "live", correct: false, id: "4-2" },
+                        { text: "living", correct: false, id: "4-3" }
+                    ],
+                    [
+                        { text: "lives", correct: true, id: "5-1" },
+                        { text: "live", correct: false, id: "5-2" },
+                        { text: "are living", correct: false, id: "5-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2106, 
+                image: '画面06.jpg', 
+                text: "Alexa: Oh, I (6) Mexico! It (7) really beautiful. My brother (8) Mexico, too. Oh, good. Soo-jin (9) here.", 
+                options: [
+                    [
+                        { text: "loves", correct: false, id: "6-1" },
+                        { text: "love", correct: true, id: "6-2" },
+                        { text: "loving", correct: false, id: "6-3" }
+                    ],
+                    [
+                        { text: "is", correct: true, id: "7-1" },
+                        { text: "am", correct: false, id: "7-2" },
+                        { text: "are", correct: false, id: "7-3" }
+                    ],
+                    [
+                        { text: "loves", correct: true, id: "8-1" },
+                        { text: "love", correct: false, id: "8-2" },
+                        { text: "loving", correct: false, id: "8-3" }
+                    ],
+                    [
+                        { text: "is", correct: true, id: "9-1" },
+                        { text: "are", correct: false, id: "9-2" },
+                        { text: "am", correct: false, id: "9-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2107, 
+                image: '画面07.jpg', 
+                text: "Arturo: Who (10) Soo-jin? She (11) familiar.", 
+                options: [
+                    [
+                        { text: "is", correct: true, id: "10-1" },
+                        { text: "are", correct: false, id: "10-2" },
+                        { text: "am", correct: false, id: "10-3" }
+                    ],
+                    [
+                        { text: "looks", correct: true, id: "11-1" },
+                        { text: "look", correct: false, id: "11-2" },
+                        { text: "looking", correct: false, id: "11-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2108, 
+                image: '画面08.jpg', 
+                text: "Alexa: She (12) my classmate. We (13) in the same business class. We (14) our class every Monday and Wednesday.", 
+                options: [
+                    [
+                        { text: "is", correct: false, id: "12-1" },
+                        { text: "are", correct: true, id: "12-2" },
+                        { text: "am", correct: false, id: "12-3" }
+                    ],
+                    [
+                        { text: "is", correct: false, id: "13-1" },
+                        { text: "are", correct: true, id: "13-2" },
+                        { text: "am", correct: false, id: "13-3" }
+                    ],
+                    [
+                        { text: "has", correct: false, id: "14-1" },
+                        { text: "have", correct: true, id: "14-2" },
+                        { text: "having", correct: false, id: "14-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2109, 
+                image: '画面09.jpg', 
+                text: "Arturo: Where (15) she from?", 
+                options: [
+                    [
+                        { text: "is", correct: false, id: "15-1" },
+                        { text: "are", correct: true, id: "15-2" },
+                        { text: "am", correct: false, id: "15-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2110, 
+                image: '画面10.jpg', 
+                text: "Alexa: South Korea. She (16) marketing. She (17) the classes (18) very interesting. Let's go and say hello. Sorry, what (19) your last name again? Vargas?", 
+                options: [
+                    [
+                        { text: "studies", correct: true, id: "16-1" },
+                        { text: "study", correct: false, id: "16-2" },
+                        { text: "studying", correct: false, id: "16-3" }
+                    ],
+                    [
+                        { text: "says", correct: true, id: "17-1" },
+                        { text: "say", correct: false, id: "17-2" },
+                        { text: "saying", correct: false, id: "17-3" }
+                    ],
+                    [
+                        { text: "is", correct: false, id: "18-1" },
+                        { text: "are", correct: true, id: "18-2" },
+                        { text: "am", correct: false, id: "18-3" }
+                    ],
+                    [
+                        { text: "is", correct: true, id: "19-1" },
+                        { text: "are", correct: false, id: "19-2" },
+                        { text: "am", correct: false, id: "19-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2111, 
+                image: '画面11.jpg', 
+                text: "Arturo: Actually, it (20) Valdez", 
+                options: [
+                    [
+                        { text: "is", correct: true, id: "20-1" },
+                        { text: "are", correct: false, id: "20-2" },
+                        { text: "am", correct: false, id: "20-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2112, 
+                image: '画面12.jpg', 
+                text: "Alexa: How (21) you spell that?", 
+                options: [
+                    [
+                        { text: "is", correct: false, id: "21-1" },
+                        { text: "are", correct: true, id: "21-2" },
+                        { text: "am", correct: false, id: "21-3" }
+                    ]
+                ]
+            },
+            { 
+                id: 2113, 
+                image: '', 
+                text: "", 
+                options: [],
+                isRanking: true
+            }
         ];
 
         let currentSceneIndex = 0;
@@ -71,14 +268,43 @@
             score: 0,
             correctAnswers: 0,
             startTime: Date.now(),
-            timeSpent: 0
+            timeSpent: 0,
+            progress: 0
         };
+        let playerNickname = "";
+        let updateInterval;
 
         // 预加载图片
         function preloadImages() {
             for (let i = 1; i < scenes.length; i++) {
-                const img = new Image();
-                img.src = `images/${scenes[i].image}`;
+                if (scenes[i].image) {
+                    const img = new Image();
+                    img.src = `images/${scenes[i].image}`;
+                    img.onload = function() {
+                        console.log(`Preloaded: ${scenes[i].image}`);
+                    };
+                }
+            }
+        }
+
+        // 从Firebase获取玩家数据
+        async function fetchPlayerData() {
+            try {
+                const roomDoc = await db.collection('rooms').doc(roomCode).get();
+                if (roomDoc.exists) {
+                    const roomData = roomDoc.data();
+                    const players = roomData.players || [];
+                    
+                    const player = players.find(p => p.id === playerId);
+                    if (player) {
+                        playerNickname = player.nickname;
+                        if (player.score) playerData.score = player.score;
+                        if (player.correctAnswers) playerData.correctAnswers = player.correctAnswers;
+                        if (player.startTime) playerData.startTime = player.startTime;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching player data:', error);
             }
         }
 
@@ -92,16 +318,26 @@
                     
                     const playerIndex = players.findIndex(p => p.id === playerId);
                     if (playerIndex !== -1) {
+                        // 计算当前进度
+                        const progress = Math.round((currentSceneIndex / 12) * 100);
+                        
+                        // 计算用时（秒）
+                        const timeSpent = Math.floor((Date.now() - playerData.startTime) / 1000);
+                        
                         players[playerIndex] = {
                             ...players[playerIndex],
-                            ...playerData,
-                            progress: Math.round((currentSceneIndex / 21) * 100),
-                            timeSpent: Math.floor((Date.now() - playerData.startTime) / 1000)
+                            score: playerData.score,
+                            correctAnswers: playerData.correctAnswers,
+                            timeSpent: timeSpent,
+                            progress: progress,
+                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                         };
                         
                         await db.collection('rooms').doc(roomCode).update({
                             players: players
                         });
+                        
+                        console.log("Player data updated successfully");
                     }
                 }
             } catch (error) {
@@ -111,13 +347,26 @@
 
         // 加载场景
         function loadScene(index) {
+            if (index >= scenes.length) {
+                finishGame();
+                return;
+            }
+            
             const scene = scenes[index];
             const sceneImage = document.getElementById('scene-image');
             const dialogueText = document.getElementById('dialogue-text');
             const optionsContainer = document.getElementById('options-container');
+            const continueBtn = document.getElementById('continue-btn');
             
             // 设置图片和文本
-            sceneImage.src = `images/${scene.image}`;
+            if (scene.image) {
+                sceneImage.src = `images/${scene.image}`;
+                sceneImage.style.display = 'block';
+                sceneImage.classList.add('fade-in');
+            } else {
+                sceneImage.style.display = 'none';
+            }
+            
             dialogueText.textContent = scene.text;
             
             // 清空选项容器
@@ -136,13 +385,19 @@
                         button.dataset.row = rowIndex;
                         button.dataset.index = optionIndex;
                         button.dataset.correct = option.correct;
+                        button.id = option.id;
                         
                         // 检查是否已选择此选项
                         if (selectedOptions[rowIndex] === optionIndex) {
                             button.classList.add('selected');
                             if (option.correct) {
                                 button.classList.add('correct');
+                            } else {
+                                button.classList.add('incorrect');
                             }
+                            
+                            // 禁用已选择的按钮
+                            button.disabled = true;
                         }
                         
                         button.addEventListener('click', () => {
@@ -154,13 +409,23 @@
                     
                     optionsContainer.appendChild(rowDiv);
                 });
+            } else {
+                // 没有选项的场景
+                optionsContainer.innerHTML = '<p>No options for this scene</p>';
             }
             
-            // 更新进度
-            updatePlayerData();
+            // 设置继续按钮文本
+            if (index === scenes.length - 1) {
+                continueBtn.textContent = "See Ranking";
+            } else {
+                continueBtn.textContent = "Continue";
+            }
+            
+            // 更新当前场景索引
+            currentSceneIndex = index;
             
             // 预加载下一张图片
-            if (index < scenes.length - 1) {
+            if (index < scenes.length - 1 && scenes[index + 1].image) {
                 const nextImage = new Image();
                 nextImage.src = `images/${scenes[index + 1].image}`;
             }
@@ -172,22 +437,32 @@
             const rowButtons = document.querySelectorAll(`.option-btn[data-row="${row}"]`);
             rowButtons.forEach(btn => {
                 btn.classList.remove('selected', 'correct', 'incorrect');
+                btn.disabled = false;
             });
             
             // 设置当前选项为选中状态
             const selectedButton = document.querySelector(`.option-btn[data-row="${row}"][data-index="${index}"]`);
             selectedButton.classList.add('selected');
+            selectedButton.disabled = true;
             
             if (isCorrect) {
                 selectedButton.classList.add('correct');
-                playerData.score += 6.7;
-                playerData.correctAnswers++;
+                // 只在第一次选择正确答案时加分
+                if (selectedOptions[row] === undefined) {
+                    playerData.score += 6.7;
+                    playerData.correctAnswers++;
+                    console.log(`Correct! Score: ${playerData.score}, Correct answers: ${playerData.correctAnswers}`);
+                }
             } else {
                 selectedButton.classList.add('incorrect');
+                console.log("Incorrect answer");
             }
             
             // 保存选择
             selectedOptions[row] = index;
+            
+            // 立即更新玩家数据
+            updatePlayerData();
         }
 
         // 继续按钮事件
@@ -203,22 +478,22 @@
                 }
             }
             
-            currentSceneIndex++;
+            // 重置选择
+            selectedOptions = {};
             
-            if (currentSceneIndex < scenes.length) {
-                selectedOptions = {};
-                loadScene(currentSceneIndex);
-            } else {
-                // 游戏结束，计算最终分数
-                finishGame();
-            }
+            // 加载下一个场景
+            loadScene(currentSceneIndex + 1);
         });
 
         // 完成游戏
         async function finishGame() {
+            // 停止定时更新
+            clearInterval(updateInterval);
+            
             // 计算时间分数
-            const timeInMinutes = Math.floor((Date.now() - playerData.startTime) / 1000 / 60);
-            const timeScore = timeInMinutes * 2 + (timeInMinutes % 1 > 0 ? 1 : 0);
+            const timeInSeconds = Math.floor((Date.now() - playerData.startTime) / 1000);
+            const timeInMinutes = timeInSeconds / 60;
+            const timeScore = Math.floor(timeInMinutes) * 2 + (timeInMinutes % 1 > 0 ? 1 : 0);
             
             // 计算总分
             let totalScore = playerData.score + timeScore;
@@ -231,7 +506,7 @@
             playerData.finalScore = totalScore;
             playerData.accuracy = accuracy;
             playerData.finished = true;
-            playerData.timeSpent = Math.floor((Date.now() - playerData.startTime) / 1000);
+            playerData.timeSpent = timeInSeconds;
             
             // 保存到Firebase
             try {
@@ -244,9 +519,12 @@
                     if (playerIndex !== -1) {
                         players[playerIndex] = {
                             ...players[playerIndex],
-                            ...playerData,
+                            finalScore: totalScore,
+                            accuracy: accuracy,
+                            timeSpent: timeInSeconds,
                             progress: 100,
-                            finished: true
+                            finished: true,
+                            completedAt: firebase.firestore.FieldValue.serverTimestamp()
                         };
                         
                         await db.collection('rooms').doc(roomCode).update({
@@ -264,12 +542,23 @@
         }
 
         // 初始化游戏
-        window.addEventListener('load', () => {
-            preloadImages();
-            loadScene(currentSceneIndex);
+        window.addEventListener('load', async () => {
+            // 获取玩家数据
+            await fetchPlayerData();
             
-            // 设置定时更新玩家数据
-            setInterval(updatePlayerData, 3000);
+            // 预加载图片
+            preloadImages();
+            
+            // 加载第一个场景
+            loadScene(0);
+            
+            // 设置定时更新玩家数据（每3秒）
+            updateInterval = setInterval(updatePlayerData, 3000);
+        });
+
+        // 处理页面卸载
+        window.addEventListener('beforeunload', () => {
+            clearInterval(updateInterval);
         });
     </script>
 </body>
