@@ -3,631 +3,593 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>英语时态之旅 - 游戏</title>
-    <style>
-        /* 全局样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
-        }
-
-        body {
-            background-color: black;
-            color: white;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* 屏幕容器 */
-        .screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-        }
-
-        /* 隐藏类 */
-        .hidden {
-            display: none !important;
-        }
-
-        .active {
-            display: flex;
-        }
-
-        /* 背景图片 */
-        .background-image {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        /* 文字容器 */
-        .text-container {
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
-            font-size: 18px;
-            min-height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* 按钮容器 */
-        .button-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 50px; /* 安全距离，避免被浏览器底部栏遮挡 */
-        }
-
-        /* 主要按钮样式 */
-        .primary-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-
-        .primary-btn:active {
-            opacity: 0.8;
-        }
-
-        /* 选项按钮组 */
-        .options-group {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-        }
-
-        .option-btn {
-            flex: 1;
-            margin: 0 5px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .option-btn.selected {
-            background-color: #0056b3;
-            font-weight: bold;
-        }
-
-        /* 排行榜样式 */
-        .room-info {
-            width: 100%;
-            background-color: #343a40;
-            padding: 10px;
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 10px;
-        }
-
-        .leaderboard-container {
-            width: 100%;
-            height: calc(100% - 70px);
-            overflow-y: auto;
-        }
-
-        #leaderboard-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        #leaderboard-table th, #leaderboard-table td {
-            padding: 8px;
-            text-align: center;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        #leaderboard-table tr.highlight {
-            background-color: #007bff;
-            color: white;
-        }
-
-        /* 淡入淡出动画 */
-        .fade-in {
-            animation: fadeIn 0.5s;
-        }
-
-        .fade-out {
-            animation: fadeOut 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-    </style>
+    <title>English Tenses Journey - Game</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <!-- 游戏画面容器 -->
+    <!-- 游戏章节页面容器 -->
     <div id="game-container">
         <!-- 画面01 -->
-        <div id="screen-2101" class="screen active">
-            <img src="images/画面01.jpg" alt="画面01" class="background-image">
+        <div id="page-2101" class="game-page">
+            <img src="images/画面01.jpg" alt="Scene 01" class="background-image">
             <div class="text-container">
                 <p>Arturo: Hello, I'm Arturo Valdez.</p>
             </div>
-            <div class="button-container">
-                <button class="primary-btn" onclick="navigateTo('2102')">Continue</button>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2102">Continue</button>
             </div>
         </div>
 
         <!-- 画面02 -->
-        <div id="screen-2102" class="screen hidden">
-            <img src="images/画面02.jpg" alt="画面02" class="background-image">
+        <div id="page-2102" class="game-page">
+            <img src="images/画面02.jpg" alt="Scene 02" class="background-image">
             <div class="text-container">
                 <p>Alexa: Hi. My name <span class="blank">(1)</span> Alexandra Costa, but please <span class="blank">(2)</span> me Alexa.</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="1" onclick="selectOption(this, '1')">is</button>
-                    <button class="option-btn" data-correct="true" data-group="1" onclick="selectOption(this, '1')">am</button>
-                    <button class="option-btn" data-correct="false" data-group="1" onclick="selectOption(this, '1')">are</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="1" data-value="is" data-correct="true">is</button>
+                    <button class="option-btn" data-group="1" data-value="am" data-correct="false">am</button>
+                    <button class="option-btn" data-group="1" data-value="are" data-correct="false">are</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="2" onclick="selectOption(this, '2')">calls</button>
-                    <button class="option-btn" data-correct="true" data-group="2" onclick="selectOption(this, '2')">call</button>
-                    <button class="option-btn" data-correct="false" data-group="2" onclick="selectOption(this, '2')">calling</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="2" data-value="calls" data-correct="false">calls</button>
+                    <button class="option-btn" data-group="2" data-value="call" data-correct="true">call</button>
+                    <button class="option-btn" data-group="2" data-value="calling" data-correct="false">calling</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2103')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2103">Continue</button>
             </div>
         </div>
 
         <!-- 画面03 -->
-        <div id="screen-2103" class="screen hidden">
-            <img src="images/画面03.jpg" alt="画面03" class="background-image">
+        <div id="page-2103" class="game-page">
+            <img src="images/画面03.jpg" alt="Scene 03" class="background-image">
             <div class="text-container">
                 <p>Arturo: OK. Where <span class="blank">(3)</span> you from, Alexa?</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="3" onclick="selectOption(this, '3')">is</button>
-                    <button class="option-btn" data-correct="true" data-group="3" onclick="selectOption(this, '3')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="3" onclick="selectOption(this, '3')">am</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="3" data-value="is" data-correct="false">is</button>
+                    <button class="option-btn" data-group="3" data-value="are" data-correct="true">are</button>
+                    <button class="option-btn" data-group="3" data-value="am" data-correct="false">am</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2104')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2104">Continue</button>
             </div>
         </div>
 
         <!-- 画面04 -->
-        <div id="screen-2104" class="screen hidden">
-            <img src="images/画面04.jpg" alt="画面04" class="background-image">
+        <div id="page-2104" class="game-page">
+            <img src="images/画面04.jpg" alt="Scene 04" class="background-image">
             <div class="text-container">
                 <p>Alexa: Brazil. How about you?</p>
             </div>
-            <div class="button-container">
-                <button class="primary-btn" onclick="navigateTo('2105')">Continue</button>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2105">Continue</button>
             </div>
         </div>
 
         <!-- 画面05 -->
-        <div id="screen-2105" class="screen hidden">
-            <img src="images/画面05.jpg" alt="画面05" class="background-image">
+        <div id="page-2105" class="game-page">
+            <img src="images/画面05.jpg" alt="Scene 05" class="background-image">
             <div class="text-container">
                 <p>Arturo: I'm from Mexico. I <span class="blank">(4)</span> here in the city now, but my family <span class="blank">(5)</span> in a small town near Guadalajara.</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="4" onclick="selectOption(this, '4')">lives</button>
-                    <button class="option-btn" data-correct="false" data-group="4" onclick="selectOption(this, '4')">live</button>
-                    <button class="option-btn" data-correct="false" data-group="4" onclick="selectOption(this, '4')">living</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="4" data-value="lives" data-correct="true">lives</button>
+                    <button class="option-btn" data-group="4" data-value="live" data-correct="false">live</button>
+                    <button class="option-btn" data-group="4" data-value="living" data-correct="false">living</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="5" onclick="selectOption(this, '5')">lives</button>
-                    <button class="option-btn" data-correct="false" data-group="5" onclick="selectOption(this, '5')">live</button>
-                    <button class="option-btn" data-correct="false" data-group="5" onclick="selectOption(this, '5')">are living</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="5" data-value="lives" data-correct="true">lives</button>
+                    <button class="option-btn" data-group="5" data-value="live" data-correct="false">live</button>
+                    <button class="option-btn" data-group="5" data-value="are living" data-correct="false">are living</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2106')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2106">Continue</button>
             </div>
         </div>
 
         <!-- 画面06 -->
-        <div id="screen-2106" class="screen hidden">
-            <img src="images/画面06.jpg" alt="画面06" class="background-image">
+        <div id="page-2106" class="game-page">
+            <img src="images/画面06.jpg" alt="Scene 06" class="background-image">
             <div class="text-container">
                 <p>Alexa: Oh, I <span class="blank">(6)</span> Mexico! It <span class="blank">(7)</span> really beautiful. My brother <span class="blank">(8)</span> Mexico, too. Oh, good. Soo-jin <span class="blank">(9)</span> here.</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="6" onclick="selectOption(this, '6')">loves</button>
-                    <button class="option-btn" data-correct="true" data-group="6" onclick="selectOption(this, '6')">love</button>
-                    <button class="option-btn" data-correct="false" data-group="6" onclick="selectOption(this, '6')">living</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="6" data-value="loves" data-correct="false">loves</button>
+                    <button class="option-btn" data-group="6" data-value="love" data-correct="true">love</button>
+                    <button class="option-btn" data-group="6" data-value="loving" data-correct="false">loving</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="7" onclick="selectOption(this, '7')">is</button>
-                    <button class="option-btn" data-correct="false" data-group="7" onclick="selectOption(this, '7')">am</button>
-                    <button class="option-btn" data-correct="false" data-group="7" onclick="selectOption(this, '7')">are</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="7" data-value="is" data-correct="true">is</button>
+                    <button class="option-btn" data-group="7" data-value="am" data-correct="false">am</button>
+                    <button class="option-btn" data-group="7" data-value="are" data-correct="false">are</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="8" onclick="selectOption(this, '8')">loves</button>
-                    <button class="option-btn" data-correct="false" data-group="8" onclick="selectOption(this, '8')">love</button>
-                    <button class="option-btn" data-correct="false" data-group="8" onclick="selectOption(this, '8')">loving</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="8" data-value="loves" data-correct="true">loves</button>
+                    <button class="option-btn" data-group="8" data-value="love" data-correct="false">love</button>
+                    <button class="option-btn" data-group="8" data-value="loving" data-correct="false">loving</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="9" onclick="selectOption(this, '9')">is</button>
-                    <button class="option-btn" data-correct="false" data-group="9" onclick="selectOption(this, '9')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="9" onclick="selectOption(this, '9')">am</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="9" data-value="is" data-correct="true">is</button>
+                    <button class="option-btn" data-group="9" data-value="are" data-correct="false">are</button>
+                    <button class="option-btn" data-group="9" data-value="am" data-correct="false">am</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2107')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2107">Continue</button>
             </div>
         </div>
 
         <!-- 画面07 -->
-        <div id="screen-2107" class="screen hidden">
-            <img src="images/画面07.jpg" alt="画面07" class="background-image">
+        <div id="page-2107" class="game-page">
+            <img src="images/画面07.jpg" alt="Scene 07" class="background-image">
             <div class="text-container">
                 <p>Arturo: Who <span class="blank">(10)</span> Soo-jin? She <span class="blank">(11)</span> familiar.</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="10" onclick="selectOption(this, '10')">is</button>
-                    <button class="option-btn" data-correct="false" data-group="10" onclick="selectOption(this, '10')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="10" onclick="selectOption(this, '10')">am</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="10" data-value="is" data-correct="true">is</button>
+                    <button class="option-btn" data-group="10" data-value="are" data-correct="false">are</button>
+                    <button class="option-btn" data-group="10" data-value="am" data-correct="false">am</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="11" onclick="selectOption(this, '11')">looks</button>
-                    <button class="option-btn" data-correct="false" data-group="11" onclick="selectOption(this, '11')">look</button>
-                    <button class="option-btn" data-correct="false" data-group="11" onclick="selectOption(this, '11')">looking</button>
+                <极简版div class="option-row">
+                    <button class="option-btn" data-group="11" data-value="looks" data-correct="true">looks</button>
+                    <button class="option-btn" data-group="11" data-value="look" data-correct="false">look</极简版button>
+                    <button class="option-btn" data-group="11" data-value="looking" data-correct="false">looking</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2108')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2108">Continue</button>
             </div>
         </div>
 
         <!-- 画面08 -->
-        <div id="screen-2108" class="screen hidden">
-            <img src="images/画面08.jpg" alt="画面08" class="background-image">
-            <div class="text-container">
+        <div id="page-2108" class="game-page">
+            <img src="images/画面08.jpg" alt="Scene 08" class="background-image">
+            <div class="极简版text-container">
                 <p>Alexa: She <span class="blank">(12)</span> my classmate. We <span class="blank">(13)</span> in the same business class. We <span class="blank">(14)</span> our class every Monday and Wednesday.</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="12" onclick="selectOption(this, '12')">is</button>
-                    <button class="option-btn" data-correct="true" data-group="12" onclick="selectOption(this, '12')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="12" onclick="selectOption(this, '12')">am</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="12" data-value="is" data-correct="false">is</button>
+                    <button class="option-btn" data-group="12" data-value="are" data-correct="true">are</button>
+                    <button class="option-btn" data-group="12" data-value="am" data-correct="false">am</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="13" onclick="selectOption(this, '13')">is</button>
-                    <button class="option-btn" data-correct="true" data-group="13" onclick="selectOption(this, '13')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="极速13" onclick="selectOption(this, '13')">am</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="13极简版" data-value="is" data-correct="false">is</button>
+                    <button class="option-btn" data-group="13" data-value="are" data-correct="true">are</button>
+                    <button class="option-btn" data-group="13" data-value="am" data-correct="false">am</button>
                 </div>
-                <极速 class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="14" onclick="selectOption(this, '14')">has</button>
-                    <button class="option-btn" data-correct="true" data-group="14" onclick="selectOption(this, '14')">have</button>
-                    <button class="option-btn极速" data-correct="false" data-group="14" onclick="selectOption(this, '14')">having</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="14" data-value="has" data-correct="false">has</button>
+                    <button class="option-btn" data-group="14" data-value="have" data-correct="true">have</button>
+                    <button class="option-btn" data-group="14" data-value="having" data-correct="false">having</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2109')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2109">Continue</button>
             </div>
         </div>
 
         <!-- 画面09 -->
-        <div id="screen-2109" class="screen hidden">
-            <img src="images/画面09.jpg" alt="画面09" class="background-image">
+        <div id="page-2109" class="game-page">
+            <img src="images/画面09.jpg" alt="Scene 09" class="background-image">
             <div class="text-container">
                 <p>Arturo: Where <span class="blank">(15)</span> she from?</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="15" onclick="selectOption(this, '15')">is</button>
-                    <button class="option-btn" data极速correct="true" data-group="15" onclick="selectOption(this, '15')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="15" onclick="selectOption(this, '15')">am</button>
-                </div>
-                <button class="primary-btn" onclick="navigateTo('2110')">Continue</极速button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="15" data-value="is" data-correct="false">is</button>
+                    <button class="option-btn" data-group="15" data-value="are" data-correct="true">are</button>
+                    <button class="option-btn" data-group="15" data-value="am" data-correct="false">am</button>
+                </极简版div>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2110">Continue</button>
             </div>
         </div>
 
         <!-- 画面10 -->
-        <div id="screen-2110" class="screen hidden">
-            <img src="images/画面10.jpg" alt="画面10" class="background-image">
+        <div id="page-2110" class="game-page">
+            <img src="images/画面10.jpg" alt="Scene 10" class="background-image">
             <div class="text-container">
                 <p>Alexa: South Korea. She <span class="blank">(16)</span> marketing. She <span class="blank">(17)</span> the classes <span class="blank">(18)</span> very interesting. Let's go and say hello. Sorry, what <span class="blank">(19)</span> your last name again? Vargas?</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="16" onclick="selectOption(this, '16')">studies</button>
-                    <button class="option-btn" data-correct="false" data-group="16" onclick="selectOption(this, '16')">study</button>
-                    <button class="option-btn" data-correct="false" data-group="16" onclick="selectOption(this, '16')">studying</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="16" data-value="studies" data-correct="true">studies</button>
+                    <button class="option-btn" data-group="16" data-value="study" data-correct="false">study</button>
+                    <button class="option-btn" data-group="16" data-value="studying" data-correct="false">studying</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true极速" data-group="17" onclick="selectOption(this, '17')">says</button>
-                    <button class="option-btn" data-correct="false" data-group="17" onclick="selectOption(this, '17')">say</button>
-                    <button class="option-btn" data-correct="false" data-group="17" onclick="selectOption(this, '17')">saying</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="17" data-value="says" data极简版-correct="true">says</button>
+                    <button class="option-btn" data-group="17" data-value="say" data-correct="false">say</button>
+                    <button class="option-btn" data-group="17" data-value="saying" data-correct="false">saying</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="18" onclick="selectOption(this, '18')">is</button>
-                    <button class="option-btn" data-correct="true" data-group="18" onclick="selectOption(this, '18')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="18" onclick="selectOption(this, '18')">am</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="18" data-value="is" data-correct="false">is</button>
+                    <button class="option-btn" data-group="18" data-value="are" data-correct="true">are</button>
+                    <button class="option-btn" data-group="18" data-value="am" data-correct="false">am</button>
                 </div>
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="19" onclick="selectOption(this, '19')">is</button>
-                    <button class="option-btn" data-correct="false" data-group="19" onclick="selectOption(this, '19')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="19" onclick="selectOption(this, '19')">am</button>
+                <div class="option-row">
+                    <button class="option-btn" data-group="19" data-value="is" data-correct="true">is</button>
+                    <button class="option-btn" data-group="19" data-value="are" data-correct="false">are</button>
+                    <button class="option-btn" data-group="19" data-value="am" data-correct="false">am</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2111')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2111">Continue</button>
             </div>
         </div>
 
         <!-- 画面11 -->
-        <div id="screen-2111" class="screen hidden">
-            <img src="images/画面11.jpg" alt="画面11" class="background-image">
+        <div id="page-2111" class="game-page">
+            <img src="images/画面11.jpg" alt="Scene 11" class="background-image">
             <div class="text-container">
                 <p>Arturo: Actually, it <span class="blank">(20)</span> Valdez</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="true" data-group="20" onclick="极速selectOption(this, '20')">is</button>
-                    <button class="option-btn" data-correct="false" data-group="20" onclick="selectOption(this, '20')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="20" onclick="selectOption(this, '20')">am</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="20" data-value="is" data-correct="true">is</button>
+                    <button class="option-btn" data-group="20" data-value="are" data-correct="false">are</button>
+                    <button class="option-btn" data-group="20" data-value="am" data-correct="false极简版">am</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2112')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2112">Continue</button>
             </div>
         </div>
 
         <!-- 画面12 -->
-        <div id="screen-2112" class="screen hidden">
-            <img src="images/画面12.jpg" alt="画面12" class="background-image">
+        <div id="page-2112" class="game-page">
+            <img src="images/画面12.jpg" alt="Scene 12" class="background-image">
             <div class="text-container">
                 <p>Alexa: How <span class="blank">(21)</span> you spell that?</p>
             </div>
-            <div class="button-container">
-                <div class="options-group">
-                    <button class="option-btn" data-correct="false" data-group="21" onclick="selectOption(this, '21')">is</button>
-                    <button class="option-btn" data-correct="true" data-group="21" onclick="selectOption(this, '21')">are</button>
-                    <button class="option-btn" data-correct="false" data-group="21" onclick="selectOption(this, '21')">am</button>
+            <div class="options-container">
+                <div class="option-row">
+                    <button class="option-btn" data-group="21" data-value="is" data-correct="false">is</button>
+                    <button class="option-btn" data-group="21" data-value="are" data-correct="true">are</button>
+                    <button class="option-btn" data-group="21" data-value="am" data-correct="false">am</button>
                 </div>
-                <button class="primary-btn" onclick="navigateTo('2113')">Continue</button>
+            </div>
+            <div class="buttons-container">
+                <button class="blue-btn continue-btn" data-next="2113">Continue</button>
             </div>
         </div>
-    </div>
 
-    <!-- 排行榜画面 -->
-    <div id="screen-2113" class="screen hidden">
-        <div class="room-info">
-            <p>房间号: <span id="room-number-display">000000</span></p>
-            <p>玩家人数: <span id="player-count">0</span></p>
-        </div>
-        <div class="leaderboard-container">
-            <table id="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>排名</th>
-                        <th>名称</th>
-                        <th>总分数</th>
-                        <th>正确率</th>
-                        <th>用时</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- 排行榜数据将通过JavaScript动态填充 -->
-                </tbody>
-            </table>
+        <!-- 排名画面13 -->
+        <div id="page-2113" class="game-page">
+            <div class="ranking-header">
+                <div class="room-info">
+                    <p>Room: <span id="room-number-display"></span></p>
+                    <p>Players: <span id="player-count">0</span></p>
+                </div>
+            </div>
+            <div class="ranking-container">
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Score</th>
+                            <th>Accuracy</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-body">
+                        <!-- 排行榜数据将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        // 游戏状态管理
-        const gameState = {
-            currentScreen: '2101',
-            score: 0,
-            correctAnswers: 0,
-            totalQuestions: 21,
-            startTime: null,
-            elapsedTime: 0,
-            selectedOptions: {},
-            playerName: '',
-            roomId: ''
+        // Firebase配置
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHRYTBU74r31极简版MPYVAAnRMwKM76c_-BduQ",
+            authDomain: "tetrisonline-ca400.firebaseapp.com",
+            projectId: "tetrisonline-ca400",
+            storageBucket: "tetrisonline-ca400.firebasestorage.app",
+            messagingSenderId: "58207939196",
+            appId: "1:58207939196:web:b34f403204096084ee37f9",
+            measurementId: "G-GG7GNEQ718"
         };
+
+        // 初始化Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 全局变量
+        let currentPage = "2101";
+        let playerAnswers = {};
+        let correctCount = 0;
+        let startTime = null;
+        let totalTime = 0;
+        let playerId = null;
+        let roomId = null;
+        let playerNickname = null;
+        let isTeacher = false;
+        let timerInterval = null;
+        let preloadedImages = [];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            roomId = urlParams.get('room');
+            playerId = urlParams.get('player');
+            isTeacher = urlParams.get('teacher') === 'true';
+            
+            // 初始化页面
+            initGame();
+            
+            // 预加载下一张图片
+            preloadNextImage(parseInt(currentPage) + 1);
+        });
 
         // 初始化游戏
         function initGame() {
-            // 从URL参数获取房间号和玩家名称
-            const urlParams = new URLSearchParams(window.location.search);
-            gameState.roomId = urlParams.get('roomId') || '';
-            gameState.playerName = urlParams.get('playerName') || 'Player';
+            // 显示第一页
+            showPage(currentPage);
             
-            // 显示房间号
-            document.getElementById('room-number-display').textContent = gameState.roomId;
+            // 如果不是老师，开始计时
+            if (!isTeacher && playerId) {
+                startTime = Date.now();
+                
+                // 设置计时器，每3秒更新一次数据到Firebase
+                timerInterval = setInterval(updatePlayerData, 3000);
+            }
             
-            // 开始计时
-            gameState.startTime = new Date();
+            // 如果是老师，直接显示排名页面
+            if (isTeacher) {
+                showPage("2113");
+                startRankingUpdates();
+            }
             
-            // 初始化Firebase（这里需要您配置自己的Firebase项目）
-            initFirebase();
+            // 设置继续按钮事件
+            document.querySelectorAll('.continue-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const nextPage = this.getAttribute('data-next');
+                    navigateToPage(nextPage);
+                });
+            });
             
-            // 预加载图片
-            preloadImages();
+            // 设置选项按钮事件
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    handleOptionClick(this);
+                });
+            });
         }
 
-        // Firebase初始化（示例代码，需要您配置自己的Firebase项目）
-        function initFirebase() {
-            // 您的Firebase配置
-            const firebaseConfig = {
-                apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
-                authDomain: "tetrisonline-ca400.firebaseapp.com",
-                projectId: "tetrisonline-ca400",
-                storageBucket: "tetrisonline-ca400.firebasestorage.app",
-                messagingSenderId: "58207939196",
-                appId: "1:58207939196:web:b34f403204096084ee37f9",
-                measurementId: "G-GG7GNEQ718"
+        // 显示指定页面
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.game-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示指定页面
+            const pageElement = document.getElementById('page-' + pageId);
+            if (pageElement) {
+                pageElement.classList.add('active');
+                currentPage = pageId;
+                
+                // 更新Firebase中的进度
+                updateProgress();
+                
+                // 预加载下一张图片
+                const nextPageNum = parseInt(pageId) + 1;
+                if (nextPageNum <= 2112) {
+                    preloadNextImage(nextPageNum);
+                }
+            }
+        }
+
+        // 处理选项点击
+        function handleOptionClick(button) {
+            const group = button.getAttribute('data-group');
+            const value = button.getAttribute('data-value');
+            const isCorrect = button.getAttribute('data-correct') === 'true';
+            
+            // 禁用同一组的其他按钮
+            const groupButtons = document.querySelectorAll(`.option-btn[data-group="${group}"]`);
+            groupButtons.forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            // 标记选中的按钮
+            if (isCorrect) {
+                button.classList.add('correct');
+                correctCount++;
+            } else {
+                button.classList.add('incorrect');
+                
+                // 显示正确答案
+                groupButtons.forEach(btn => {
+                    if (btn.getAttribute('data-correct') === 'true') {
+                        btn.classList.add('show-correct');
+                    }
+                });
+            }
+            
+            // 保存答案
+            playerAnswers[group] = {
+                value: value,
+                correct: isCorrect
             };
+        }
+
+        // 导航到指定页面
+        function navigateToPage(pageId) {
+            // 如果是最后一页，计算分数并结束游戏
+            if (pageId === "2113") {
+                endGame();
+            }
             
-            // 初始化Firebase
-            // firebase.initializeApp(firebaseConfig);
-            console.log("Firebase would be initialized with: ", firebaseConfig);
-            
-            // 设置定期更新玩家数据
-            setInterval(updatePlayerData, 3000);
+            showPage(pageId);
+        }
+
+        // 更新进度到Firebase
+        function updateProgress() {
+            if (!isTeacher && playerId && roomId) {
+                const progress = Math.round((parseInt(currentPage) - 2100) / 21 * 100);
+                
+                db.collection('rooms').doc(roomId).collection('players').doc(playerId).update({
+                    progress: progress,
+                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(error => {
+                    console.error("Error updating progress:", error);
+                });
+            }
         }
 
         // 更新玩家数据到Firebase
         function updatePlayerData() {
-            // 计算经过的时间（秒）
-            const now = new Date();
-            gameState.elapsedTime = Math.floor((now - gameState.startTime) / 1000);
+            if (!isTeacher && playerId && roomId && startTime) {
+                totalTime = Math.floor((Date.now() - startTime) / 1000);
+                
+                db.collection('rooms').doc(roomId).collection('players').doc(playerId).update({
+                    elapsedTime: totalTime,
+                    correctAnswers: correctCount,
+                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(error => {
+                    console.error("Error updating player data:", error);
+                });
+            }
+        }
+
+        // 结束游戏
+        function endGame() {
+            // 停止计时器
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
             
-            // 计算进度
-            const progress = Math.floor((parseInt(gameState.currentScreen) - 2100) / 21 * 100);
+            // 计算总分
+            totalTime = Math.floor((Date.now() - startTime) / 1000);
+            const timeScore = calculateTimeScore(totalTime);
+            const answerScore = correctCount * 6.7;
+            let totalScore = Math.min(answerScore + timeScore, 100);
             
             // 计算正确率
-            const accuracy = gameState.totalQuestions > 0 ? 
-                (gameState.correctAnswers / gameState.totalQuestions * 100).toFixed(1) : "0.0";
+            const accuracy = (correctCount / 15 * 100).toFixed(1);
             
-            // 这里应该是Firebase更新代码
-            console.log("Updating player data: ", {
-                playerName: gameState.playerName,
-                score: gameState.score,
-                accuracy: accuracy,
-                elapsedTime: gameState.elapsedTime,
-                progress: progress
-            });
-        }
-
-        // 图片预加载
-        function preloadImages() {
-            const imageUrls = [];
-            for (let i = 1; i <= 12; i++) {
-                // 确保图片编号是两位数
-                const imgNum = i < 10 ? `0${i}` : i;
-                imageUrls.push(`images/画面${imgNum}.jpg`);
+            // 更新最终分数到Firebase
+            if (playerId && roomId) {
+                db.collection('rooms').doc(roomId).collection('players').doc(playerId).update({
+                    finished: true,
+                    totalScore: totalScore,
+                    accuracy: accuracy,
+                    elapsedTime: totalTime,
+                    correctAnswers: correctCount,
+                    endTime: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    // 开始排行榜更新
+                    startRankingUpdates();
+                }).catch(error => {
+                    console.error("Error updating final score:", error);
+                });
             }
             
-            imageUrls.forEach(url => {
-                const img = new Image();
-                img.src = url;
-            });
-        }
-
-        // 导航到指定画面
-        function navigateTo(screenId) {
-            // 隐藏当前画面
-            const currentScreen = document.getElementById(`screen-${gameState.currentScreen}`);
-            currentScreen.classList.remove('active');
-            currentScreen.classList.add('hidden');
-            
-            // 显示新画面
-            const newScreen = document.getElementById(`screen-${screenId}`);
-            newScreen.classList.remove('hidden');
-            newScreen.classList.add('active');
-            newScreen.classList.add('fade-in');
-            
-            // 更新当前画面ID
-            gameState.currentScreen = screenId;
-            
-            // 如果是最后一个画面，显示排行榜
-            if (screenId === '2113') {
-                showLeaderboard();
-            }
-            
-            // 更新玩家数据
-            updatePlayerData();
-        }
-
-        // 选择选项
-        function selectOption(button, groupId) {
-            // 取消同组中其他选项的选中状态
-            const groupButtons = document.querySelectorAll(`.option-btn[data-group="${groupId}"]`);
-            groupButtons.forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            // 标记当前选中的选项
-            button.classList.add('selected');
-            
-            // 记录选择
-            gameState.selectedOptions[groupId] = button.getAttribute('data-correct') === 'true';
-            
-            // 如果选择正确，增加分数
-            if (gameState.selectedOptions[groupId]) {
-                gameState.score += 6.7;
-                gameState.correctAnswers++;
-            }
-        }
-
-        // 显示排行榜
-        function showLeaderboard() {
-            // 计算最终分数
-            const timeScore = calculateTimeScore();
-            const totalScore = Math.min(100, Math.round(gameState.score + timeScore));
-            const accuracy = (gameState.correctAnswers / gameState.totalQuestions * 100).toFixed(1);
-            
-            // 格式化时间
-            const minutes = Math.floor(gameState.elapsedTime / 60);
-            const seconds = gameState.elapsedTime % 60;
-            const timeFormatted = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            
-            // 这里应该是从Firebase获取排行榜数据的代码
-            // 模拟数据
-            const leaderboardData = [
-                { rank: 1, name: gameState.playerName, score: totalScore, accuracy: accuracy, time: timeFormatted },
-                { rank: 2, name: "Player2", score: 92, accuracy: "85.7", time: "5:23" },
-                { rank: 3, name: "Player3", score: 88, accuracy: "81.0", time: "6:45" }
-            ];
-            
-            // 更新排行榜
-            const tbody = document.querySelector('#leaderboard-table tbody');
-            tbody.innerHTML = '';
-            
-            leaderboardData.forEach(player => {
-                const row = document.createElement('tr');
-                if (player.name === gameState.playerName) {
-                    row.classList.add('highlight');
-                }
-                
-                row.innerHTML = `
-                    <td>${player.rank}</td>
-                    <td>${player.name}</td>
-                    <td>${player.score}</td>
-                    <td>${player.accuracy}%</td>
-                    <td>${player.time}</td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-            
-            // 更新玩家人数
-            document.getElementById('player-count').textContent = leaderboardData.length;
+            // 显示房间信息
+            document.getElementById('room-number-display').textContent = roomId;
         }
 
         // 计算时间分数
-        function calculateTimeScore() {
-            const minutes = Math.floor(gameState.elapsedTime / 60);
-            const seconds = gameState.elapsedTime % 60;
-            
-            // 每满一分钟得2分，不满一分钟得1分
-            return minutes * 2 + (seconds > 0 ? 1 : 0);
+        function calculateTimeScore(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            return minutes * 2 + (seconds % 60 > 0 ? 1 : 0);
         }
 
-        // 页面加载时初始化游戏
-        window.addEventListener('load', initGame);
+        // 开始排行榜更新
+        function startRankingUpdates() {
+            // 显示房间信息
+            document.getElementById('room-number-display').textContent = roomId;
+            
+            // 设置定期更新
+            updateRanking();
+            setInterval(updateRanking, 3000);
+        }
+
+        // 更新排行榜
+        function updateRanking() {
+            if (roomId) {
+                // 获取玩家数量
+                db.collection('rooms').doc(roomId).collection('players')
+                    .where('finished', '==', true)
+                    .get()
+                    .then(snapshot => {
+                        document.getElementById('player-count').textContent = snapshot.size;
+                    });
+                
+                // 获取排行榜数据
+                db.collection('rooms').doc(roomId).collection('players')
+                    .where('finished', '==', true)
+                    .orderBy('totalScore', 'desc')
+                    .limit(10)
+                    .get()
+                    .then(snapshot => {
+                        const rankingBody = document.getElementById('ranking-body');
+                        rankingBody.innerHTML = '';
+                        
+                        let rank = 1;
+                        snapshot.forEach(doc => {
+                            const player = doc.data();
+                            const row = document.createElement('tr');
+                            
+                            // 如果是当前玩家，高亮显示
+                            if (doc.id === playerId) {
+                                row.classList.add('current-player');
+                            }
+                            
+                            // 格式化时间
+                            const minutes = Math.floor(player.elapsedTime / 60);
+                            const seconds = player.elapsedTime % 60;
+                            const timeFormatted = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                            
+                            row.innerHTML = `
+                                <td>${rank}</td>
+                                <td>${player.nickname}</td>
+                                <td>${Math.round(player.totalScore || 0)}</td>
+                                <td>${player.accuracy || '0.0'}%</td>
+                                <td>${timeFormatted}</td>
+                            `;
+                            
+                            rankingBody.appendChild(row);
+                            rank++;
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error getting ranking data:", error);
+                    });
+            }
+        }
+
+        // 预加载下一张图片
+        function preloadNextImage(nextPageNum) {
+            if (nextPageNum > 2112) return;
+            
+            const img = new Image();
+            img.src = `images/画面${nextPageNum.toString().padStart(2, '0')}.jpg`;
+            
+            img.onload = function() {
+                preloadedImages.push(img);
+            };
+        }
     </script>
 </body>
 </html>
