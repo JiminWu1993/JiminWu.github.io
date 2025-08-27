@@ -1,47 +1,276 @@
+<!-- chapter.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>英语时态之旅 - 游戏章节</title>
+    <title>英语时态之旅 - 游戏</title>
     <link rel="stylesheet" href="style.css">
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <!-- 游戏章节容器 -->
     <div id="game-container">
-        <!-- 所有游戏画面将通过JS动态加载 -->
+        <img id="scene-image" class="background-image" alt="Scene">
+        <div class="text-container">
+            <p id="dialogue-text"></p>
+        </div>
+        <div id="options-container" class="options-container"></div>
+        <button id="continue-btn" class="continue-btn">Continue</button>
     </div>
 
-    <!-- 排行榜画面 -->
-    <div id="ranking-screen" class="screen">
-        <div class="ranking-header">
-            <div class="room-info">
-                <p>Room: <span id="room-id-display"></span></p>
-                <p>Players: <span id="player-count">0</span></p>
-            </div>
-        </div>
-        <div class="ranking-table-container">
-            <table class="ranking-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Score</th>
-                        <th>Accuracy</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody id="ranking-body">
-                    <!-- 排行榜数据将通过JS动态填充 -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <script>
+        // Firebase配置
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
+            authDomain: "tetrisonline-ca400.firebaseapp.com",
+            projectId: "tetrisonline-ca400",
+            storageBucket: "tetrisonline-ca400.firebasestorage.app",
+            messagingSenderId: "58207939196",
+            appId: "1:58207939196:web:b34f403204096084ee37f9",
+            measurementId: "G-GG7GNEQ718"
+        };
 
-    <script src="firebase-config.js"></script>
-    <script src="chapter-script.js"></script>
+        // 初始化Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomCode = urlParams.get('room');
+        const playerId = urlParams.get('player');
+
+        // 游戏数据
+        const scenes = [
+            { id: 2101, image: '画面01.jpg', text: "Arturo: Hello, I'm Arturo Valdez.", options: [] },
+            { 
+                id: 2102, 
+                image: '画面02.jpg', 
+                text: "Alexa: Hi. My name (1) Alexandra Costa, but please (2) me Alexa.", 
+                options: [
+                    [
+                        { text: "is", correct: true },
+                        { text: "am", correct: false },
+                        { text: "are", correct: false }
+                    ],
+                    [
+                        { text: "calls", correct: false },
+                        { text: "call", correct: true },
+                        { text: "calling", correct: false }
+                    ]
+                ]
+            },
+            // 其他场景数据...
+            { id: 2113, image: '', text: "", options: [] } // 排行榜场景
+        ];
+
+        let currentSceneIndex = 0;
+        let selectedOptions = {};
+        let playerData = {
+            score: 0,
+            correctAnswers: 0,
+            startTime: Date.now(),
+            timeSpent: 0
+        };
+
+        // 预加载图片
+        function preloadImages() {
+            for (let i = 1; i < scenes.length; i++) {
+                const img = new Image();
+                img.src = `images/${scenes[i].image}`;
+            }
+        }
+
+        // 更新玩家数据到Firebase
+        async function updatePlayerData() {
+            try {
+                const roomDoc = await db.collection('rooms').doc(roomCode).get();
+                if (roomDoc.exists) {
+                    const roomData = roomDoc.data();
+                    const players = roomData.players || [];
+                    
+                    const playerIndex = players.findIndex(p => p.id === playerId);
+                    if (playerIndex !== -1) {
+                        players[playerIndex] = {
+                            ...players[playerIndex],
+                            ...playerData,
+                            progress: Math.round((currentSceneIndex / 21) * 100),
+                            timeSpent: Math.floor((Date.now() - playerData.startTime) / 1000)
+                        };
+                        
+                        await db.collection('rooms').doc(roomCode).update({
+                            players: players
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating player data:', error);
+            }
+        }
+
+        // 加载场景
+        function loadScene(index) {
+            const scene = scenes[index];
+            const sceneImage = document.getElementById('scene-image');
+            const dialogueText = document.getElementById('dialogue-text');
+            const optionsContainer = document.getElementById('options-container');
+            
+            // 设置图片和文本
+            sceneImage.src = `images/${scene.image}`;
+            dialogueText.textContent = scene.text;
+            
+            // 清空选项容器
+            optionsContainer.innerHTML = '';
+            
+            // 创建选项按钮
+            if (scene.options && scene.options.length > 0) {
+                scene.options.forEach((optionRow, rowIndex) => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'option-row';
+                    
+                    optionRow.forEach((option, optionIndex) => {
+                        const button = document.createElement('button');
+                        button.className = 'option-btn';
+                        button.textContent = option.text;
+                        button.dataset.row = rowIndex;
+                        button.dataset.index = optionIndex;
+                        button.dataset.correct = option.correct;
+                        
+                        // 检查是否已选择此选项
+                        if (selectedOptions[rowIndex] === optionIndex) {
+                            button.classList.add('selected');
+                            if (option.correct) {
+                                button.classList.add('correct');
+                            }
+                        }
+                        
+                        button.addEventListener('click', () => {
+                            selectOption(rowIndex, optionIndex, option.correct);
+                        });
+                        
+                        rowDiv.appendChild(button);
+                    });
+                    
+                    optionsContainer.appendChild(rowDiv);
+                });
+            }
+            
+            // 更新进度
+            updatePlayerData();
+            
+            // 预加载下一张图片
+            if (index < scenes.length - 1) {
+                const nextImage = new Image();
+                nextImage.src = `images/${scenes[index + 1].image}`;
+            }
+        }
+
+        // 选择选项
+        function selectOption(row, index, isCorrect) {
+            // 移除同一行中其他按钮的选中状态
+            const rowButtons = document.querySelectorAll(`.option-btn[data-row="${row}"]`);
+            rowButtons.forEach(btn => {
+                btn.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // 设置当前选项为选中状态
+            const selectedButton = document.querySelector(`.option-btn[data-row="${row}"][data-index="${index}"]`);
+            selectedButton.classList.add('selected');
+            
+            if (isCorrect) {
+                selectedButton.classList.add('correct');
+                playerData.score += 6.7;
+                playerData.correctAnswers++;
+            } else {
+                selectedButton.classList.add('incorrect');
+            }
+            
+            // 保存选择
+            selectedOptions[row] = index;
+        }
+
+        // 继续按钮事件
+        document.getElementById('continue-btn').addEventListener('click', () => {
+            // 检查是否所有必选选项都已选择
+            const currentScene = scenes[currentSceneIndex];
+            if (currentScene.options && currentScene.options.length > 0) {
+                for (let i = 0; i < currentScene.options.length; i++) {
+                    if (selectedOptions[i] === undefined) {
+                        alert('Please select all options before continuing');
+                        return;
+                    }
+                }
+            }
+            
+            currentSceneIndex++;
+            
+            if (currentSceneIndex < scenes.length) {
+                selectedOptions = {};
+                loadScene(currentSceneIndex);
+            } else {
+                // 游戏结束，计算最终分数
+                finishGame();
+            }
+        });
+
+        // 完成游戏
+        async function finishGame() {
+            // 计算时间分数
+            const timeInMinutes = Math.floor((Date.now() - playerData.startTime) / 1000 / 60);
+            const timeScore = timeInMinutes * 2 + (timeInMinutes % 1 > 0 ? 1 : 0);
+            
+            // 计算总分
+            let totalScore = playerData.score + timeScore;
+            totalScore = Math.min(Math.round(totalScore), 100);
+            
+            // 计算正确率
+            const accuracy = (playerData.correctAnswers / 15 * 100).toFixed(1);
+            
+            // 更新最终玩家数据
+            playerData.finalScore = totalScore;
+            playerData.accuracy = accuracy;
+            playerData.finished = true;
+            playerData.timeSpent = Math.floor((Date.now() - playerData.startTime) / 1000);
+            
+            // 保存到Firebase
+            try {
+                const roomDoc = await db.collection('rooms').doc(roomCode).get();
+                if (roomDoc.exists) {
+                    const roomData = roomDoc.data();
+                    const players = roomData.players || [];
+                    
+                    const playerIndex = players.findIndex(p => p.id === playerId);
+                    if (playerIndex !== -1) {
+                        players[playerIndex] = {
+                            ...players[playerIndex],
+                            ...playerData,
+                            progress: 100,
+                            finished: true
+                        };
+                        
+                        await db.collection('rooms').doc(roomCode).update({
+                            players: players
+                        });
+                    }
+                }
+                
+                // 跳转到排行榜
+                window.location.href = `ranking.html?room=${roomCode}&player=${playerId}`;
+            } catch (error) {
+                console.error('Error finishing game:', error);
+                alert('Error finishing game. Please try again.');
+            }
+        }
+
+        // 初始化游戏
+        window.addEventListener('load', () => {
+            preloadImages();
+            loadScene(currentSceneIndex);
+            
+            // 设置定时更新玩家数据
+            setInterval(updatePlayerData, 3000);
+        });
+    </script>
 </body>
 </html>
