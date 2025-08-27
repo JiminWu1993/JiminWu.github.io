@@ -4,8 +4,214 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>English Tenses Journey</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDK -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: black;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #app {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+        }
+
+        .page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .page.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .main-image {
+            width: 100%;
+            height: auto;
+            max-height: 60vh;
+            object-fit: contain;
+        }
+
+        .text-box {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: -4px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .button-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .horizontal-buttons {
+            flex-direction: row;
+            justify-content: space-around;
+        }
+
+        .game-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .game-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background-color: #222;
+            color: white;
+            font-size: 16px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #007bff;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .text-box {
+                font-size: 16px;
+                padding: 10px;
+            }
+            
+            .game-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 100px;
+            }
+        }
+
+        @media (orientation: landscape) {
+            body::before {
+                content: "Please rotate your device to portrait mode.";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: black;
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                font-size: 24px;
+                text-align: center;
+            }
+            
+            #app {
+                display: none;
+            }
+        }
+    </style>
+    <!-- Firebase SDK - 使用兼容版本确保稳定性 -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
@@ -51,6 +257,11 @@
         <div id="message-toast" class="toast">
             <p id="toast-message"></p>
         </div>
+
+        <!-- 加载指示器 -->
+        <div id="loading-indicator" class="loading">
+            <div class="loading-spinner"></div>
+        </div>
     </div>
 
     <script>
@@ -65,14 +276,11 @@
             measurementId: "G-GG7GNEQ718"
         };
 
-        // 初始化Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
         // 全局变量
         let currentRoom = null;
         let playerId = null;
         let playerNickname = null;
+        let database = null;
         
         // DOM元素
         const joinRoomBtn = document.getElementById('join-room-btn');
@@ -87,6 +295,7 @@
         const cancelNicknameBtn = document.getElementById('cancel-nickname-btn');
         const messageToast = document.getElementById('message-toast');
         const toastMessage = document.getElementById('toast-message');
+        const loadingIndicator = document.getElementById('loading-indicator');
 
         // 显示提示消息
         function showToast(message, duration = 3000) {
@@ -96,6 +305,32 @@
             setTimeout(() => {
                 messageToast.classList.remove('show');
             }, duration);
+        }
+
+        // 显示/隐藏加载指示器
+        function setLoading(visible) {
+            loadingIndicator.style.display = visible ? 'flex' : 'none';
+        }
+
+        // 初始化Firebase
+        function initializeFirebase() {
+            try {
+                // 检查firebase是否已定义
+                if (typeof firebase === 'undefined') {
+                    showToast("Firebase SDK failed to load. Please check your internet connection.");
+                    return false;
+                }
+                
+                // 初始化Firebase
+                firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                console.log("Firebase initialized successfully");
+                return true;
+            } catch (error) {
+                console.error("Firebase initialization error:", error);
+                showToast("Failed to initialize Firebase. Please refresh the page.");
+                return false;
+            }
         }
 
         // 生成随机6位房间号
@@ -117,6 +352,7 @@
 
         // 创建新房间
         async function createNewRoom() {
+            setLoading(true);
             const roomCode = generateRoomCode();
             
             try {
@@ -141,7 +377,11 @@
                 
                 // 设置24小时后自动删除房间
                 setTimeout(async () => {
-                    await database.ref('rooms/' + roomCode).remove();
+                    try {
+                        await database.ref('rooms/' + roomCode).remove();
+                    } catch (error) {
+                        console.error("Error auto-deleting room:", error);
+                    }
                 }, 24 * 60 * 60 * 1000);
                 
                 return roomCode;
@@ -149,11 +389,14 @@
                 console.error("Error creating room:", error);
                 showToast("Error creating room. Please try again.");
                 return null;
+            } finally {
+                setLoading(false);
             }
         }
 
         // 加入房间
         async function joinRoom(roomCode) {
+            setLoading(true);
             try {
                 // 检查房间是否存在
                 const exists = await checkRoomExists(roomCode);
@@ -168,11 +411,14 @@
                 console.error("Error joining room:", error);
                 showToast("Error joining room. Please try again.");
                 return false;
+            } finally {
+                setLoading(false);
             }
         }
 
         // 添加玩家到房间
         async function addPlayerToRoom(roomCode, nickname) {
+            setLoading(true);
             try {
                 // 生成玩家ID
                 playerId = 'player_' + Date.now();
@@ -192,31 +438,14 @@
                 // 写入数据库
                 await database.ref('rooms/' + roomCode + '/players/' + playerId).set(playerData);
                 
-                // 开始计时并定期更新
-                startPlayerTimer(roomCode, playerId);
-                
                 return true;
             } catch (error) {
                 console.error("Error adding player to room:", error);
                 showToast("Error joining room. Please try again.");
                 return false;
+            } finally {
+                setLoading(false);
             }
-        }
-
-        // 开始玩家计时器
-        function startPlayerTimer(roomCode, playerId) {
-            const startTime = Date.now();
-            
-            // 每3秒更新一次时间
-            setInterval(async () => {
-                const timeSpent = Math.floor((Date.now() - startTime) / 1000); // 秒
-                
-                try {
-                    await database.ref('rooms/' + roomCode + '/players/' + playerId + '/timeSpent').set(timeSpent);
-                } catch (error) {
-                    console.error("Error updating player time:", error);
-                }
-            }, 3000);
         }
 
         // 跳转到游戏章节页面
@@ -229,81 +458,80 @@
             window.location.href = 'chapter.html?room=' + roomCode + '&view=leaderboard';
         }
 
-        // 事件监听器
-        joinRoomBtn.addEventListener('click', () => {
-            roomInputModal.style.display = 'block';
-        });
-
-        createRoomBtn.addEventListener('click', async () => {
-            const roomCode = await createNewRoom();
-            if (roomCode) {
-                redirectToLeaderboard(roomCode);
-            }
-        });
-
-        confirmRoomBtn.addEventListener('click', async () => {
-            const roomCode = roomNumberInput.value.trim();
-            
-            if (roomCode.length !== 6 || isNaN(roomCode)) {
-                showToast("Please enter a valid 6-digit room number");
+        // 初始化应用程序
+        function initApp() {
+            // 首先初始化Firebase
+            if (!initializeFirebase()) {
+                // 如果Firebase初始化失败，禁用相关按钮
+                joinRoomBtn.disabled = true;
+                createRoomBtn.disabled = true;
+                joinRoomBtn.textContent = "Firebase Error";
+                createRoomBtn.textContent = "Firebase Error";
                 return;
             }
             
-            const success = await joinRoom(roomCode);
-            if (success) {
+            // 事件监听器
+            joinRoomBtn.addEventListener('click', () => {
+                roomInputModal.style.display = 'block';
+            });
+
+            createRoomBtn.addEventListener('click', async () => {
+                const roomCode = await createNewRoom();
+                if (roomCode) {
+                    redirectToLeaderboard(roomCode);
+                }
+            });
+
+            confirmRoomBtn.addEventListener('click', async () => {
+                const roomCode = roomNumberInput.value.trim();
+                
+                if (roomCode.length !== 6 || isNaN(roomCode)) {
+                    showToast("Please enter a valid 6-digit room number");
+                    return;
+                }
+                
+                const success = await joinRoom(roomCode);
+                if (success) {
+                    roomInputModal.style.display = 'none';
+                    nicknameModal.style.display = 'block';
+                }
+            });
+
+            cancelRoomBtn.addEventListener('click', () => {
                 roomInputModal.style.display = 'none';
-                nicknameModal.style.display = 'block';
-            }
-        });
+                roomNumberInput.value = '';
+            });
 
-        cancelRoomBtn.addEventListener('click', () => {
-            roomInputModal.style.display = 'none';
-            roomNumberInput.value = '';
-        });
+            confirmNicknameBtn.addEventListener('click', async () => {
+                const nickname = nicknameInput.value.trim();
+                
+                if (nickname.length === 0) {
+                    showToast("Please enter your nickname");
+                    return;
+                }
+                
+                if (nickname.length > 12) {
+                    showToast("Nickname must be 12 characters or less");
+                    return;
+                }
+                
+                const success = await addPlayerToRoom(currentRoom, nickname);
+                if (success) {
+                    nicknameModal.style.display = 'none';
+                    nicknameInput.value = '';
+                    redirectToChapterPage();
+                }
+            });
 
-        confirmNicknameBtn.addEventListener('click', async () => {
-            const nickname = nicknameInput.value.trim();
-            
-            if (nickname.length === 0) {
-                showToast("Please enter your nickname");
-                return;
-            }
-            
-            if (nickname.length > 12) {
-                showToast("Nickname must be 12 characters or less");
-                return;
-            }
-            
-            const success = await addPlayerToRoom(currentRoom, nickname);
-            if (success) {
+            cancelNicknameBtn.addEventListener('click', () => {
                 nicknameModal.style.display = 'none';
                 nicknameInput.value = '';
-                redirectToChapterPage();
-            }
-        });
-
-        cancelNicknameBtn.addEventListener('click', () => {
-            nicknameModal.style.display = 'none';
-            nicknameInput.value = '';
-            currentRoom = null;
-        });
-
-        // 预加载chapter.html所需的图片
-        function preloadChapterImages() {
-            const images = [
-                '画面01.jpg', '画面02.jpg', '画面03.jpg', '画面04.jpg',
-                '画面05.jpg', '画面06.jpg', '画面07.jpg', '画面08.jpg',
-                '画面09.jpg', '画面10.jpg', '画面11.jpg', '画面12.jpg'
-            ];
-            
-            images.forEach(image => {
-                const img = new Image();
-                img.src = 'images/' + image;
+                currentRoom = null;
             });
         }
-        
-        // 页面加载完成后预加载图片
-        window.addEventListener('load', preloadChapterImages);
+
+        // 页面加载完成后初始化应用
+        window.addEventListener('load', initApp);
     </script>
 </body>
 </html>
