@@ -1,127 +1,116 @@
 /* 通用样式 */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: "Microsoft YaHei", sans-serif;
+    font-family: 'Microsoft YaHei', sans-serif;
     background-color: black;
     color: white;
     height: 100vh;
     overflow: hidden;
+}
+
+#app {
     position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 /* 页面样式 */
 .page {
     display: none;
     flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-    position: absolute;
-    top: 0;
-    left: 0;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .page.active {
     display: flex;
+    opacity: 1;
 }
 
-/* 背景图片 */
-.background-image {
+/* 图片样式 */
+.main-image {
     width: 100%;
     height: auto;
-    object-fit: cover;
+    object-fit: contain;
 }
 
-/* 文字容器 */
-.text-container {
+/* 文字框样式 */
+.text-box {
+    width: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     padding: 15px;
+    border-radius: 5px;
+    margin-top: -4px; /* 紧贴图片底部 */
+    text-align: center;
     font-size: 18px;
-    line-height: 1.5;
 }
 
-/* 按钮容器 */
+/* 按钮容器样式 */
 .button-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.horizontal-buttons {
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+/* 按钮组样式 */
+.button-group {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
-    margin-top: auto;
-    margin-bottom: 50px; /* 安全距离，避免被浏览器底部栏遮挡 */
+    width: 100%;
+    gap: 10px;
 }
 
-/* 游戏按钮 */
+/* 游戏按钮样式 */
 .game-btn {
     background-color: #007bff;
     color: white;
     border: none;
     padding: 15px 25px;
-    font-size: 16px;
     border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
-    min-width: 140px;
+    min-width: 120px;
+    text-align: center;
 }
 
-.game-btn:active {
+.game-btn:hover {
     background-color: #0056b3;
 }
 
-/* 答案按钮容器 */
-.buttons-container {
-    padding: 15px;
-    margin-top: auto;
-}
-
-/* 按钮行 */
-.button-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-/* 答案按钮 */
-.answer-btn {
+/* 选项按钮样式 */
+.option-btn {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 12px 0;
-    font-size: 16px;
+    padding: 10px 15px;
     border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
     flex: 1;
-    margin: 0 5px;
 }
 
-.answer-btn.selected {
+.option-btn.selected {
     background-color: #0056b3;
     font-weight: bold;
 }
 
-.answer-btn:active {
-    background-color: #004085;
-}
-
-/* Continue按钮 */
-.continue-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 15px;
-    margin-bottom: 50px; /* 安全距离，避免被浏览器底部栏遮挡 */
-}
-
-.continue-btn:active {
-    background-color: #0056b3;
-}
-
-/* 模态框 */
+/* 模态框样式 */
 .modal {
     display: none;
     position: fixed;
@@ -136,51 +125,32 @@ body {
 }
 
 .modal-content {
-    background-color: white;
+    background-color: #1a1a1a;
     padding: 20px;
     border-radius: 10px;
     width: 80%;
     max-width: 400px;
-    color: black;
     text-align: center;
-}
-
-.modal-content p {
-    margin-bottom: 15px;
-    font-size: 18px;
 }
 
 .modal-content input {
     width: 100%;
     padding: 12px;
-    margin-bottom: 15px;
-    font-size: 16px;
-    border: 1px solid #ccc;
+    margin: 15px 0;
     border-radius: 5px;
+    border: 1px solid #333;
+    background-color: #222;
+    color: white;
+    font-size: 16px;
 }
 
 .modal-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
+    margin-top: 15px;
 }
 
-.modal-buttons button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    flex: 1;
-    margin: 0 5px;
-}
-
-.modal-buttons button:active {
-    background-color: #0056b3;
-}
-
-/* 提示消息框 */
+/* 提示消息样式 */
 .toast {
     position: fixed;
     top: 50%;
@@ -192,85 +162,106 @@ body {
     border-radius: 5px;
     z-index: 1001;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease;
 }
 
 .toast.show {
     opacity: 1;
 }
 
-/* 排行榜样式 */
-.ranking-info {
-    background-color: #007bff;
-    color: white;
+/* 排行榜页面样式 */
+.leaderboard-page {
+    display: none;
+    flex-direction: column;
     padding: 15px;
+}
+
+.room-info {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    background-color: #222;
+    padding: 15px;
+    border-radius: 5px;
     display: flex;
     justify-content: space-between;
-    font-size: 18px;
-    font-weight: bold;
 }
 
-.ranking-table {
+.leaderboard {
+    width: 100%;
+}
+
+.leaderboard h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.leaderboard table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0;
+    background-color: #1a1a1a;
 }
 
-.ranking-table th, .ranking-table td {
-    padding: 12px;
+.leaderboard th, .leaderboard td {
+    padding: 10px;
     text-align: center;
-    border: 1px solid #ddd;
+    border: 1px solid #333;
 }
 
-.ranking-table th {
+.leaderboard th {
     background-color: #007bff;
-    color: white;
 }
 
-.ranking-table tr:nth-child(even) {
-    background-color: #333;
-}
-
-.ranking-table tr.current-player {
-    background-color: #0056b3;
-    font-weight: bold;
-}
-
-/* 淡入淡出动画 */
-.page {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.leaderboard tr.highlight {
+    background-color: #004a99;
 }
 
 /* 响应式设计 */
-@media (max-height: 700px) {
-    .text-container {
-        padding: 10px;
+@media (max-width: 480px) {
+    .text-box {
         font-size: 16px;
+        padding: 10px;
     }
     
-    .button-container {
-        padding: 15px;
-        margin-bottom: 40px;
+    .game-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        min-width: 100px;
     }
     
-    .continue-btn {
-        margin-bottom: 40px;
+    .option-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .leaderboard th, .leaderboard td {
+        padding: 8px;
+        font-size: 14px;
     }
 }
 
-@media (max-width: 400px) {
-    .game-btn {
-        min-width: 120px;
-        padding: 12px 20px;
+/* 防止横屏 */
+@media (orientation: landscape) {
+    body::before {
+        content: "Please rotate your device to portrait mode.";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        font-size: 24px;
+        text-align: center;
     }
     
-    .answer-btn {
-        padding: 10px 0;
-        font-size: 14px;
+    #app {
+        display: none;
     }
 }
