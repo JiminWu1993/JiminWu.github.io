@@ -1,3 +1,4 @@
+/* 重置默认样式 */
 * {
     margin: 0;
     padding: 0;
@@ -5,130 +6,126 @@
 }
 
 body {
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: "Microsoft YaHei", sans-serif;
     background-color: black;
     color: white;
     overflow: hidden;
     height: 100vh;
-    touch-action: manipulation;
+    touch-action: manipulation; /* 防止双击缩放 */
 }
 
-#game-container {
+.container {
+    position: relative;
     width: 100%;
-    height: 100%;
-    transition: opacity 0.3s ease;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    position: relative;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
 }
 
-.screen img {
+.screen.active {
+    opacity: 1;
+}
+
+.background-image {
     width: 100%;
     height: auto;
     object-fit: cover;
 }
 
-.text-content {
-    width: 100%;
-    padding: 15px;
+.text-container {
     background-color: rgba(0, 0, 0, 0.7);
-    text-align: center;
+    padding: 15px;
     font-size: 18px;
+    line-height: 1.5;
+    text-align: center;
 }
 
-.options-container {
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.option-row {
+.option-group {
     display: flex;
     justify-content: space-around;
-    width: 100%;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .option-btn {
-    background-color: #1E90FF;
+    background-color: #1E90FF; /* 蓝色 */
     color: white;
     border: none;
-    padding: 12px 0;
-    width: 30%;
+    padding: 10px 15px;
     border-radius: 5px;
     font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.option-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    opacity: 0.7; /* 未选择时亮度暗淡 */
+    transition: opacity 0.3s;
 }
 
 .option-btn.selected {
-    background-color: #0066CC;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    opacity: 1; /* 选择后高亮 */
 }
 
-.continue-btn {
-    position: absolute;
-    bottom: 20px;
-    width: 90%;
-    padding: 15px 0;
-    background-color: #1E90FF;
+.button-container {
+    margin-top: auto;
+    padding: 15px;
+}
+
+.primary-btn {
+    background-color: #1E90FF; /* 蓝色 */
     color: white;
     border: none;
+    padding: 15px;
+    width: 100%;
     border-radius: 5px;
     font-size: 18px;
-    cursor: pointer;
-}
-
-.score-text {
-    position: absolute;
-    bottom: 80px;
-    width: 100%;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
+    font-family: "Microsoft YaHei", sans-serif;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-    .text-content {
+    .text-container {
         font-size: 16px;
         padding: 10px;
     }
     
     .option-btn {
-        padding: 10px 0;
+        padding: 8px 12px;
         font-size: 14px;
     }
     
-    .continue-btn {
+    .primary-btn {
+        padding: 12px;
         font-size: 16px;
-        padding: 12px 0;
     }
 }
 
+/* 防止长按出现默认菜单 */
+button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 /* 提示框样式 */
-.alert {
+.alert-box {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #1E90FF;
+    background-color: blue;
     color: white;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     z-index: 1000;
     text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 80%;
 }
