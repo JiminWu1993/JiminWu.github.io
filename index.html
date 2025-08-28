@@ -1,10 +1,10 @@
-<!-- chapter.html -->
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>英语时态之旅 - 游戏</title>
+    <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
     <!-- Firebase App (必选) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -12,33 +12,41 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <!-- 游戏画面容器 -->
-    <div id="game-container">
-        <!-- 动态生成的游戏画面将在这里显示 -->
+    <div id="start-screen" class="screen active">
+        <img src="images/开始画面.jpg" alt="开始画面" class="background-image">
+        <div class="text-container">
+            <h1>Welcome to the journey of English tenses</h1>
+        </div>
+        <div class="button-container">
+            <button id="join-room-btn" class="action-btn">Join a Room</button>
+            <button id="create-room-btn" class="action-btn">Create a Room</button>
+        </div>
     </div>
 
-    <!-- 排行榜画面 -->
-    <div id="leaderboard-screen" class="screen">
-        <div class="room-info">
-            <div>Room: <span id="room-id-display"></span></div>
-            <div>Players: <span id="player-count">0</span></div>
+    <div id="room-input-modal" class="modal">
+        <div class="modal-content">
+            <p>Please enter a 6-digit room number</p>
+            <input type="text" id="room-number-input" maxlength="6" pattern="[0-9]{6}">
+            <div class="modal-buttons">
+                <button id="confirm-join-btn">Confirm</button>
+                <button id="cancel-join-btn">Cancel</button>
+            </div>
         </div>
-        <div class="leaderboard">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Score</th>
-                        <th>Accuracy</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-body">
-                    <!-- 排行榜数据将动态生成 -->
-                </tbody>
-            </table>
+    </div>
+
+    <div id="nickname-input-modal" class="modal">
+        <div class="modal-content">
+            <p>Please enter your English nickname</p>
+            <input type="text" id="nickname-input" maxlength="12">
+            <div class="modal-buttons">
+                <button id="confirm-nickname-btn">Confirm</button>
+                <button id="cancel-nickname-btn">Cancel</button>
+            </div>
         </div>
+    </div>
+
+    <div id="message-toast" class="toast">
+        <p id="toast-message"></p>
     </div>
 
     <script>
@@ -67,639 +75,214 @@
             alert("Failed to initialize Firebase. Please check your connection.");
         }
 
-        // 游戏数据
-        const gameData = [
-            {
-                pageId: 2101,
-                image: "画面01.jpg",
-                text: "Arturo: Hello, I'm Arturo Valdez.",
-                buttons: [],
-                nextPage: 2102
-            },
-            {
-                pageId: 2102,
-                image: "画面02.jpg",
-                text: "Alexa: Hi. My name (1) Alexandra Costa, but please (2) me Alexa.",
-                buttons: [
-                    [
-                        { id: "1-1", text: "is", correct: true },
-                        { id: "1-2", text: "am", correct: false },
-                        { id: "1-3", text: "are", correct: false }
-                    ],
-                    [
-                        { id: "2-1", text: "calls", correct: false },
-                        { id: "2-2", text: "call", correct: true },
-                        { id: "2-3", text: "calling", correct: false }
-                    ]
-                ],
-                nextPage: 2103
-            },
-            {
-                pageId: 2103,
-                image: "画面03.jpg",
-                text: "Arturo: OK. Where (3) you from, Alexa?",
-                buttons: [
-                    [
-                        { id: "3-1", text: "is", correct: false },
-                        { id: "3-2", text: "are", correct: true },
-                        { id: "3-3", text: "am", correct: false }
-                    ]
-                ],
-                nextPage: 2104
-            },
-            {
-                pageId: 2104,
-                image: "画面04.jpg",
-                text: "Alexa: Brazil. How about you?",
-                buttons: [],
-                nextPage: 2105
-            },
-            {
-                pageId: 2105,
-                image: "画面05.jpg",
-                text: "Arturo: I'm from Mexico. I (4) here in the city now, but my family (5) in a small town near Guadalajara.",
-                buttons: [
-                    [
-                        { id: "4-1", text: "lives", correct: true },
-                        { id: "4-2", text: "live", correct: false },
-                        { id: "4-3", text: "living", correct: false }
-                    ],
-                    [
-                        { id: "5-1", text: "lives", correct: true },
-                        { id: "5-2", text: "live", correct: false },
-                        { id: "5-3", text: "are living", correct: false }
-                    ]
-                ],
-                nextPage: 2106
-            },
-            {
-                pageId: 2106,
-                image: "画面06.jpg",
-                text: "Alexa: Oh, I (6) Mexico! It (7) really beautiful. My brother (8) Mexico, too. Oh, good. Soo-jin (9) here.",
-                buttons: [
-                    [
-                        { id: "6-1", text: "loves", correct: false },
-                        { id: "6-2", text: "love", correct: true },
-                        { id: "6-3", text: "loving", correct: false }
-                    ],
-                    [
-                        { id: "7-1", text: "is", correct: true },
-                        { id: "7-2", text: "am", correct: false },
-                        { id: "7-3", text: "are", correct: false }
-                    ],
-                    [
-                        { id: "8-1", text: "loves", correct: true },
-                        { id: "8-2", text: "love", correct: false },
-                        { id: "8-3", text: "loving", correct: false }
-                    ],
-                    [
-                        { id: "9-1", text: "is", correct: true },
-                        { id: "9-2", text: "are", correct: false },
-                        { id: "9-3", text: "am", correct: false }
-                    ]
-                ],
-                nextPage: 2107
-            },
-            {
-                pageId: 2107,
-                image: "画面07.jpg",
-                text: "Arturo: Who (10) Soo-jin? She (11) familiar.",
-                buttons: [
-                    [
-                        { id: "10-1", text: "is", correct: true },
-                        { id: "10-2", text: "are", correct: false },
-                        { id: "10-3", text: "am", correct: false }
-                    ],
-                    [
-                        { id: "11-1", text: "looks", correct: true },
-                        { id: "11-2", text: "look", correct: false },
-                        { id: "11-3", text: "looking", correct: false }
-                    ]
-                ],
-                nextPage: 2108
-            },
-            {
-                pageId: 2108,
-                image: "画面08.jpg",
-                text: "Alexa: She (12) my classmate. We (13) in the same business class. We (14) our class every Monday and Wednesday.",
-                buttons: [
-                    [
-                        { id: "12-1", text: "is", correct: false },
-                        { id: "12-2", text: "are", correct: true },
-                        { id: "12-3", text: "am", correct: false }
-                    ],
-                    [
-                        { id: "13-1", text: "is", correct: false },
-                        { id: "13-2", text: "are", correct: true },
-                        { id: "13-3", text: "am", correct: false }
-                    ],
-                    [
-                        { id: "14-1", text: "has", correct: false },
-                        { id: "14-2", text: "have", correct: true },
-                        { id: "14-3", text: "having", correct: false }
-                    ]
-                ],
-                nextPage: 2109
-            },
-            {
-                pageId: 2109,
-                image: "画面09.jpg",
-                text: "Arturo: Where (15) she from?",
-                buttons: [
-                    [
-                        { id: "15-1", text: "is", correct: false },
-                        { id: "15-2", text: "are", correct: true },
-                        { id: "15-3", text: "am", correct: false }
-                    ]
-                ],
-                nextPage: 2110
-            },
-            {
-                pageId: 2110,
-                image: "画面10.jpg",
-                text: "Alexa: South Korea. She (16) marketing. She (17) the classes (18) very interesting. Let's go and say hello. Sorry, what (19) your last name again? Vargas?",
-                buttons: [
-                    [
-                        { id: "16-1", text: "studies", correct: true },
-                        { id: "16-2", text: "study", correct: false },
-                        { id: "16-3", text: "studying", correct: false }
-                    ],
-                    [
-                        { id: "17-1", text: "says", correct: true },
-                        { id: "17-2", text: "say", correct: false },
-                        { id: "17-3", text: "saying", correct: false }
-                    ],
-                    [
-                        { id: "18-1", text: "is", correct: false },
-                        { id: "18-2", text: "are", correct: true },
-                        { id: "18-3", text: "am", correct: false }
-                    ],
-                    [
-                        { id: "19-1", text: "is", correct: true },
-                        { id: "19-2", text: "are", correct: false },
-                        { id: "19-3", text: "am", correct: false }
-                    ]
-                ],
-                nextPage: 2111
-            },
-            {
-                pageId: 2111,
-                image: "画面11.jpg",
-                text: "Arturo: Actually, it (20) Valdez",
-                buttons: [
-                    [
-                        { id: "20-1", text: "is", correct: true },
-                        { id: "20-2", text: "are", correct: false },
-                        { id: "20-3", text: "am", correct: false }
-                    ]
-                ],
-                nextPage: 2112
-            },
-            {
-                pageId: 2112,
-                image: "画面12.jpg",
-                text: "Alexa: How (21) you spell that?",
-                buttons: [
-                    [
-                        { id: "21-1", text: "is", correct: false },
-                        { id: "21-2", text: "are", correct: true },
-                        { id: "21-3", text: "am", correct: false }
-                    ]
-                ],
-                nextPage: 2113
-            }
-        ];
-
         // 全局变量
-        let currentPage = 0;
-        let playerAnswers = Array(21).fill(null); // 存储21个问题的答案
-        let startTime = null;
-        let roomId = null;
+        let currentRoomId = null;
         let playerId = null;
+        let playerNickname = null;
         let isTeacher = false;
-        let playerData = {
-            nickname: "",
-            correctAnswers: 0,
-            timeSpent: 0,
-            score: 0,
-            accuracy: 0,
-            progress: 0,
-            status: "waiting",
-            finished: false
-        };
-        let updateInterval = null;
 
-        // 初始化游戏
-        async function initGame() {
-            // 获取URL参数
-            const urlParams = new URLSearchParams(window.location.search);
-            roomId = urlParams.get('room');
-            playerId = urlParams.get('player');
-            isTeacher = urlParams.get('teacher') === 'true';
+        // DOM元素
+        const joinRoomBtn = document.getElementById('join-room-btn');
+        const createRoomBtn = document.getElementById('create-room-btn');
+        const roomInputModal = document.getElementById('room-input-modal');
+        const roomNumberInput = document.getElementById('room-number-input');
+        const confirmJoinBtn = document.getElementById('confirm-join-btn');
+        const cancelJoinBtn = document.getElementById('cancel-join-btn');
+        const nicknameInputModal = document.getElementById('nickname-input-modal');
+        const nicknameInput = document.getElementById('nickname-input');
+        const confirmNicknameBtn = document.getElementById('confirm-nickname-btn');
+        const cancelNicknameBtn = document.getElementById('cancel-nickname-btn');
+        const messageToast = document.getElementById('message-toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        // 显示提示消息
+        function showToast(message, duration = 3000) {
+            toastMessage.textContent = message;
+            messageToast.classList.add('show');
             
-            if (!roomId) {
-                alert("Room ID missing. Redirecting to start page.");
-                window.location.href = "index.html";
-                return;
-            }
-            
-            if (isTeacher) {
-                // 老师直接显示排行榜
-                showLeaderboard();
-                startRoomMonitoring();
-                return;
-            }
-            
-            if (!playerId) {
-                alert("Player ID missing. Redirecting to start page.");
-                window.location.href = "index.html";
-                return;
-            }
-            
-            // 加载玩家数据
-            await loadPlayerData();
-            
-            // 设置开始时间
-            startTime = new Date();
-            
-            // 开始更新玩家数据到Firebase
-            startUpdatingPlayerData();
-            
-            // 显示第一页
-            showPage(0);
-            
-            // 预加载下一张图片
-            preloadNextImage(1);
+            setTimeout(() => {
+                messageToast.classList.remove('show');
+            }, duration);
         }
 
-        // 加载玩家数据
-        async function loadPlayerData() {
-            if (!firebaseInitialized) return;
+        // 生成随机6位房间号
+        function generateRoomId() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // 验证房间号是否存在
+        async function checkRoomExists(roomId) {
+            if (!firebaseInitialized) return false;
             
             try {
-                const playerDoc = await db.collection('rooms').doc(roomId).collection('players').doc(playerId).get();
-                
-                if (playerDoc.exists) {
-                    const data = playerDoc.data();
-                    playerData.nickname = data.nickname || "";
-                    playerData.correctAnswers = data.correctAnswers || 0;
-                    playerData.timeSpent = data.timeSpent || 0;
-                    playerData.score = data.score || 0;
-                    playerData.accuracy = data.accuracy || 0;
-                    playerData.progress = data.progress || 0;
-                    playerData.status = data.status || "waiting";
-                    playerData.finished = data.finished || false;
-                    
-                    // 如果玩家已经完成游戏，直接显示排行榜
-                    if (playerData.finished) {
-                        showLeaderboard();
-                    }
-                }
+                const roomDoc = await db.collection('rooms').doc(roomId).get();
+                return roomDoc.exists;
             } catch (error) {
-                console.error("Error loading player data:", error);
+                console.error("Error checking room:", error);
+                return false;
             }
         }
 
-        // 开始更新玩家数据到Firebase
-        function startUpdatingPlayerData() {
-            if (!firebaseInitialized) return;
+        // 创建新房间
+        async function createNewRoom() {
+            if (!firebaseInitialized) {
+                showToast("Database not available. Please try again later.");
+                return null;
+            }
             
-            // 每3秒更新一次数据
-            updateInterval = setInterval(async () => {
-                await updatePlayerData();
-            }, 3000);
-        }
-
-        // 更新玩家数据到Firebase
-        async function updatePlayerData() {
-            if (!firebaseInitialized || !roomId || !playerId) return;
+            const roomId = generateRoomId();
             
             try {
-                // 计算当前用时（秒）
-                const currentTime = new Date();
-                const timeSpent = Math.floor((currentTime - startTime) / 1000);
-                
-                // 计算进度
-                const progress = Math.floor((currentPage / 12) * 100);
-                
-                // 更新本地数据
-                playerData.timeSpent = timeSpent;
-                playerData.progress = progress;
-                playerData.status = currentPage > 0 ? "playing" : "waiting";
-                
-                // 更新到Firebase
-                await db.collection('rooms').doc(roomId).collection('players').doc(playerId).update({
-                    timeSpent: timeSpent,
-                    progress: progress,
-                    status: playerData.status,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                await db.collection('rooms').doc(roomId).set({
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: 'teacher',
+                    playerCount: 0,
+                    status: 'waiting'
                 });
+                
+                currentRoomId = roomId;
+                isTeacher = true;
+                
+                // 跳转到排行榜页面
+                window.location.href = `chapter.html?room=${roomId}&teacher=true`;
             } catch (error) {
-                console.error("Error updating player data:", error);
+                console.error("Error creating room:", error);
+                showToast("Failed to create room. Please try again.");
+                return null;
             }
         }
 
-        // 显示指定页面
-        function showPage(pageIndex) {
-            const gameContainer = document.getElementById('game-container');
-            const pageData = gameData[pageIndex];
+        // 加入房间
+        async function joinRoom(roomId) {
+            if (!firebaseInitialized) {
+                showToast("Database not available. Please try again later.");
+                return false;
+            }
             
-            if (!pageData) {
-                console.error("Page data not found for index:", pageIndex);
+            const roomExists = await checkRoomExists(roomId);
+            
+            if (!roomExists) {
+                showToast("Room number does not exist");
+                return false;
+            }
+            
+            currentRoomId = roomId;
+            roomInputModal.classList.remove('active');
+            nicknameInputModal.classList.add('active');
+            return true;
+        }
+
+        // 注册玩家到房间
+        async function registerPlayer(roomId, nickname) {
+            if (!firebaseInitialized) return null;
+            
+            try {
+                // 检查房间玩家数量
+                const roomDoc = await db.collection('rooms').doc(roomId).get();
+                const playerCount = roomDoc.data().playerCount || 0;
+                
+                if (playerCount >= 20) {
+                    showToast("Room is full. Maximum 20 players allowed.");
+                    return null;
+                }
+                
+                // 生成玩家ID
+                const playerId = Math.random().toString(36).substring(2, 15);
+                
+                // 添加玩家到房间
+                await db.collection('rooms').doc(roomId).collection('players').doc(playerId).set({
+                    nickname: nickname,
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'waiting',
+                    progress: 0,
+                    correctAnswers: 0,
+                    timeSpent: 0,
+                    score: 0,
+                    accuracy: 0
+                });
+                
+                // 更新房间玩家数量
+                await db.collection('rooms').doc(roomId).update({
+                    playerCount: playerCount + 1
+                });
+                
+                return playerId;
+            } catch (error) {
+                console.error("Error registering player:", error);
+                showToast("Failed to join room. Please try again.");
+                return null;
+            }
+        }
+
+        // 事件监听器
+        joinRoomBtn.addEventListener('click', () => {
+            roomInputModal.classList.add('active');
+        });
+
+        createRoomBtn.addEventListener('click', () => {
+            createNewRoom();
+        });
+
+        confirmJoinBtn.addEventListener('click', async () => {
+            const roomId = roomNumberInput.value.trim();
+            
+            if (!/^\d{6}$/.test(roomId)) {
+                showToast("Please enter a valid 6-digit room number");
                 return;
             }
             
-            // 更新当前页面索引
-            currentPage = pageIndex;
-            
-            // 创建页面HTML
-            gameContainer.innerHTML = `
-                <div class="screen active">
-                    <img src="images/${pageData.image}" alt="Game Scene ${pageData.pageId}" class="background-image fade-in">
-                    <div class="text-container">
-                        <p>${pageData.text}</p>
-                    </div>
-                    <div class="buttons-container">
-                        ${renderButtons(pageData.buttons)}
-                    </div>
-                    <div class="continue-container">
-                        <button class="continue-btn" onclick="nextPage()">Continue</button>
-                    </div>
-                </div>
-            `;
-            
-            // 设置按钮事件
-            setupButtonEvents(pageData.buttons);
-            
-            // 恢复之前的选择（如果有）
-            restoreButtonSelections(pageIndex);
-            
-            // 预加载下一张图片
-            if (pageIndex < gameData.length - 1) {
-                preloadNextImage(pageIndex + 1);
-            }
-        }
+            await joinRoom(roomId);
+        });
 
-        // 渲染按钮
-        function renderButtons(buttonGroups) {
-            if (buttonGroups.length === 0) return '';
-            
-            return buttonGroups.map((group, groupIndex) => `
-                <div class="button-row">
-                    ${group.map(button => `
-                        <button class="answer-btn" data-id="${button.id}" data-correct="${button.correct}">
-                            ${button.text}
-                        </button>
-                    `).join('')}
-                </div>
-            `).join('');
-        }
+        cancelJoinBtn.addEventListener('click', () => {
+            roomInputModal.classList.remove('active');
+            roomNumberInput.value = '';
+        });
 
-        // 设置按钮事件
-        function setupButtonEvents(buttonGroups) {
-            if (buttonGroups.length === 0) return;
+        confirmNicknameBtn.addEventListener('click', async () => {
+            const nickname = nicknameInput.value.trim();
             
-            const buttons = document.querySelectorAll('.answer-btn');
-            
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const buttonId = this.getAttribute('data-id');
-                    const isCorrect = this.getAttribute('data-correct') === 'true';
-                    
-                    // 获取组索引（例如 "1-1" 中的 "1"）
-                    const groupIndex = parseInt(buttonId.split('-')[0]) - 1;
-                    
-                    // 禁用同组的所有按钮
-                    const groupButtons = document.querySelectorAll(`.button-row:nth-child(${groupIndex + 1}) .answer-btn`);
-                    groupButtons.forEach(btn => {
-                        btn.disabled = true;
-                    });
-                    
-                    // 高亮选中的按钮
-                    this.classList.add('selected');
-                    if (isCorrect) {
-                        this.classList.add('correct');
-                    } else {
-                        this.classList.add('incorrect');
-                    }
-                    
-                    // 保存答案
-                    const questionIndex = parseInt(buttonId.split('-')[0]);
-                    playerAnswers[questionIndex] = isCorrect;
-                });
-            });
-        }
-
-        // 恢复按钮选择状态
-        function restoreButtonSelections(pageIndex) {
-            const pageData = gameData[pageIndex];
-            
-            pageData.buttons.forEach((group, groupIndex) => {
-                group.forEach(button => {
-                    const questionIndex = parseInt(button.id.split('-')[0]);
-                    const isSelected = playerAnswers[questionIndex] !== null;
-                    
-                    if (isSelected) {
-                        const buttonElement = document.querySelector(`.answer-btn[data-id="${button.id}"]`);
-                        if (buttonElement) {
-                            buttonElement.disabled = true;
-                            buttonElement.classList.add('selected');
-                            
-                            if (playerAnswers[questionIndex]) {
-                                buttonElement.classList.add('correct');
-                            } else {
-                                buttonElement.classList.add('incorrect');
-                            }
-                        }
-                    }
-                });
-            });
-        }
-
-        // 预加载下一张图片
-        function preloadNextImage(nextPageIndex) {
-            if (nextPageIndex >= gameData.length) return;
-            
-            const nextPageData = gameData[nextPageIndex];
-            const img = new Image();
-            img.src = `images/${nextPageData.image}`;
-        }
-
-        // 下一页
-        async function nextPage() {
-            // 如果是最后一页，结束游戏
-            if (currentPage >= gameData.length - 1) {
-                await finishGame();
+            if (!nickname) {
+                showToast("Please enter your nickname");
                 return;
             }
             
-            // 计算当前页的得分
-            calculateScoreForCurrentPage();
-            
-            // 显示下一页
-            showPage(currentPage + 1);
-        }
-
-        // 计算当前页的得分
-        function calculateScoreForCurrentPage() {
-            const pageData = gameData[currentPage];
-            
-            pageData.buttons.forEach(group => {
-                group.forEach(button => {
-                    const questionIndex = parseInt(button.id.split('-')[0]);
-                    if (playerAnswers[questionIndex] !== null && playerAnswers[questionIndex]) {
-                        playerData.correctAnswers++;
-                    }
-                });
-            });
-        }
-
-        // 完成游戏
-        async function finishGame() {
-            // 停止更新间隔
-            if (updateInterval) {
-                clearInterval(updateInterval);
+            if (nickname.length > 12) {
+                showToast("Nickname must be 12 characters or less");
+                return;
             }
             
-            // 计算最终得分
-            await calculateFinalScore();
+            playerNickname = nickname;
+            playerId = await registerPlayer(currentRoomId, nickname);
             
-            // 更新玩家状态为已完成
-            playerData.finished = true;
-            playerData.status = "finished";
-            
-            // 保存最终数据到Firebase
-            if (firebaseInitialized) {
-                try {
-                    await db.collection('rooms').doc(roomId).collection('players').doc(playerId).update({
-                        correctAnswers: playerData.correctAnswers,
-                        timeSpent: playerData.timeSpent,
-                        score: playerData.score,
-                        accuracy: playerData.accuracy,
-                        progress: 100,
-                        status: "finished",
-                        finished: true,
-                        finishedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                } catch (error) {
-                    console.error("Error updating finished game data:", error);
-                }
+            if (playerId) {
+                // 跳转到游戏页面
+                window.location.href = `chapter.html?room=${currentRoomId}&player=${playerId}`;
             }
-            
-            // 显示排行榜
-            showLeaderboard();
-        }
+        });
 
-        // 计算最终得分
-        async function calculateFinalScore() {
-            // 计算用时（分钟）
-            const endTime = new Date();
-            const timeSpentMinutes = Math.ceil((endTime - startTime) / 1000 / 60);
-            
-            // 计算时间分数（每满一分钟2分，不满一分钟1分）
-            const timeScore = timeSpentMinutes <= 60 ? 
-                (timeSpentMinutes * 2 - (timeSpentMinutes > 0 ? 1 : 0)) : 120;
-            
-            // 计算总分数 = 正确数 - 时间分数（不超过100）
-            playerData.score = Math.min(100, Math.max(0, playerData.correctAnswers - timeScore));
-            
-            // 计算正确率
-            playerData.accuracy = (playerData.correctAnswers / 15 * 100).toFixed(1);
-            
-            // 保存用时
-            playerData.timeSpent = Math.floor((endTime - startTime) / 1000);
-        }
+        cancelNicknameBtn.addEventListener('click', () => {
+            nicknameInputModal.classList.remove('active');
+            nicknameInput.value = '';
+            currentRoomId = null;
+        });
 
-        // 显示排行榜
-        function showLeaderboard() {
-            document.getElementById('game-container').style.display = 'none';
-            document.getElementById('leaderboard-screen').classList.add('active');
+        // 预加载章节图片
+        function preloadChapterImages() {
+            const images = [
+                '画面01.jpg', '画面02.jpg', '画面03.jpg', '画面04.jpg', 
+                '画面05.jpg', '画面06.jpg', '画面07.jpg', '画面08.jpg', 
+                '画面09.jpg', '画面10.jpg', '画面11.jpg', '画面12.jpg'
+            ];
             
-            // 显示房间信息
-            document.getElementById('room-id-display').textContent = roomId;
-            
-            // 开始监听排行榜数据
-            startLeaderboardMonitoring();
-        }
-
-        // 开始监听排行榜数据
-        function startLeaderboardMonitoring() {
-            if (!firebaseInitialized || !roomId) return;
-            
-            // 监听房间玩家数量变化
-            db.collection('rooms').doc(roomId).onSnapshot((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    document.getElementById('player-count').textContent = data.playerCount || 0;
-                }
-            });
-            
-            // 监听玩家数据变化
-            db.collection('rooms').doc(roomId).collection('players')
-                .orderBy('score', 'desc')
-                .limit(10)
-                .onSnapshot((snapshot) => {
-                    updateLeaderboard(snapshot.docs);
-                });
-        }
-
-        // 更新排行榜
-        function updateLeaderboard(playerDocs) {
-            const leaderboardBody = document.getElementById('leaderboard-body');
-            leaderboardBody.innerHTML = '';
-            
-            playerDocs.forEach((doc, index) => {
-                const player = doc.data();
-                const isCurrentPlayer = doc.id === playerId;
-                
-                const row = document.createElement('tr');
-                if (isCurrentPlayer) {
-                    row.classList.add('current-player');
-                }
-                
-                // 格式化时间显示
-                const minutes = Math.floor(player.timeSpent / 60);
-                const seconds = player.timeSpent % 60;
-                const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${player.nickname || 'Unknown'}</td>
-                    <td>${player.score || 0}</td>
-                    <td>${player.accuracy || 0}%</td>
-                    <td>${timeDisplay}</td>
-                `;
-                
-                leaderboardBody.appendChild(row);
+            images.forEach(image => {
+                const img = new Image();
+                img.src = `images/${image}`;
             });
         }
 
-        // 开始房间监控（老师视图）
-        function startRoomMonitoring() {
-            if (!firebaseInitialized || !roomId) return;
-            
-            // 监听房间玩家数量变化
-            db.collection('rooms').doc(roomId).onSnapshot((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    document.getElementById('player-count').textContent = data.playerCount || 0;
-                }
-            });
-            
-            // 监听玩家数据变化
-            db.collection('rooms').doc(roomId).collection('players')
-                .orderBy('score', 'desc')
-                .limit(10)
-                .onSnapshot((snapshot) => {
-                    updateLeaderboard(snapshot.docs);
-                });
-        }
-
-        // 全局函数，用于HTML中的onclick事件
-        window.nextPage = nextPage;
-
-        // 初始化游戏
-        window.addEventListener('load', initGame);
+        // 页面加载完成后预加载图片
+        window.addEventListener('load', preloadChapterImages);
     </script>
 </body>
 </html>
