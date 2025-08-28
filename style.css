@@ -1,7 +1,8 @@
+/* 通用样式 */
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 body {
@@ -12,27 +13,33 @@ body {
     overflow: hidden;
 }
 
-.screen {
-    width: 100%;
-    height: 100%;
-    position: relative;
+/* 页面容器 */
+.page {
     display: none;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-.screen.active {
-    display: block;
+.page.active {
+    display: flex;
 }
 
-.background-image, .scene-image {
+/* 图片样式 */
+.full-width-img {
     width: 100%;
     height: auto;
-    display: block;
+    object-fit: cover;
 }
 
+/* 文本容器 */
 .text-container {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 15px;
-    margin-top: -4px; /* 紧贴图片底部 */
+    width: 100%;
 }
 
 .text-container p {
@@ -40,66 +47,72 @@ body {
     line-height: 1.5;
 }
 
-.button-container {
-    position: absolute;
-    bottom: 20px;
+.blank {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+/* 选项容器 */
+.options-container {
     width: 100%;
-    display: flex;
-    justify-content: space-around;
-    padding: 0 10px;
-}
-
-.action-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    width: 45%;
-}
-
-.buttons-container {
-    padding: 15px;
+    padding: 10px;
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.button-group {
+.option-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     margin-bottom: 10px;
 }
 
-.answer-btn {
+/* 按钮样式 */
+.button-container {
+    width: 100%;
+    padding: 15px;
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.horizontal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.blue-btn {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 15px;
     border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 140px;
+    text-align: center;
+}
+
+.blue-btn:active {
+    background-color: #0056b3;
+}
+
+.option-btn {
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
     font-size: 16px;
     cursor: pointer;
     flex: 1;
     margin: 0 5px;
-    opacity: 0.7;
 }
 
-.answer-btn.selected {
-    opacity: 1;
+.option-btn.selected {
+    background-color: #007bff;
 }
 
 .continue-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    width: calc(100% - 30px);
-    margin: 15px;
-    position: absolute;
-    bottom: 20px;
+    width: 100%;
 }
 
 /* 模态框样式 */
@@ -117,7 +130,7 @@ body {
 }
 
 .modal-content {
-    background-color: #004a99;
+    background-color: #007bff;
     color: white;
     padding: 20px;
     border-radius: 10px;
@@ -126,15 +139,10 @@ body {
     text-align: center;
 }
 
-.modal-content p {
-    margin-bottom: 15px;
-    font-size: 18px;
-}
-
 .modal-content input {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
+    padding: 10px;
+    margin: 15px 0;
     border: none;
     border-radius: 5px;
     font-size: 16px;
@@ -143,76 +151,56 @@ body {
 .modal-buttons {
     display: flex;
     justify-content: space-around;
+    margin-top: 15px;
 }
 
-.modal-buttons button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
+/* 排名页面样式 */
+.ranking-header {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-bottom: 1px solid #333;
 }
 
-/* 消息框样式 */
-.message-box {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #004a99;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    z-index: 1001;
-    text-align: center;
-}
-
-.message-box.hidden {
-    display: none;
-}
-
-/* 排名画面样式 */
-#ranking-screen {
-    padding: 20px;
-}
-
-.top-info {
+.room-info {
     display: flex;
     justify-content: space-between;
-    background-color: #004a99;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    font-size: 18px;
 }
 
 .ranking-table-container {
-    width: 100%;
+    flex: 1;
     overflow-y: auto;
-    max-height: calc(100vh - 100px);
+    padding: 10px;
 }
 
-#ranking-table {
+.ranking-table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 14px;
 }
 
-#ranking-table th, #ranking-table td {
-    padding: 10px;
+.ranking-table th, .ranking-table td {
+    padding: 8px;
     text-align: center;
     border-bottom: 1px solid #333;
 }
 
-#ranking-table th {
-    background-color: #004a99;
-    position: sticky;
-    top: 0;
+.ranking-table th {
+    background-color: #007bff;
+    color: white;
 }
 
-#ranking-table tr.highlight {
-    background-color: #0066cc;
+.ranking-table tr.highlight {
+    background-color: #0056b3;
+}
+
+/* 淡入淡出动画 */
+.page {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* 响应式设计 */
@@ -221,31 +209,28 @@ body {
         font-size: 16px;
     }
     
-    .action-btn, .continue-btn {
+    .blue-btn {
+        padding: 10px 15px;
         font-size: 14px;
-        padding: 12px 20px;
+        min-width: 120px;
     }
     
-    .answer-btn {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-    
-    #ranking-table {
+    .option-btn {
+        padding: 8px 10px;
         font-size: 14px;
     }
     
-    #ranking-table th, #ranking-table td {
-        padding: 8px 5px;
+    .ranking-table {
+        font-size: 12px;
     }
 }
 
-/* 淡入淡出动画 */
-.scene {
-    animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@media (max-height: 700px) {
+    .text-container {
+        padding: 10px;
+    }
+    
+    .button-container {
+        padding: 10px;
+    }
 }
