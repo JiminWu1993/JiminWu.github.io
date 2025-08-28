@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Microsoft+YaHei&display=swap" rel="stylesheet">
-    <!-- Firebase App (the core Firebase SDK) -->
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Firebase Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
     <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
-    <div id="game-container">
-        <!-- 游戏内容将通过JavaScript动态加载 -->
+    <div class="container">
+        <div class="screen" id="screen-2100">
+            <img src="images/开始画面.jpg" alt="开始画面" class="background-image">
+            <div class="text-container">
+                <p>Welcome to the journey of English tenses</p>
+            </div>
+            <div class="button-container">
+                <button class="primary-btn" onclick="startGame()">Begin</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -29,174 +38,39 @@
         };
 
         // 初始化Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        let firebaseApp;
+        let analytics;
+        let db;
         
-        // 游戏状态管理
-        let gameState = {
-            currentPage: 2100,
-            score: 0,
-            selectedOptions: {}
-        };
+        try {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            analytics = firebase.analytics();
+            db = firebase.firestore();
+            console.log("Firebase initialized successfully");
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+        }
 
-        // 图片预加载
-        const preloadedImages = {};
-        function preloadImage(imageName) {
-            if (!preloadedImages[imageName]) {
-                const img = new Image();
-                img.src = `images/${imageName}`;
-                preloadedImages[imageName] = img;
+        // 开始游戏函数
+        function startGame() {
+            // 记录游戏开始事件
+            if (analytics) {
+                analytics.logEvent('game_start');
             }
+            
+            // 跳转到游戏章节页面
+            window.location.href = "chapter.html";
         }
 
-        // 初始预加载
-        preloadImage("开始画面.jpg");
-        preloadImage("画面01.jpg");
-
-        // 页面跳转函数
-        function navigateTo(pageId) {
-            // 淡出效果
-            const container = document.getElementById('game-container');
-            container.style.opacity = 0;
-            
-            setTimeout(() => {
-                gameState.currentPage = pageId;
-                renderPage();
-                
-                // 预加载下一张图片
-                if (pageId < 2121) {
-                    const nextImageId = pageId + 1;
-                    preloadImage(`画面${nextImageId - 2100 < 10 ? '0' + (nextImageId - 2100) : nextImageId - 2100}.jpg`);
-                }
-                
-                // 淡入效果
-                setTimeout(() => {
-                    container.style.opacity = 1;
-                }, 50);
-            }, 300);
+        // 预加载下一张图片
+        function preloadImage(imagePath) {
+            const img = new Image();
+            img.src = imagePath;
         }
 
-        // 渲染页面内容
-        function renderPage() {
-            const container = document.getElementById('game-container');
-            container.innerHTML = '';
-            
-            // 根据当前页面ID渲染不同内容
-            switch(gameState.currentPage) {
-                case 2100:
-                    renderStartScreen(container);
-                    break;
-                case 2121:
-                    renderScoreScreen(container);
-                    break;
-                default:
-                    renderChapterScreen(container);
-                    break;
-            }
-        }
-
-        // 渲染开始屏幕
-        function renderStartScreen(container) {
-            const startScreen = document.createElement('div');
-            startScreen.className = 'screen';
-            
-            const img = document.createElement('img');
-            img.src = 'images/开始画面.jpg';
-            img.alt = 'Start Screen';
-            
-            const text = document.createElement('div');
-            text.className = 'text-content';
-            text.textContent = 'Welcome to the journey of English tenses';
-            
-            const button = document.createElement('button');
-            button.className = 'continue-btn';
-            button.textContent = 'Begin';
-            button.addEventListener('click', () => navigateTo(2101));
-            
-            startScreen.appendChild(img);
-            startScreen.appendChild(text);
-            startScreen.appendChild(button);
-            
-            container.appendChild(startScreen);
-        }
-
-        // 渲染章节屏幕
-        function renderChapterScreen(container) {
-            // 在实际实现中，这里会根据页面ID加载不同的内容
-            // 由于内容较多，这里只展示框架，完整实现需要根据需求文档编写
-            const screen = document.createElement('div');
-            screen.className = 'screen';
-            
-            // 添加图片
-            const imgNum = gameState.currentPage - 2100;
-            const imgName = `画面${imgNum < 10 ? '0' + imgNum : imgNum}.jpg`;
-            const img = document.createElement('img');
-            img.src = `images/${imgName}`;
-            img.alt = `Scene ${imgNum}`;
-            
-            // 添加文本内容
-            const text = document.createElement('div');
-            text.className = 'text-content';
-            // 这里根据页面ID设置不同的文本内容
-            
-            // 添加选项按钮
-            const optionsContainer = document.createElement('div');
-            optionsContainer.className = 'options-container';
-            // 根据页面ID添加不同的选项按钮
-            
-            // 添加Continue按钮
-            const continueBtn = document.createElement('button');
-            continueBtn.className = 'continue-btn';
-            continueBtn.textContent = 'Continue';
-            continueBtn.addEventListener('click', () => {
-                // 处理得分逻辑并跳转到下一页
-                const nextPage = gameState.currentPage + 1;
-                navigateTo(nextPage);
-            });
-            
-            screen.appendChild(img);
-            screen.appendChild(text);
-            screen.appendChild(optionsContainer);
-            screen.appendChild(continueBtn);
-            
-            container.appendChild(screen);
-        }
-
-        // 渲染得分屏幕
-        function renderScoreScreen(container) {
-            const scoreScreen = document.createElement('div');
-            scoreScreen.className = 'screen';
-            
-            // 计算最终得分
-            const finalScore = Math.floor(gameState.score * 4.55);
-            const imgName = finalScore >= 60 ? '及格.jpg' : '不及格.jpg';
-            
-            const img = document.createElement('img');
-            img.src = `images/${imgName}`;
-            img.alt = 'Score Screen';
-            
-            const scoreText = document.createElement('div');
-            scoreText.className = 'score-text';
-            scoreText.textContent = `得分: ${finalScore}`;
-            
-            scoreScreen.appendChild(img);
-            scoreScreen.appendChild(scoreText);
-            
-            // 保存得分到Firebase
-            db.collection("scores").add({
-                score: finalScore,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .catch((error) => {
-                console.error("Error saving score: ", error);
-            });
-            
-            container.appendChild(scoreScreen);
-        }
-
-        // 初始化游戏
+        // 预加载游戏第一张图片
         window.onload = function() {
-            renderPage();
+            preloadImage("images/画面01.jpg");
         };
     </script>
 </body>
