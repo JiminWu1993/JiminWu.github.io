@@ -11,8 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
-    <div id="start-screen" class="screen">
-        <img src="images/开始画面.jpg" alt="Welcome" class="background-image">
+    <div class="container">
+        <img src="images/开始画面.jpg" alt="开始画面" class="background-image">
         <div class="text-container">
             <p>Welcome to the journey of English tenses</p>
         </div>
@@ -30,15 +30,17 @@
             appId: "1:58207939196:web:b34f403204096084ee37f9",
             measurementId: "G-GG7GNEQ718"
         };
-        
+
         // 初始化Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        // 开始游戏按钮事件
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialized successfully");
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+        }
+
+        // 开始按钮点击事件
         document.getElementById('begin-btn').addEventListener('click', function() {
-            // 重置得分并跳转到游戏页面
-            localStorage.setItem('score', '0');
             window.location.href = 'chapter.html?page=2101';
         });
     </script>
