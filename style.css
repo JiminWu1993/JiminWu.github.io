@@ -6,23 +6,26 @@
 }
 
 body {
-    font-family: "Microsoft YaHei", sans-serif;
+    font-family: 'Microsoft YaHei', sans-serif;
     background-color: black;
     color: white;
-    overflow: hidden;
     height: 100vh;
-    width: 100vw;
+    overflow: hidden;
 }
 
 /* 页面容器 */
 .page {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    display: flex;
+    display: none;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.page.active {
+    display: flex;
 }
 
 /* 背景图片 */
@@ -30,123 +33,8 @@ body {
     width: 100%;
     height: auto;
     object-fit: cover;
-}
-
-/* 内容区域 */
-.content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-}
-
-/* 欢迎文本 */
-.welcome-text {
-    text-align: center;
-    margin-top: 20%;
-    font-size: 24px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-}
-
-/* 按钮容器 */
-.button-container {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 50px;
-}
-
-/* 操作按钮 */
-.action-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    min-width: 150px;
-    text-align: center;
-}
-
-.action-btn:active {
-    background-color: #0056b3;
-}
-
-/* 文本内容 */
-.text-content {
-    width: 100%;
-    padding: 20px;
-    text-align: center;
-    font-size: 18px;
-    background-color: rgba(0, 0, 0, 0.7);
-    margin-top: -4px; /* 紧贴图片底部 */
-}
-
-/* 按钮组容器 */
-.buttons-container {
-    width: 100%;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-/* 按钮组 */
-.button-group {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 15px;
-}
-
-/* 选项按钮 */
-.option-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    flex: 1;
-    margin: 0 5px;
-    opacity: 0.7;
-}
-
-.option-btn.selected {
-    opacity: 1;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.option-btn:active {
-    background-color: #0056b3;
-}
-
-/* Continue按钮 */
-.continue-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: auto;
-    margin-bottom: 30px;
-    width: 80%;
-}
-
-.continue-btn:active {
-    background-color: #0056b3;
-}
-
-/* 淡入效果 */
-.fade-in {
-    animation: fadeIn 0.5s ease-in;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
 }
 
 @keyframes fadeIn {
@@ -154,98 +42,236 @@ body {
     to { opacity: 1; }
 }
 
-/* 临时提示 */
-.temporary-alert {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #007bff;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    z-index: 1000;
+/* 文本容器 */
+.text-container {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-top: 1px solid #333;
+}
+
+.text-container p {
     font-size: 18px;
+    line-height: 1.5;
 }
 
-/* 排行榜页面 */
-.leaderboard-page {
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
+.blank {
+    text-decoration: underline;
+    font-weight: bold;
 }
 
-/* 房间信息 */
-.room-info {
+/* 选项容器 */
+.options-container {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-top: 1px solid #333;
+}
+
+.option-row {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.option-row:last-child {
+    margin-bottom: 0;
+}
+
+.option-btn {
+    flex: 1;
+    margin: 0 5px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.option-btn:hover {
+    background-color: #0056b3;
+}
+
+.option-btn.selected {
+    background-color: #28a745;
+    font-weight: bold;
+}
+
+/* 按钮容器 */
+.button-container {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-top: 1px solid #333;
+    margin-top: auto;
+}
+
+.horizontal {
+    display: flex;
+    justify-content: space-between;
+}
+
+.game-btn {
+    padding: 15px 25px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.game-btn:hover {
+    background-color: #0056b3;
+}
+
+.continue-btn {
+    width: 100%;
     padding: 15px;
     background-color: #007bff;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.continue-btn:hover {
+    background-color: #0056b3;
+}
+
+/* 模态框 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+}
+
+.modal-content p {
+    margin-bottom: 15px;
     font-size: 18px;
 }
 
-/* 排行榜表格 */
-.leaderboard-table {
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    background-color: white;
+    color: #007bff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.modal-buttons button:hover {
+    background-color: #f0f0f0;
+}
+
+/* 排名页面样式 */
+.ranking-header {
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+}
+
+.room-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.ranking-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+#ranking-table {
     width: 100%;
     border-collapse: collapse;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
 }
 
-.leaderboard-table th, .leaderboard-table td {
-    padding: 12px;
+#ranking-table th, #ranking-table td {
+    padding: 10px;
     text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid #333;
 }
 
-.leaderboard-table th {
+#ranking-table th {
     background-color: #007bff;
     color: white;
 }
 
-.leaderboard-table tr.current-player {
-    background-color: rgba(0, 123, 255, 0.3);
+#ranking-table tr.highlight {
+    background-color: #28a745;
+    font-weight: bold;
 }
 
 /* 响应式设计 */
+@media (max-width: 768px) {
+    .text-container p {
+        font-size: 16px;
+    }
+    
+    .option-btn, .game-btn, .continue-btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+    
+    #ranking-table {
+        font-size: 14px;
+    }
+}
+
 @media (max-width: 480px) {
-    .welcome-text {
-        font-size: 20px;
-        margin-top: 25%;
-    }
-    
-    .action-btn {
-        padding: 12px 20px;
-        min-width: 130px;
-        font-size: 16px;
-    }
-    
-    .text-content {
-        font-size: 16px;
-        padding: 15px;
-    }
-    
-    .option-btn {
-        padding: 8px 12px;
+    .text-container p {
         font-size: 14px;
     }
     
-    .continue-btn {
-        padding: 12px 25px;
-        font-size: 16px;
-    }
-    
-    .room-info {
-        font-size: 16px;
-    }
-    
-    .leaderboard-table th, .leaderboard-table td {
+    .option-btn, .game-btn, .continue-btn {
+        font-size: 12px;
         padding: 8px;
-        font-size: 14px;
+    }
+    
+    #ranking-table {
+        font-size: 12px;
+    }
+    
+    .modal-content {
+        width: 90%;
     }
 }
