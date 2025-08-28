@@ -1,4 +1,4 @@
-/* 重置默认样式 */
+/* 全局样式 */
 * {
     margin: 0;
     padding: 0;
@@ -10,109 +10,96 @@ body {
     background-color: black;
     color: white;
     overflow: hidden;
-    height: 100vh;
-    touch-action: manipulation; /* 防止双击缩放 */
-}
-
-.container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    align-items: center;
 }
 
-.screen.active {
-    opacity: 1;
-}
-
+/* 背景图片样式 */
 .background-image {
     width: 100%;
     height: auto;
     object-fit: cover;
 }
 
+/* 文本容器样式 */
 .text-container {
-    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
     padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    text-align: center;
     font-size: 18px;
     line-height: 1.5;
-    text-align: center;
 }
 
-.option-group {
+/* 选项容器样式 */
+.options-container {
+    width: 100%;
+    padding: 15px;
     display: flex;
-    justify-content: space-around;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
+    flex-direction: column;
+    gap: 10px;
 }
 
+/* 选项行样式 */
+.option-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* 选项按钮样式 */
 .option-btn {
-    background-color: #1E90FF; /* 蓝色 */
+    flex: 1;
+    padding: 12px;
+    background-color: #1E90FF;
     color: white;
     border: none;
-    padding: 10px 15px;
     border-radius: 5px;
     font-size: 16px;
-    opacity: 0.7; /* 未选择时亮度暗淡 */
+    font-family: "Microsoft YaHei", sans-serif;
+    cursor: pointer;
     transition: opacity 0.3s;
 }
 
+.option-btn:active {
+    opacity: 0.8;
+}
+
 .option-btn.selected {
-    opacity: 1; /* 选择后高亮 */
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.button-container {
-    margin-top: auto;
+.option-btn:not(.selected) {
+    opacity: 0.6;
+}
+
+/* Continue按钮样式 */
+.continue-btn {
+    position: absolute;
+    bottom: 20px;
+    width: calc(100% - 30px);
     padding: 15px;
-}
-
-.primary-btn {
-    background-color: #1E90FF; /* 蓝色 */
+    background-color: #1E90FF;
     color: white;
     border: none;
-    padding: 15px;
-    width: 100%;
     border-radius: 5px;
     font-size: 18px;
     font-family: "Microsoft YaHei", sans-serif;
+    cursor: pointer;
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .text-container {
-        font-size: 16px;
-        padding: 10px;
-    }
-    
-    .option-btn {
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-    
-    .primary-btn {
-        padding: 12px;
-        font-size: 16px;
-    }
-}
-
-/* 防止长按出现默认菜单 */
-button {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
+.continue-btn:active {
+    opacity: 0.8;
 }
 
 /* 提示框样式 */
@@ -121,11 +108,30 @@ button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: blue;
+    background-color: #1E90FF;
     color: white;
     padding: 20px;
     border-radius: 10px;
     z-index: 1000;
     text-align: center;
-    max-width: 80%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* 媒体查询确保竖屏显示 */
+@media screen and (orientation: landscape) {
+    body::before {
+        content: "请将设备旋转至竖屏模式";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        z-index: 10000;
+    }
 }
