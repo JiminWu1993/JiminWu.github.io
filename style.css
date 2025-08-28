@@ -1,4 +1,3 @@
-/* style.css */
 * {
     margin: 0;
     padding: 0;
@@ -14,49 +13,43 @@ body {
 }
 
 .screen {
-    display: none;
-    flex-direction: column;
-    height: 100vh;
     width: 100%;
+    height: 100%;
+    position: relative;
+    display: none;
 }
 
 .screen.active {
-    display: flex;
+    display: block;
 }
 
-/* 开始画面样式 */
-#start-screen {
-    position: relative;
-    justify-content: center;
-    align-items: center;
-}
-
-.background-image {
+.background-image, .scene-image {
     width: 100%;
     height: auto;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
+    display: block;
 }
 
 .text-container {
-    text-align: center;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    margin-top: -4px; /* 紧贴图片底部 */
+}
+
+.text-container p {
+    font-size: 18px;
+    line-height: 1.5;
 }
 
 .button-container {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
     display: flex;
     justify-content: space-around;
-    width: 100%;
-    padding: 0 20px;
+    padding: 0 10px;
 }
 
-.game-btn {
+.action-btn {
     background-color: #007bff;
     color: white;
     border: none;
@@ -64,11 +57,49 @@ body {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    min-width: 120px;
+    width: 45%;
 }
 
-.game-btn:active {
-    background-color: #0056b3;
+.buttons-container {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.answer-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    flex: 1;
+    margin: 0 5px;
+    opacity: 0.7;
+}
+
+.answer-btn.selected {
+    opacity: 1;
+}
+
+.continue-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: calc(100% - 30px);
+    margin: 15px;
+    position: absolute;
+    bottom: 20px;
 }
 
 /* 模态框样式 */
@@ -80,13 +111,14 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
-    z-index: 100;
+    z-index: 1000;
     justify-content: center;
     align-items: center;
 }
 
 .modal-content {
-    background-color: #333;
+    background-color: #004a99;
+    color: white;
     padding: 20px;
     border-radius: 10px;
     width: 80%;
@@ -96,13 +128,14 @@ body {
 
 .modal-content p {
     margin-bottom: 15px;
+    font-size: 18px;
 }
 
 .modal-content input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 5px;
     font-size: 16px;
 }
@@ -118,130 +151,47 @@ body {
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
-    cursor: pointer;
-}
-
-.modal-buttons button:active {
-    background-color: #0056b3;
-}
-
-/* 错误提示样式 */
-.error-toast {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #007bff;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 5px;
-    z-index: 200;
-    display: none;
-}
-
-.error-toast.active {
-    display: block;
-}
-
-/* 游戏画面样式 */
-#game-container {
-    height: 100vh;
-    width: 100%;
-    position: relative;
-}
-
-.game-screen {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-}
-
-.game-screen img {
-    width: 100%;
-    height: auto;
-}
-
-.text-container {
-    padding: 15px;
-    background-color: rgba(0, 0, 0, 0.7);
-    text-align: center;
-    font-size: 18px;
-}
-
-.buttons-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 10px;
-}
-
-.button-group {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 15px;
-}
-
-.option-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 12px 0;
-    border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    flex: 1;
-    margin: 0 5px;
 }
 
-.option-btn.selected {
-    background-color: #0056b3;
-    font-weight: bold;
-}
-
-.option-btn:active {
-    background-color: #0056b3;
-}
-
-.continue-btn {
-    background-color: #007bff;
+/* 消息框样式 */
+.message-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #004a99;
     color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 5px;
-    font-size: 18px;
-    cursor: pointer;
-    margin: 10px;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1001;
+    text-align: center;
 }
 
-.continue-btn:active {
-    background-color: #0056b3;
-}
-
-/* 排行榜样式 */
-#ranking-screen {
+.message-box.hidden {
     display: none;
-    flex-direction: column;
-    height: 100vh;
-    padding: 10px;
 }
 
-.ranking-header {
-    background-color: #333;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 10px;
+/* 排名画面样式 */
+#ranking-screen {
+    padding: 20px;
 }
 
-.room-info {
+.top-info {
     display: flex;
     justify-content: space-between;
+    background-color: #004a99;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 18px;
 }
 
 .ranking-table-container {
-    flex: 1;
+    width: 100%;
     overflow-y: auto;
+    max-height: calc(100vh - 100px);
 }
 
 #ranking-table {
@@ -250,43 +200,52 @@ body {
 }
 
 #ranking-table th, #ranking-table td {
-    border: 1px solid #555;
-    padding: 8px;
+    padding: 10px;
     text-align: center;
+    border-bottom: 1px solid #333;
 }
 
 #ranking-table th {
-    background-color: #333;
+    background-color: #004a99;
+    position: sticky;
+    top: 0;
 }
 
 #ranking-table tr.highlight {
-    background-color: #007bff;
+    background-color: #0066cc;
 }
 
-/* 淡入淡出效果 */
-.fade-in {
-    animation: fadeIn 0.5s;
+/* 响应式设计 */
+@media (max-width: 480px) {
+    .text-container p {
+        font-size: 16px;
+    }
+    
+    .action-btn, .continue-btn {
+        font-size: 14px;
+        padding: 12px 20px;
+    }
+    
+    .answer-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    #ranking-table {
+        font-size: 14px;
+    }
+    
+    #ranking-table th, #ranking-table td {
+        padding: 8px 5px;
+    }
+}
+
+/* 淡入淡出动画 */
+.scene {
+    animation: fadeIn 0.5s ease-in;
 }
 
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-/* 响应式调整 */
-@media (max-height: 700px) {
-    .text-container {
-        font-size: 16px;
-        padding: 10px;
-    }
-    
-    .option-btn {
-        padding: 10px 0;
-        font-size: 14px;
-    }
-    
-    .continue-btn {
-        padding: 12px;
-        font-size: 16px;
-    }
 }
