@@ -5,24 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <!-- Firebase App (core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Analytics -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
     <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="screen" id="screen-2100">
-            <img src="images/开始画面.jpg" alt="开始画面" class="background-image">
-            <div class="text-container">
-                <p>Welcome to the journey of English tenses</p>
-            </div>
-            <div class="button-container">
-                <button class="primary-btn" onclick="startGame()">Begin</button>
-            </div>
+    <div id="start-screen" class="screen">
+        <img src="images/开始画面.jpg" alt="Welcome" class="background-image">
+        <div class="text-container">
+            <p>Welcome to the journey of English tenses</p>
         </div>
+        <button id="begin-btn" class="continue-btn">Begin</button>
     </div>
 
     <script>
@@ -36,42 +30,17 @@
             appId: "1:58207939196:web:b34f403204096084ee37f9",
             measurementId: "G-GG7GNEQ718"
         };
-
-        // 初始化Firebase
-        let firebaseApp;
-        let analytics;
-        let db;
         
-        try {
-            firebaseApp = firebase.initializeApp(firebaseConfig);
-            analytics = firebase.analytics();
-            db = firebase.firestore();
-            console.log("Firebase initialized successfully");
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
-        }
-
-        // 开始游戏函数
-        function startGame() {
-            // 记录游戏开始事件
-            if (analytics) {
-                analytics.logEvent('game_start');
-            }
-            
-            // 跳转到游戏章节页面
-            window.location.href = "chapter.html";
-        }
-
-        // 预加载下一张图片
-        function preloadImage(imagePath) {
-            const img = new Image();
-            img.src = imagePath;
-        }
-
-        // 预加载游戏第一张图片
-        window.onload = function() {
-            preloadImage("images/画面01.jpg");
-        };
+        // 初始化Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // 开始游戏按钮事件
+        document.getElementById('begin-btn').addEventListener('click', function() {
+            // 重置得分并跳转到游戏页面
+            localStorage.setItem('score', '0');
+            window.location.href = 'chapter.html?page=2101';
+        });
     </script>
 </body>
 </html>
