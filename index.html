@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
-    <!-- 引入Firebase -->
+    <!-- Firebase App (core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Database -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
 <body>
-    <div class="container" id="container">
-        <!-- 开始画面 -->
-        <div class="screen" id="screen-2100">
-            <img src="images/开始画面.jpg" alt="开始画面" class="background-img">
-            <div class="text-box">
-                <p>Welcome to the journey of English tenses</p>
-            </div>
+    <div class="container">
+        <div id="2100" class="page active">
+            <img src="images/开始画面.jpg" alt="Welcome" class="background-img">
+            <div class="text-display">Welcome to the journey of English tenses</div>
             <button class="continue-btn" onclick="navigateTo(2101)">Begin</button>
         </div>
     </div>
@@ -37,109 +35,29 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // 游戏状态
+        // 游戏状态管理
         let gameState = {
-            currentScreen: 2100,
-            scores: {},
-            roomId: generateRoomId()
+            currentPage: 2100,
+            score: 0,
+            selectedOptions: {}
         };
         
-        // 生成房间ID (月日小时分钟)
-        function generateRoomId() {
-            const now = new Date();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            return month + day + hours + minutes;
+        // 导航函数
+        function navigateTo(pageId) {
+            document.querySelector('.page.active').classList.remove('active');
+            document.getElementById(pageId).classList.add('active');
+            gameState.currentPage = pageId;
         }
         
-        // 导航到指定页面
-        function navigateTo(screenId) {
-            // 隐藏当前屏幕
-            document.getElementById(`screen-${gameState.currentScreen}`).style.display = 'none';
-            
-            // 显示目标屏幕
-            const targetScreen = document.getElementById(`screen-${screenId}`);
-            if (targetScreen) {
-                targetScreen.style.display = 'flex';
-                gameState.currentScreen = screenId;
-            } else {
-                console.error(`Screen ${screenId} not found`);
-            }
+        // 开始新游戏
+        function startNewGame() {
+            gameState = {
+                currentPage: 2101,
+                score: 0,
+                selectedOptions: {}
+            };
+            navigateTo(2101);
         }
-        
-        // 加载章节内容
-        function loadChapterContent() {
-            fetch('chapter.html')
-                .then(response => response.text())
-                .then(data => {
-                    const container = document.getElementById('container');
-                    container.innerHTML += data;
-                    
-                    // 初始化所有屏幕，默认隐藏
-                    const screens = document.querySelectorAll('.screen');
-                    screens.forEach(screen => {
-                        if (screen.id !== 'screen-2100') {
-                            screen.style.display = 'none';
-                        }
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading chapter content:', error);
-                });
-        }
-        
-        // 记录得分
-        function recordScore(questionId, isCorrect) {
-            if (questionId >= 22 && questionId <= 43) {
-                gameState.scores[questionId] = isCorrect;
-            }
-        }
-        
-        // 计算总分
-        function calculateTotalScore() {
-            let correctCount = 0;
-            for (let i = 22; i <= 43; i++) {
-                if (gameState.scores[i] === true) {
-                    correctCount++;
-                }
-            }
-            return Math.round(correctCount * 4.55);
-        }
-        
-        // 保存分数到Firebase
-        function saveScoreToFirebase() {
-            const totalScore = calculateTotalScore();
-            const roomRef = database.ref('rooms/' + gameState.roomId);
-            
-            roomRef.set({
-                score: totalScore,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            })
-            .then(() => {
-                // 更新结果显示
-                const resultScreen = document.getElementById('screen-2121');
-                const scoreDisplay = resultScreen.querySelector('.score-display');
-                scoreDisplay.textContent = `得分: ${totalScore}`;
-                
-                // 设置背景图片
-                const bgImg = resultScreen.querySelector('.background-img');
-                bgImg.src = totalScore >= 60 ? 'images/及格.jpg' : 'images/不及格.jpg';
-                
-                // 导航到结果页面
-                navigateTo(2121);
-            })
-            .catch(error => {
-                console.error('Error saving score to Firebase:', error);
-                alert('保存分数时出错，请检查网络连接');
-            });
-        }
-        
-        // 初始化游戏
-        window.onload = function() {
-            loadChapterContent();
-        };
     </script>
 </body>
 </html>
