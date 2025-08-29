@@ -1,3 +1,4 @@
+/* 全局样式 */
 * {
     margin: 0;
     padding: 0;
@@ -9,27 +10,43 @@ body {
     background-color: black;
     color: white;
     overflow: hidden;
-    height: 100vh;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.container {
+#game-container {
     position: relative;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
-    display: flex;
+    overflow: hidden;
+}
+
+/* 页面样式 */
+.game-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
 }
 
-.background-image {
+.game-page.active {
+    display: flex;
+}
+
+/* 图片样式 */
+.page-image {
     width: 100%;
     height: auto;
-    max-height: 70vh;
     object-fit: cover;
 }
 
-.text-container {
+/* 文本显示区域 */
+.text-display {
     width: 100%;
     padding: 15px;
     background-color: rgba(0, 0, 0, 0.7);
@@ -38,97 +55,143 @@ body {
     line-height: 1.5;
 }
 
-.buttons-container {
+/* 选项容器 */
+.options-container {
     width: 100%;
-    padding: 15px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    flex-grow: 1;
-    overflow-y: auto;
 }
 
-.button-row {
+/* 选项行 */
+.option-row {
     display: flex;
     justify-content: space-around;
     width: 100%;
-    gap: 10px;
 }
 
+/* 选项按钮 */
 .option-btn {
     flex: 1;
-    padding: 12px 5px;
-    background-color: #1E90FF;
+    margin: 0 5px;
+    padding: 12px 0;
+    background-color: #0066cc;
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 16px;
     font-family: "Microsoft YaHei", sans-serif;
     cursor: pointer;
-    transition: all 0.3s;
-    min-height: 44px;
+    transition: background-color 0.3s, opacity 0.3s;
 }
 
-.option-btn:hover {
-    background-color: #0066CC;
+.option-btn:active {
+    background-color: #0055aa;
 }
 
 .option-btn.selected {
-    background-color: #004C99;
-    font-weight: bold;
+    background-color: #004499;
+    opacity: 1;
 }
 
-.option-btn:disabled {
-    background-color: #666;
-    cursor: not-allowed;
+.option-btn:not(.selected) {
+    opacity: 0.7;
 }
 
+/* 继续按钮 */
 .continue-btn {
+    position: absolute;
+    bottom: 0;
     width: 100%;
-    padding: 15px;
-    background-color: #1E90FF;
+    padding: 20px;
+    background-color: #0066cc;
     color: white;
     border: none;
     font-size: 18px;
     font-family: "Microsoft YaHei", sans-serif;
     cursor: pointer;
-    transition: background-color 0.3s;
-    min-height: 50px;
 }
 
-.continue-btn:hover {
-    background-color: #0066CC;
+.continue-btn:active {
+    background-color: #0055aa;
+}
+
+/* 得分页面样式 */
+.score-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-image {
+    width: 100%;
+    height: auto;
+    max-height: 70%;
+    object-fit: contain;
+}
+
+.score-display {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 提示框样式 */
+.alert-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: blue;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    text-align: center;
+    display: none;
 }
 
 /* 响应式设计 */
-@media (max-width: 768px) {
-    .text-container {
+@media (max-height: 700px) {
+    .text-display {
         font-size: 16px;
         padding: 10px;
     }
     
     .option-btn {
+        padding: 10px 0;
         font-size: 14px;
-        padding: 10px 5px;
     }
     
     .continue-btn {
+        padding: 15px;
         font-size: 16px;
-        padding: 12px;
     }
 }
 
-/* 防止长按出现默认菜单 */
-button {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-/* 确保在移动设备上正确显示 */
-@media (max-height: 700px) {
-    .background-image {
-        max-height: 60vh;
+/* 防止横屏 */
+@media (orientation: landscape) {
+    body::before {
+        content: "请将设备旋转至竖屏模式";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        z-index: 10000;
+    }
+    
+    #game-container {
+        display: none;
     }
 }
