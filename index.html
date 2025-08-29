@@ -1,60 +1,18 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
-    <script type="module">
-        // ---------------- Firebase 初始化 ----------------
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-        const firebaseConfig = {       
-            apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
-            authDomain: "tetrisonline-ca400.firebaseapp.com",
-            projectId: "tetrisonline-ca400",
-            storageBucket: "tetrisonline-ca400.firebasestorage.app",
-            messagingSenderId: "58207939196",
-            appId: "1:58207939196:web:b34f403204096084ee37f9",
-            measurementId: "G-GG7GNEQ718"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // ---------------- 游戏开始逻辑 ----------------
-        function startGame() {
-            try {
-                // 用当前时间生成一个房间号，例如：08290825（8月29日08:25）
-                const now = new Date();
-                const roomId = ("0" + (now.getMonth()+1)).slice(-2) +
-                               ("0" + now.getDate()).slice(-2) +
-                               ("0" + now.getHours()).slice(-2) +
-                               ("0" + now.getMinutes()).slice(-2);
-
-                // 把分数初始化为 0，存入 Firebase
-                set(ref(db, "rooms/" + roomId), {
-                    score: 0
-                });
-
-                // 跳转到游戏章节页面，同时传递 roomId
-                window.location.href = "chapter.html?roomId=" + roomId + "&page=2101";
-            } catch (err) {
-                alert("启动游戏时出错: " + err.message);
-                console.error(err);
-            }
-        }
-
-        window.startGame = startGame;
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- 开始画面 -->
-        <img src="images/开始画面.jpg" alt="开始画面" class="full-img">
-        <div class="text-box">Welcome to the journey of English tenses</div>
-        <button class="continue-btn" onclick="startGame()">Begin</button>
+    <div id="game-container">
+        <!-- 游戏内容将通过JavaScript动态加载 -->
     </div>
+    
+    <script src="JavaScript.html"></script>
 </body>
 </html>
