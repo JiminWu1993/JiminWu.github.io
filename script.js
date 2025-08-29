@@ -1,45 +1,39 @@
-<script> 
 // Firebase配置
 const firebaseConfig = {
     apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
     authDomain: "tetrisonline-ca400.firebaseapp.com",
     projectId: "tetrisonline-ca400",
-    storageBucket: "tetrisonline-ca400.firebasestorage.app",
+    storageBucket: "tetrisonline-ca400.appspot.com",
     messagingSenderId: "58207939196",
     appId: "1:58207939196:web:b34f403204096084ee37f9",
     measurementId: "G-GG7GNEQ718"
 };
 
 // 初始化Firebase
-try {
-    firebase.initializeApp(firebaseConfig);
-    console.log("Firebase initialized successfully");
-} catch (error) {
-    console.error("Firebase initialization error:", error);
-}
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-// 游戏状态和数据
-const gameData = {
-    currentPage: 2100,
-    score: 0,
+// 游戏状态
+let gameState = {
+    currentScreen: 2100,
     selectedOptions: {},
-    roomId: null
+    score: 0
 };
 
-// 页面配置数据
-const pagesConfig = {
+// 游戏数据
+const gameData = {
     2100: {
         image: "开始画面.jpg",
         text: "Welcome to the journey of English tenses",
         buttons: [
-            { content: "Begin", action: "navigate", target: 2101 }
+            { content: "Begin", correct: null, action: () => navigateTo(2101) }
         ]
     },
     2101: {
         image: "画面01.jpg",
         text: "Arturo: Hello, I'm Arturo Valdez.",
         buttons: [
-            { content: "Continue", action: "navigate", target: 2102 }
+            { content: "Continue", correct: null, action: () => navigateTo(2102) }
         ]
     },
     2102: {
@@ -47,24 +41,24 @@ const pagesConfig = {
         text: "Alexa: Hi. My name (1) Alexandra Costa, but please (2) me Alexa.",
         optionGroups: [
             {
-                id: "group1",
+                id: "1",
                 options: [
-                    { id: "1-1", content: "is", correct: true },
-                    { id: "1-2", content: "am", correct: false },
-                    { id: "1-3", content: "are", correct: false }
+                    { content: "is", correct: true },
+                    { content: "am", correct: false },
+                    { content: "are", correct: false }
                 ]
             },
             {
-                id: "group2",
+                id: "2",
                 options: [
-                    { id: "2-1", content: "calls", correct: false },
-                    { id: "2-2", content: "call", correct: true },
-                    { id: "2-3", content: "calling", correct: false }
+                    { content: "calls", correct: false },
+                    { content: "call", correct: true },
+                    { content: "calling", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2103 }
+            { content: "Continue", correct: null, action: () => navigateTo(2103) }
         ]
     },
     2103: {
@@ -72,23 +66,23 @@ const pagesConfig = {
         text: "Arturo: OK. Where (3) you from, Alexa?",
         optionGroups: [
             {
-                id: "group3",
+                id: "3",
                 options: [
-                    { id: "3-1", content: "is", correct: false },
-                    { id: "3-2", content: "are", correct: true },
-                    { id: "3-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2104 }
+            { content: "Continue", correct: null, action: () => navigateTo(2104) }
         ]
     },
     2104: {
         image: "画面04.jpg",
         text: "Alexa: Brazil. How about you?",
         buttons: [
-            { content: "Continue", action: "navigate", target: 2105 }
+            { content: "Continue", correct: null, action: () => navigateTo(2105) }
         ]
     },
     2105: {
@@ -96,24 +90,24 @@ const pagesConfig = {
         text: "Arturo: I'm from Mexico. I (4) here in the city now, but my family (5) in a small town near Guadalajara.",
         optionGroups: [
             {
-                id: "group4",
+                id: "4",
                 options: [
-                    { id: "4-1", content: "lives", correct: true },
-                    { id: "4-2", content: "live", correct: false },
-                    { id: "4-3", content: "living", correct: false }
+                    { content: "lives", correct: true },
+                    { content: "live", correct: false },
+                    { content: "living", correct: false }
                 ]
             },
             {
-                id: "group5",
+                id: "5",
                 options: [
-                    { id: "5-1", content: "lives", correct: true },
-                    { id: "5-2", content: "live", correct: false },
-                    { id: "5-3", content: "are living", correct: false }
+                    { content: "lives", correct: true },
+                    { content: "live", correct: false },
+                    { content: "are living", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2106 }
+            { content: "Continue", correct: null, action: () => navigateTo(2106) }
         ]
     },
     2106: {
@@ -121,40 +115,40 @@ const pagesConfig = {
         text: "Alexa: Oh, I (6) Mexico! It (7) really beautiful. My brother (8) Mexico, too. Oh, good. Soo-jin (9) here.",
         optionGroups: [
             {
-                id: "group6",
+                id: "6",
                 options: [
-                    { id: "6-1", content: "loves", correct: false },
-                    { id: "6-2", content: "love", correct: true },
-                    { id: "6-3", content: "loving", correct: false }
+                    { content: "loves", correct: false },
+                    { content: "love", correct: true },
+                    { content: "loving", correct: false }
                 ]
             },
             {
-                id: "group7",
+                id: "7",
                 options: [
-                    { id: "7-1", content: "is", correct: true },
-                    { id: "7-2", content: "am", correct: false },
-                    { id: "7-3", content: "are", correct: false }
+                    { content: "is", correct: true },
+                    { content: "am", correct: false },
+                    { content: "are", correct: false }
                 ]
             },
             {
-                id: "group8",
+                id: "8",
                 options: [
-                    { id: "8-1", content: "loves", correct: true },
-                    { id: "8-2", content: "love", correct: false },
-                    { id: "8-3", content: "loving", correct: false }
+                    { content: "loves", correct: true },
+                    { content: "love", correct: false },
+                    { content: "loving", correct: false }
                 ]
             },
             {
-                id: "group9",
+                id: "9",
                 options: [
-                    { id: "9-1", content: "is", correct: true },
-                    { id: "9-2", content: "are", correct: false },
-                    { id: "9-3", content: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2107 }
+            { content: "Continue", correct: null, action: () => navigateTo(2107) }
         ]
     },
     2107: {
@@ -162,24 +156,24 @@ const pagesConfig = {
         text: "Arturo: Who (10) Soo-jin? She (11) familiar.",
         optionGroups: [
             {
-                id: "group10",
+                id: "10",
                 options: [
-                    { id: "10-1", content: "is", correct: true },
-                    { id: "10-2", content: "are", correct: false },
-                    { id: "10-3", content: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group11",
+                id: "11",
                 options: [
-                    { id: "11-1", content: "looks", correct: true },
-                    { id: "11-2", content: "look", correct: false },
-                    { id: "11-3", content: "looking", correct: false }
+                    { content: "looks", correct: true },
+                    { content: "look", correct: false },
+                    { content: "looking", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2108 }
+            { content: "Continue", correct: null, action: () => navigateTo(2108) }
         ]
     },
     2108: {
@@ -187,32 +181,32 @@ const pagesConfig = {
         text: "Alexa: She (12) my classmate. We (13) in the same business class. We (14) our class every Monday and Wednesday.",
         optionGroups: [
             {
-                id: "group12",
+                id: "12",
                 options: [
-                    { id: "12-1", content: "is", correct: false },
-                    { id: "12-2", content: "are", correct: true },
-                    { id: "12-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group13",
+                id: "13",
                 options: [
-                    { id: "13-1", content: "is", correct: false },
-                    { id: "13-2", content: "are", correct: true },
-                    { id: "13-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group14",
+                id: "14",
                 options: [
-                    { id: "14-1", content: "has", correct: false },
-                    { id: "14-2", content: "have", correct: true },
-                    { id: "14-3", content: "having", correct: false }
+                    { content: "has", correct: false },
+                    { content: "have", correct: true },
+                    { content: "having", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2109 }
+            { content: "Continue", correct: null, action: () => navigateTo(2109) }
         ]
     },
     2109: {
@@ -220,16 +214,16 @@ const pagesConfig = {
         text: "Arturo: Where (15) she from?",
         optionGroups: [
             {
-                id: "group15",
+                id: "15",
                 options: [
-                    { id: "15-1", content: "is", correct: false },
-                    { id: "15-2", content: "are", correct: true },
-                    { id: "15-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2110 }
+            { content: "Continue", correct: null, action: () => navigateTo(2110) }
         ]
     },
     2110: {
@@ -237,40 +231,40 @@ const pagesConfig = {
         text: "Alexa: South Korea. She (16) marketing. She (17) the classes (18) very interesting. Let's go and say hello. Sorry, what (19) your last name again? Vargas?",
         optionGroups: [
             {
-                id: "group16",
+                id: "16",
                 options: [
-                    { id: "16-1", content: "studies", correct: true },
-                    { id: "16-2", content: "study", correct: false },
-                    { id: "16-3", content: "studying", correct: false }
+                    { content: "studies", correct: true },
+                    { content: "study", correct: false },
+                    { content: "studying", correct: false }
                 ]
             },
             {
-                id: "group17",
+                id: "17",
                 options: [
-                    { id: "17-1", content: "says", correct: true },
-                    { id: "17-2", content: "say", correct: false },
-                    { id: "17-3", content: "saying", correct: false }
+                    { content: "says", correct: true },
+                    { content: "say", correct: false },
+                    { content: "saying", correct: false }
                 ]
             },
             {
-                id: "group18",
+                id: "18",
                 options: [
-                    { id: "18-1", content: "is", correct: false },
-                    { id: "18-2", content: "are", correct: true },
-                    { id: "18-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group19",
+                id: "19",
                 options: [
-                    { id: "19-1", content: "is", correct: true },
-                    { id: "19-2", content: "are", correct: false },
-                    { id: "19-3", content: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2111 }
+            { content: "Continue", correct: null, action: () => navigateTo(2111) }
         ]
     },
     2111: {
@@ -278,16 +272,16 @@ const pagesConfig = {
         text: "Arturo: Actually, it (20) Valdez",
         optionGroups: [
             {
-                id: "group20",
+                id: "20",
                 options: [
-                    { id: "20-1", content: "is", correct: true },
-                    { id: "20-2", content: "are", correct: false },
-                    { id: "20-3", content: "am", extreme: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2112 }
+            { content: "Continue", correct: null, action: () => navigateTo(2112) }
         ]
     },
     2112: {
@@ -295,16 +289,16 @@ const pagesConfig = {
         text: "Alexa: How (21) you spell that?",
         optionGroups: [
             {
-                id: "group21",
+                id: "21",
                 options: [
-                    { id: "21-1", content: "is", correct: false },
-                    { id: "21-2", content: "are", correct: true },
-                    { id: "21-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2113 }
+            { content: "Continue", correct: null, action: () => navigateTo(2113) }
         ]
     },
     2113: {
@@ -312,32 +306,32 @@ const pagesConfig = {
         text: "My name's Nick. My girlfriend's name (1) Karen. We (2) students. I (3) to university in Oxford.",
         optionGroups: [
             {
-                id: "group22",
+                id: "22",
                 options: [
-                    { id: "22-1", content: "is", correct: true },
-                    { id: "22-2", content: "are", correct: false },
-                    { id: "22-3", content extreme: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group23",
+                id: "23",
                 options: [
-                    { id: "23-极", content: "is", correct: false },
-                    { id: "23-2", content: "are", correct: true },
-                    { id: "23-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group24",
+                id: "24",
                 options: [
-                    { id: "24-1", content: "go", correct: true },
-                    {极 id: "24-2", content: "goes", correct: false },
-                    { id: "24-3", content: "going", correct: false }
+                    { content: "go", correct: true },
+                    { content: "goes", correct: false },
+                    { content: "going", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2114, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => navigateTo(2114) }
         ]
     },
     2114: {
@@ -345,32 +339,32 @@ const pagesConfig = {
         text: "Karen (4) go to university in Oxford; she (5) to university in Cambridge. She (6) in Cambridge.",
         optionGroups: [
             {
-                id: "group25",
+                id: "25",
                 options: [
-                    { id: "25-1", content: "don't", correct: false },
-                    { id: "25-2", content: "isn't", correct: false },
-                    { id: "25-3", content: "doesn't", correct: true }
+                    { content: "don't", correct: false },
+                    { content: "isn't", correct: false },
+                    { content: "doesn't", correct: true }
                 ]
             },
             {
-                id: "group26",
+                id: "26",
                 options: [
-                    { id: "26-1", content: "go", correct: false },
-                    { id: "26-2", content: "go极es", correct: true },
-                    { id: "26-3", content: "going", correct: false }
+                    { content: "go", correct: false },
+                    { content: "goes", correct: true },
+                    { content: "going", correct: false }
                 ]
             },
             {
-                id: "group27",
+                id: "27",
                 options: [
-                    { id: "27-1", content: "lives", correct: true },
-                    { id: "27-2", content: "live", correct: false },
-                    { id: "27-3", content: "living", correct: false }
+                    { content: "lives", correct: true },
+                    { content: "live", correct: false },
+                    { content: "living", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2115, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => navigateTo(2115) }
         ]
     },
     2115: {
@@ -378,49 +372,49 @@ const pagesConfig = {
         text: "I (7) with my parents in Woodstock, which (8) a small town near Oxford.",
         optionGroups: [
             {
-                id: "group28",
+                id: "28",
                 options: [
-                    { id: "28-1", content: "lives", correct: false },
-                    { id: "28-2", content: "live", correct: true },
-                    { id: "28-3", content: "living", correct: false }
+                    { content: "lives", correct: false },
+                    { content: "live", correct: true },
+                    { content: "living", correct: false }
                 ]
             },
             {
-                id: "group29",
+                id: "29",
                 options: [
-                    { id: "29-1", content: "is", correct: true },
-                    { id: "29-2", content: "are", correct: false },
-                    { id: "29-3", content: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2116, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => navigateTo(2116) }
         ]
     },
-    211极6: {
+    2116: {
         image: "画面16.jpg",
         text: "It (9) difficult sometimes because we (10) each other only on weekends.",
         optionGroups: [
             {
-                id: "group30",
+                id: "30",
                 options: [
-                    { id: "30-1", content: "is", correct: true },
-                    { id: "30-2", content: "are", correct: false },
-                    { id: "30-3", content: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group31",
+                id: "31",
                 options: [
-                    { id: "31-1", content: "see", correct: true },
-                    { id: "31-2", content: "sees", correct: false },
-                    { id: "31-3", content: "seeing", correct: false }
+                    { content: "see", correct: true },
+                    { content: "sees", correct: false },
+                    { content: "seeing", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2117, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => navigateTo(2117) }
         ]
     },
     2117: {
@@ -428,40 +422,40 @@ const pagesConfig = {
         text: "Karen (11) history, and she (12) her course. She (13) the architecture in Cambridge (14) beautiful.",
         optionGroups: [
             {
-                id: "group32",
+                id: "32",
                 options: [
-                    { id: "32-1", content: "studies", correct: true },
-                    { id: "32-2", content: "study", correct: false },
-                    { id: "32-3", content: "studying", correct: false }
+                    { content: "studies", correct: true },
+                    { content: "study", correct: false },
+                    { content: "studying", correct: false }
                 ]
             },
             {
-                id: "group33",
+                id: "33",
                 options: [
-                    { id: "33-1", content: "love", correct: false },
-                    { id: "33-2", content: "loves", correct: true },
-                    { id: "33-3", content: "loving", correct: false }
-极            ]
-            },
-            {
-                id: "group34",
-                options: [
-                    { id: "34-1", content: "says", correct: true },
-                    { id: "34-2", content: "say", correct: false },
-                    { id: "34-3", content: "saying", correct: false }
+                    { content: "love", correct: false },
+                    { content: "loves", correct: true },
+                    { content: "loving", correct: false }
                 ]
             },
             {
-                id: "group35",
+                id: "34",
                 options: [
-                   极 { id: "35-1", content: "is", correct: true },
-                    { id: "35-2", content: "are", correct: false },
-                    { id: "35-3", content: "am", correct: false }
+                    { content: "says", correct: true },
+                    { content: "say", correct: false },
+                    { content: "saying", correct: false }
+                ]
+            },
+            {
+                id: "35",
+                options: [
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2118, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => navigateTo(2118) }
         ]
     },
     2118: {
@@ -469,24 +463,24 @@ const pagesConfig = {
         text: "I (15) philosophy and politics, so my courses (16) very different from hers.",
         optionGroups: [
             {
-                id: "group36",
+                id: "36",
                 options: [
-                    { id: "36-1", content: "studies", correct: false },
-                    { id: "36-2", content: "study", correct: true },
-                    { id: "36-3", content: "studying", correct: false }
+                    { content: "studies", correct: false },
+                    { content: "study", correct: true },
+                    { content: "studying", correct: false }
                 ]
             },
             {
-                id: "group37",
+                id: "37",
                 options: [
-                    { id: "37-1", content: "is", correct: false },
-                    { id: "37-2", content: "are", correct: true },
-                    { id: "37-3", content: "am", correct: false }
+                    { content: "is", correct: false },
+                    { content: "are", correct: true },
+                    { content: "am", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2119, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => navigateTo(2119) }
         ]
     },
     2119: {
@@ -494,40 +488,40 @@ const pagesConfig = {
         text: "I (17) living in Woodstock because my family (18) there and it (19) quiet, but I (20) Karen a lot.",
         optionGroups: [
             {
-                id: "group38",
+                id: "38",
                 options: [
-                    { id: "38-1", content: "like", correct: true },
-                    { id: "38-2", content: "likes", correct: false },
-                    { id: "38-3", content: "liking", correct: false }
+                    { content: "like", correct: true },
+                    { content: "likes", correct: false },
+                    { content: "liking", correct: false }
                 ]
             },
             {
-                id: "group39",
+                id: "39",
                 options: [
-                    { id: "39-1", content: "is", correct: true },
-                    { id: "39-2", content: "are", correct: false },
-                    { id: "39-3", content: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group40",
+                id: "40",
                 options: [
-                    { id: "40-1", content: "is", correct: true },
-                    { id: "40-2", content: "are", correct: false },
-                    { id: "40-3", content: "am", correct: false }
+                    { content: "is", correct: true },
+                    { content: "are", correct: false },
+                    { content: "am", correct: false }
                 ]
             },
             {
-                id: "group41",
+                id: "41",
                 options: [
-                    { id: "41-1", content: "miss", correct: true },
-                    { id: "41-2", content: "misses", correct: false },
-                    { id: "41-3", content: "missing", correct: false }
+                    { content: "miss", correct: true },
+                    { content: "misses", correct: false },
+                    { content: "missing", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "navigate", target: 2120, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => navigateTo(2120) }
         ]
     },
     2120: {
@@ -535,342 +529,252 @@ const pagesConfig = {
         text: "We (21) on the phone every night and we (22) each other whenever we can.",
         optionGroups: [
             {
-                id: "group42",
+                id: "42",
                 options: [
-                    { id: "42-1", content: "talk", correct: true },
-                    { id: "42-2", content: "talks", correct: false },
-                    { id: "42-3", content: "talking", correct: false }
+                    { content: "talk", correct: true },
+                    { content: "talks", correct: false },
+                    { content: "talking", correct: false }
                 ]
             },
             {
-                id: "group43",
+                id: "43",
                 options: [
-                    { id: "43-1", content: "visit", correct: true },
-                    { id: "43-2", content: "visits", correct: false },
-                    { id: "43-3", content: "visiting", correct: false }
+                    { content: "visit", correct: true },
+                    { content: "visits", correct: false },
+                    { content: "visiting", correct: false }
                 ]
             }
         ],
         buttons: [
-            { content: "Continue", action: "calculateScore", target: 2121, scoreGroup: true }
+            { content: "Continue", correct: null, action: () => showScoreScreen() }
         ]
-    },
-    2121: {
-        // 图片和文本将在calculateScore函数中动态设置
-        buttons: []
     }
 };
 
 // 初始化游戏
 function initGame() {
-    console.log("Initializing game...");
+    createScreens();
+    showScreen(2100);
     
-    // 创建房间ID（基于当前时间）
-    const now = new Date();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    gameData.roomId = month + day + hours + minutes;
-    console.log("Room ID created:", gameData.roomId);
-    
-    // 预加载图片
+    // 预加载所有图片
     preloadImages();
-    
-    // 显示初始页面
-    showPage(2100);
-    
-    console.log("Game initialized successfully");
 }
 
-// 预加载图片函数
+// 预加载所有图片
 function preloadImages() {
-    console.log("Preloading images...");
+    const imagePaths = Object.values(gameData).map(page => page.image);
     
-    const imageUrls = [];
-    for (const pageId in pagesConfig) {
-        if (pagesConfig[pageId].image) {
-            imageUrls.push(pagesConfig[pageId].image);
-        }
-    }
-    
-    // 添加及格和不及格图片
-    imageUrls.push("及格.jpg");
-    imageUrls.push("不及格.jpg");
-    
-    // 实际预加载逻辑
-    imageUrls.forEach(url => {
+    imagePaths.forEach(path => {
         const img = new Image();
-        img.src = `images/${encodeURIComponent(url)}`;
+        img.src = `images/${encodeURIComponent(path)}`;
     });
-    
-    console.log("Images preloaded");
 }
 
-// 显示指定页面
-function showPage(pageId) {
-    console.log("Showing page:", pageId);
+// 创建所有游戏画面
+function createScreens() {
+    const container = document.getElementById('game-container');
     
-    // 隐藏所有页面
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    // 如果页面不存在，则创建它
-    let pageElement = document.getElementById(`page-${pageId}`);
-    if (!pageElement) {
-        pageElement = createPage(pageId);
-        document.getElementById('game-container').appendChild(pageElement);
-    }
-    
-    // 显示当前页面
-    pageElement.classList.add('active');
-    gameData.currentPage = pageId;
-    
-    console.log("Page displayed:", pageId);
-}
-
-// 创建页面元素
-function createPage(pageId) {
-    console.log("Creating page:", pageId);
-    
-    const config = pagesConfig[pageId];
-    const pageElement = document.createElement('div');
-    pageElement.id = `page-${pageId}`;
-    pageElement.className = 'page';
-    
-    // 添加图片
-    if (config.image) {
+    Object.keys(gameData).forEach(screenId => {
+        const screen = document.createElement('div');
+        screen.id = `screen-${screenId}`;
+        screen.className = 'game-screen';
+        
+        const pageData = gameData[screenId];
+        
+        // 创建图片
         const img = document.createElement('img');
-        img.src = `images/${encodeURIComponent(config.image)}`;
-        img.alt = `Page ${pageId} image`;
-        img.className = 'page-image';
-        img.onerror = function() {
-            console.error("Failed to load image:", this.src);
-            this.style.display = 'none';
-        };
-        pageElement.appendChild(img);
-    }
-    
-    // 添加文本
-    if (config.text) {
+        img.src = `images/${encodeURIComponent(pageData.image)}`;
+        img.alt = `Screen ${screenId}`;
+        img.className = 'screen-image';
+        screen.appendChild(img);
+        
+        // 创建文字内容
         const textDiv = document.createElement('div');
-        textDiv.className = 'text-container';
-        textDiv.textContent = config.text;
-        pageElement.appendChild(textDiv);
-    }
-    
-    // 添加选项组（如果有）
-    if (config.optionGroups) {
-        config.optionGroups.forEach(group => {
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'button-group';
+        textDiv.className = 'text-content';
+        textDiv.textContent = pageData.text;
+        screen.appendChild(textDiv);
+        
+        // 创建选项按钮（如果有）
+        if (pageData.optionGroups) {
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'buttons-container';
             
-            group.options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'option-button';
-                button.textContent = option.content;
-                button.dataset.optionId = option.id;
-                button.dataset.correct = option.correct;
-                button.dataset.groupId = group.id;
+            pageData.optionGroups.forEach(group => {
+                const row = document.createElement('div');
+                row.className = 'button-row';
                 
-                button.addEventListener('click', function() {
-                    handleOptionClick(this);
+                group.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'option-button';
+                    button.textContent = option.content;
+                    button.dataset.group = group.id;
+                    button.dataset.correct = option.correct;
+                    
+                    button.addEventListener('click', () => {
+                        handleOptionSelect(screenId, group.id, option.content, option.correct, button);
+                    });
+                    
+                    row.appendChild(button);
                 });
                 
-                groupDiv.appendChild(button);
+                buttonsContainer.appendChild(row);
             });
             
-            pageElement.appendChild(groupDiv);
-        });
-    }
-    
-    // 添加按钮
-    if (config.buttons && config.buttons.length > 0) {
-        config.buttons.forEach(buttonConfig => {
-            const button = document.createElement('button');
-            button.className = 'continue-button';
-            button.textContent = buttonConfig.content;
-            
-            if (buttonConfig.action === 'navigate') {
-                button.addEventListener('click', function() {
-                    // 如果这是一个计分组，计算得分
-                    if (buttonConfig.scoreGroup) {
-                        calculateGroupScore(pageId);
-                    }
-                    
-                    // 导航到目标页面
-                    showPage(buttonConfig.target);
-                });
-            } else if (buttonConfig.action === 'calculateScore') {
-                button.addEventListener('click', function() {
-                    calculateGroupScore(pageId);
-                    calculateFinalScore();
-                });
+            screen.appendChild(buttonsContainer);
+        }
+        
+        // 创建Continue按钮
+        const continueButton = document.createElement('button');
+        continueButton.className = 'continue-button';
+        continueButton.textContent = pageData.buttons[0].content;
+        
+        continueButton.addEventListener('click', () => {
+            if (pageData.buttons[0].action) {
+                // 对于计分页面，在继续前计算分数
+                if (screenId >= 2113 && screenId <= 2116) {
+                    calculateScore();
+                }
+                pageData.buttons[0].action();
             }
-            
-            pageElement.appendChild(button);
         });
-    }
+        
+        screen.appendChild(continueButton);
+        
+        container.appendChild(screen);
+    });
     
-    console.log("Page created:", pageId);
-    return pageElement;
+    // 创建得分画面
+    createScoreScreen();
 }
 
-// 处理选项点击
-function handleOptionClick(button) {
-    console.log("Option clicked:", button.dataset.optionId);
+// 创建得分画面
+function createScoreScreen() {
+    const container = document.getElementById('game-container');
     
-    const groupId = button.dataset.groupId;
+    const screen = document.createElement('div');
+    screen.id = 'screen-2121';
+    screen.className = 'game-screen score-screen';
     
-    // 禁用同组中的所有按钮
-    document.querySelectorAll(`.option-button[data-group-id="${groupId}"]`).forEach(btn => {
-        btn.disabled = false;
+    const img = document.createElement('img');
+    img.className = 'score-image';
+    img.alt = 'Score Background';
+    screen.appendChild(img);
+    
+    const scoreText = document.createElement('div');
+    scoreText.className = 'score-text';
+    screen.appendChild(scoreText);
+    
+    container.appendChild(screen);
+}
+
+// 显示指定画面
+function showScreen(screenId) {
+    // 隐藏所有画面
+    document.querySelectorAll('.game-screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+    
+    // 显示指定画面
+    const screen = document.getElementById(`screen-${screenId}`);
+    if (screen) {
+        screen.classList.add('active');
+        gameState.currentScreen = parseInt(screenId);
+    }
+}
+
+// 处理选项选择
+function handleOptionSelect(screenId, groupId, content, isCorrect, button) {
+    // 禁用同一组的其他按钮
+    const groupButtons = document.querySelectorAll(`#screen-${screenId} button[data-group="${groupId}"]`);
+    groupButtons.forEach(btn => {
+        btn.disabled = true;
         btn.classList.remove('selected');
     });
     
-    // 启用当前点击的按钮
-    button.disabled = false;
+    // 标记选中的按钮
     button.classList.add('selected');
     
     // 存储选择
-    gameData.selectedOptions[groupId] = {
-        optionId: button.dataset.optionId,
-        correct: button.dataset.correct === 'true'
+    if (!gameState.selectedOptions[screenId]) {
+        gameState.selectedOptions[screenId] = {};
+    }
+    gameState.selectedOptions[screenId][groupId] = {
+        content: content,
+        correct: isCorrect
     };
     
-    console.log("Option selected:", gameData.selectedOptions[groupId]);
+    // 显示提示
+    showAlert(isCorrect ? "Correct!" : "Incorrect!");
 }
 
-// 计算组得分
-function calculateGroupScore(pageId) {
-    console.log("Calculating score for page:", pageId);
+// 显示提示
+function showAlert(message) {
+    let alertBox = document.querySelector('.alert-box');
+    if (!alertBox) {
+        alertBox = document.createElement('div');
+        alertBox.className = 'alert-box';
+        document.body.appendChild(alertBox);
+    }
     
-    const config = pagesConfig[pageId];
-    if (!config.optionGroups) return;
+    alertBox.textContent = message;
+    alertBox.style.display = 'block';
     
-    let groupScore = 0;
+    setTimeout(() => {
+        alertBox.style.display = 'none';
+    }, 1500);
+}
+
+// 计算得分
+function calculateScore() {
+    let correctCount = 0;
     
-    config.optionGroups.forEach(group => {
-        const selectedOption = gameData.selectedOptions[group.id];
-        if (selectedOption && selectedOption.correct) {
-            groupScore++;
+    // 计算从22到43组的正确选择
+    for (let i = 22; i <= 43; i++) {
+        const screenId = Object.keys(gameState.selectedOptions).find(id => {
+            return gameState.selectedOptions[id][i] !== undefined;
+        });
+        
+        if (screenId && gameState.selectedOptions[screenId][i] && gameState.selectedOptions[screenId][i].correct) {
+            correctCount++;
         }
-    });
+    }
     
-    gameData.score += groupScore;
-    console.log("Group score:", groupScore, "Total score:", gameData.score);
-}
-
-// 计算最终得分
-function calculateFinalScore() {
-    console.log("Calculating final score");
-    
-    // 计算得分（选择"正确"按钮的个数 * 4.55，保留到个位）
-    const finalScore = Math.round(gameData.score * 4.55);
-    console.log("Final score:", finalScore);
+    gameState.score = Math.round(correctCount * 4.55);
     
     // 保存得分到Firebase
-    saveScoreToFirebase(finalScore);
-    
-    // 创建得分页面
-    createScorePage(finalScore);
-    
-    // 显示得分页面
-    showPage(2121);
+    saveScoreToFirebase(gameState.score);
 }
 
 // 保存得分到Firebase
 function saveScoreToFirebase(score) {
-    console.log("Saving score to Firebase:", score);
+    const now = new Date();
+    const roomId = `${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
     
-    try {
-        const database = firebase.database();
-        const roomRef = database.ref(`rooms/${gameData.roomId}`);
-        
-        roomRef.set({
-            score: score,
-            timestamp: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => {
-            console.log("Score saved successfully");
-        }).catch(error => {
-            console.error("Error saving score:", error);
-        });
-    } catch (error) {
-        console.error("Firebase error:", error);
-    }
+    database.ref('scores/' + roomId).set({
+        score: score,
+        timestamp: now.toISOString()
+    });
 }
 
-// 创建得分页面
-function createScorePage(score) {
-    console.log("Creating score page with score:", score);
-    
-    const pageElement = document.createElement('div');
-    pageElement.id = 'page-2121';
-    pageElement.className = 'page';
-    
-    // 创建得分容器
-    const scoreContainer = document.createElement('div');
-    scoreContainer.className = 'score-container';
-    
-    // 添加图片（根据得分选择）
-    const img = document.createElement('img');
-    img.className = 'score-image';
-    img.alt = "Score result";
-    
-    if (score >= 60) {
-        img.src = 'images/及格.jpg';
-    } else {
-        img.src = 'images/不及格.jpg';
-    }
-    
-    img.onerror = function() {
-        console.error("Failed to load score image:", this.src);
-        this.style.display = 'none';
-    };
-    
-    scoreContainer.appendChild(img);
-    
-    // 添加得分文本
-    const scoreText = document.createElement('div');
-    scoreText.className = 'score-text';
-    scoreText.textContent = `得分: ${score}`;
-    scoreContainer.appendChild(scoreText);
-    
-    pageElement.appendChild(scoreContainer);
-    
-    document.getElementById('game-container').appendChild(pageElement);
-    
-    console.log("Score page created");
+// 导航到指定画面
+function navigateTo(screenId) {
+    showScreen(screenId);
 }
 
-// 显示提示框
-function showAlert(message) {
-    console.log("Showing alert:", message);
+// 显示得分画面
+function showScoreScreen() {
+    const screen = document.getElementById('screen-2121');
+    const img = screen.querySelector('.score-image');
+    const scoreText = screen.querySelector('.score-text');
     
-    const alertBox = document.createElement('div');
-    alertBox.className = 'alert-box';
-    alertBox.textContent = message;
+    // 设置背景图片
+    img.src = `images/${gameState.score >= 60 ? '及格.jpg' : '不及格.jpg'}`;
     
-    document.body.appendChild(alertBox);
+    // 设置得分文本
+    scoreText.textContent = `您的得分: ${gameState.score}`;
     
-    // 3秒后移除提示框
-    setTimeout(() => {
-        if (alertBox.parentNode) {
-            alertBox.parentNode.removeChild(alertBox);
-        }
-    }, 3000);
+    showScreen(2121);
 }
 
 // 页面加载完成后初始化游戏
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM loaded, initializing game");
-    initGame();
-});
-
-// 错误处理
-window.addEventListener('error', function(e) {
-    console.error("Global error:", e.error);
-    showAlert("发生错误，请刷新页面重试");
-});
-</script>
+document.addEventListener('DOMContentLoaded', initGame);
