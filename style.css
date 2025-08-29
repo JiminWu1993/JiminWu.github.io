@@ -3,10 +3,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Microsoft YaHei", sans-serif;
 }
 
 body {
-    font-family: "微软雅黑", "Microsoft YaHei", sans-serif;
     background-color: black;
     color: white;
     overflow: hidden;
@@ -18,107 +18,101 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
-}
-
-/* 游戏页面样式 */
-.game-page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
 }
 
-.game-page.active {
+/* 页面样式 */
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
 }
 
-/* 背景图片样式 */
-.background-image {
+.page.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* 图片样式 */
+.page-image {
     width: 100%;
     height: auto;
-    object-fit: cover;
+    max-height: 50%;
+    object-fit: contain;
 }
 
-/* 文字显示框样式 */
-.text-display {
+/* 文本区域样式 */
+.text-container {
     width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 15px;
-    background-color: rgba(0, 0, 0, 0.7);
+    margin: 10px 0;
+    border-radius: 5px;
     text-align: center;
-    font-size: 18px;
-    line-height: 1.5;
-}
-
-/* 得分显示样式 */
-.score-display {
-    width: 100%;
-    padding: 20px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.7);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 按钮组样式 */
 .button-group {
     width: 100%;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.button-row {
     display: flex;
     justify-content: space-around;
     margin-bottom: 10px;
 }
 
 /* 选项按钮样式 */
-.option-btn {
-    flex: 1;
-    margin: 0 5px;
-    padding: 10px 0;
-    background-color: #1E90FF; /* 蓝色 */
+.option-button {
+    background-color: #1E90FF;
     color: white;
     border: none;
+    padding: 10px 15px;
     border-radius: 5px;
     font-size: 16px;
-    font-family: "微软雅黑", "Microsoft YaHei", sans-serif;
-    opacity: 0.7; /* 默认暗淡 */
-    transition: opacity 0.3s;
+    cursor: pointer;
+    flex: 1;
+    margin: 0 5px;
+    min-height: 44px;
 }
 
-.option-btn.selected {
-    opacity: 1; /* 选中时高亮 */
+.option-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.option-btn:hover {
-    opacity: 0.9;
+.option-button.selected {
+    background-color: #0066CC;
+    font-weight: bold;
 }
 
 /* Continue按钮样式 */
-.continue-btn {
-    width: 100%;
-    padding: 15px 0;
-    background-color: #1E90FF; /* 蓝色 */
+.continue-button {
+    background-color: #1E90FF;
     color: white;
     border: none;
+    padding: 15px;
+    border-radius: 5px;
     font-size: 18px;
-    font-family: "微软雅黑", "Microsoft YaHei", sans-serif;
-    position: absolute;
-    bottom: 0;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
 }
 
-.begin-btn {
-    position: absolute;
-    bottom: 50px;
-    width: 80%;
-    left: 10%;
-    border-radius: 10px;
+.continue-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* 提示框样式 */
@@ -127,48 +121,35 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: blue;
+    background-color: #1E90FF;
     color: white;
     padding: 20px;
     border-radius: 10px;
     z-index: 1000;
     text-align: center;
-    display: none;
+    min-width: 200px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* 媒体查询确保在智能手机竖屏模式下良好显示 */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-    .text-display {
-        font-size: 16px;
-        padding: 10px;
-    }
-    
-    .option-btn {
-        padding: 8px 0;
-        font-size: 14px;
-    }
-    
-    .continue-btn {
-        padding: 12px 0;
-        font-size: 16px;
-    }
+/* 得分页面样式 */
+.score-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-/* 防止横屏显示 */
-@media screen and (orientation: landscape) {
-    body::before {
-        content: "请将设备旋转至竖屏模式";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 24px;
-        z-index: 10000;
-    }
+.score-image {
+    width: 100%;
+    height: auto;
+    max-height: 70%;
+    object-fit: contain;
+}
+
+.score-text {
+    font-size: 24px;
+    margin-top: 20px;
+    font-weight: bold;
 }
