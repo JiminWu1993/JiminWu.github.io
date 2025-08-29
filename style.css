@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
 }
 
 body {
@@ -10,134 +11,125 @@ body {
     background-color: black;
     color: white;
     overflow: hidden;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+    height: 100vh;
+    width: 100vw;
+    touch-action: manipulation; /* 防止双击缩放 */
 }
 
-#game-container {
+.container {
     position: relative;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    position: relative;
     overflow: hidden;
 }
 
-/* 页面样式 */
-.game-page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.game-page.active {
-    display: flex;
-}
-
-/* 图片样式 */
-.page-image {
+/* 背景图片样式 */
+.background-img {
     width: 100%;
     height: auto;
     object-fit: cover;
+    flex-shrink: 0;
 }
 
-/* 文本显示区域 */
-.text-display {
-    width: 100%;
-    padding: 15px;
+/* 文字框样式 */
+.text-box {
     background-color: rgba(0, 0, 0, 0.7);
-    text-align: center;
+    padding: 15px;
+    width: 100%;
+    flex-shrink: 0;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-box p {
     font-size: 18px;
     line-height: 1.5;
+    text-align: center;
 }
 
-/* 选项容器 */
-.options-container {
+/* 按钮组样式 */
+.button-group {
     width: 100%;
     padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
-/* 选项行 */
-.option-row {
+.button-row {
     display: flex;
-    justify-content: space-around;
     width: 100%;
+    gap: 10px;
+    justify-content: center;
 }
 
-/* 选项按钮 */
+/* 选项按钮样式 */
 .option-btn {
     flex: 1;
-    margin: 0 5px;
-    padding: 12px 0;
-    background-color: #0066cc;
+    padding: 12px 5px;
+    background-color: #1a73e8;
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 16px;
     font-family: "Microsoft YaHei", sans-serif;
     cursor: pointer;
-    transition: background-color 0.3s, opacity 0.3s;
-}
-
-.option-btn:active {
-    background-color: #0055aa;
+    transition: all 0.3s ease;
+    max-width: 30%;
+    opacity: 0.7; /* 默认暗淡 */
 }
 
 .option-btn.selected {
-    background-color: #004499;
-    opacity: 1;
+    opacity: 1; /* 选中时高亮 */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.option-btn:not(.selected) {
-    opacity: 0.7;
+.option-btn:hover {
+    opacity: 0.9;
 }
 
-/* 继续按钮 */
+/* Continue按钮样式 */
 .continue-btn {
-    position: absolute;
-    bottom: 0;
     width: 100%;
-    padding: 20px;
-    background-color: #0066cc;
+    padding: 15px;
+    background-color: #1a73e8;
     color: white;
     border: none;
     font-size: 18px;
     font-family: "Microsoft YaHei", sans-serif;
     cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
 }
 
-.continue-btn:active {
-    background-color: #0055aa;
+.continue-btn:hover {
+    background-color: #0d47a1;
 }
 
-/* 得分页面样式 */
-.score-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.score-image {
-    width: 100%;
-    height: auto;
-    max-height: 70%;
-    object-fit: contain;
-}
-
+/* 得分显示样式 */
 .score-display {
-    margin-top: 20px;
+    position: absolute;
+    bottom: 100px;
+    left: 0;
+    right: 0;
+    text-align: center;
     font-size: 24px;
     font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    z-index: 10;
 }
 
 /* 提示框样式 */
@@ -146,34 +138,45 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: blue;
+    background-color: #1a73e8;
     color: white;
     padding: 20px;
     border-radius: 10px;
-    z-index: 1000;
+    z-index: 100;
     text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     display: none;
 }
 
-/* 响应式设计 */
-@media (max-height: 700px) {
-    .text-display {
+/* 响应式设计 - 适应不同屏幕尺寸 */
+@media (max-width: 480px) {
+    .text-box p {
         font-size: 16px;
-        padding: 10px;
     }
     
     .option-btn {
-        padding: 10px 0;
         font-size: 14px;
+        padding: 10px 5px;
     }
     
     .continue-btn {
-        padding: 15px;
         font-size: 16px;
+        padding: 12px;
     }
 }
 
-/* 防止横屏 */
+@media (max-width: 320px) {
+    .text-box p {
+        font-size: 14px;
+    }
+    
+    .option-btn {
+        font-size: 12px;
+        padding: 8px 3px;
+    }
+}
+
+/* 防止横屏模式 */
 @media (orientation: landscape) {
     body::before {
         content: "请将设备旋转至竖屏模式";
@@ -188,10 +191,26 @@ body {
         justify-content: center;
         align-items: center;
         font-size: 24px;
-        z-index: 10000;
+        z-index: 1000;
     }
     
-    #game-container {
+    .container {
         display: none;
     }
+}
+
+/* 加载动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.screen {
+    animation: fadeIn 0.5s ease;
+}
+
+/* 按钮禁用状态 */
+.continue-btn:disabled {
+    background-color: #666;
+    cursor: not-allowed;
 }
