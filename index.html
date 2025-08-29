@@ -5,17 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase App (core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <!-- Firebase Database -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div id="2100" class="page active">
-            <img src="images/开始画面.jpg" alt="Welcome" class="background-img">
-            <div class="text-display">Welcome to the journey of English tenses</div>
-            <button class="continue-btn" onclick="navigateTo(2101)">Begin</button>
+    <div id="app">
+        <!-- 开始画面 (页面ID:2100) -->
+        <div id="page-2100" class="page active">
+            <img src="images/开始画面.jpg" alt="开始画面" class="page-image">
+            <div class="text-container">
+                <p>Welcome to the journey of English tenses</p>
+            </div>
+            <div class="button-container">
+                <button class="btn-primary" onclick="navigateTo(2101)">Begin</button>
+            </div>
+        </div>
+
+        <!-- 得分画面 (页面ID:2121) -->
+        <div id="page-2121" class="page">
+            <img id="result-image" src="" alt="结果" class="page-image">
+            <div class="score-display">
+                <h2>您的得分: <span id="final-score">0</span></h2>
+            </div>
         </div>
     </div>
 
@@ -35,29 +48,73 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // 游戏状态管理
-        let gameState = {
-            currentPage: 2100,
-            score: 0,
-            selectedOptions: {}
-        };
+        // 全局变量
+        let currentPage = 2100;
+        let score = 0;
+        let roomId = generateRoomId();
         
-        // 导航函数
+        // 生成房间ID（月日时分）
+        function generateRoomId() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return month + day + hours + minutes;
+        }
+        
+        // 页面导航函数
         function navigateTo(pageId) {
-            document.querySelector('.page.active').classList.remove('active');
-            document.getElementById(pageId).classList.add('active');
-            gameState.currentPage = pageId;
+            // 隐藏当前页面
+            document.getElementById(`page-${currentPage}`).classList.remove('active');
+            
+            // 显示目标页面
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            
+            // 更新当前页面
+            currentPage = pageId;
+            
+            // 如果是得分页面，计算并显示分数
+            if (pageId === 2121) {
+                calculateAndDisplayScore();
+            }
         }
         
-        // 开始新游戏
-        function startNewGame() {
-            gameState = {
-                currentPage: 2101,
-                score: 0,
-                selectedOptions: {}
-            };
-            navigateTo(2101);
+        // 计算并显示分数
+        function calculateAndDisplayScore() {
+            // 计算最终得分（正确个数 * 4.55，取整）
+            const finalScore = Math.round(score * 4.55);
+            document.getElementById('final-score').textContent = finalScore;
+            
+            // 设置结果图片
+            const resultImage = document.getElementById('result-image');
+            resultImage.src = finalScore >= 60 ? 'images/及格.jpg' : 'images/不及格.jpg';
+            
+            // 保存分数到Firebase
+            saveScoreToFirebase(finalScore);
         }
+        
+        // 保存分数到Firebase
+        function saveScoreToFirebase(score) {
+            const scoreData = {
+                score: score,
+                timestamp: new Date().toISOString()
+            };
+            
+            database.ref('scores/' + roomId).set(scoreData)
+                .then(() => {
+                    console.log("分数保存成功");
+                })
+                .catch((error) => {
+                    console.error("保存分数时出错: ", error);
+                });
+        }
+        
+        // 初始化页面
+        window.onload = function() {
+            // 显示初始页面
+            document.getElementById('page-2100').classList.add('active');
+        };
     </script>
 </body>
 </html>
