@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="style.css">
     <!-- Firebase App (core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- Firebase Database -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <div class="container">
-        <img src="images/开始画面.jpg" alt="开始画面" class="background-image">
-        <div class="text-container">
-            <p>Welcome to the journey of English tenses</p>
+    <div id="game-container">
+        <!-- 开始画面 -->
+        <div id="page-2100" class="game-page active">
+            <img src="images/开始画面.jpg" alt="开始画面" class="page-image">
+            <div class="text-display">Welcome to the journey of English tenses</div>
+            <button class="continue-btn begin-btn">Begin</button>
         </div>
-        <button id="begin-btn" class="continue-btn">Begin</button>
+        
+        <!-- 其他页面将通过JavaScript动态加载 -->
     </div>
 
     <script>
@@ -30,19 +33,78 @@
             appId: "1:58207939196:web:b34f403204096084ee37f9",
             measurementId: "G-GG7GNEQ718"
         };
-
+        
         // 初始化Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-            console.log("Firebase initialized successfully");
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // 游戏状态管理
+        const gameState = {
+            currentPage: 2100,
+            score: 0,
+            selectedOptions: {}, // 存储用户选择的选项
+            roomId: generateRoomId() // 生成基于时间的房间ID
+        };
+        
+        // 生成基于时间的房间ID (月日时分)
+        function generateRoomId() {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return month + day + hours + minutes;
         }
-
-        // 开始按钮点击事件
-        document.getElementById('begin-btn').addEventListener('click', function() {
-            window.location.href = 'chapter.html?page=2101';
+        
+        // 页面定义
+        const pages = {
+            // 开始画面
+            2100: {
+                image: "开始画面.jpg",
+                text: "Welcome to the journey of English tenses",
+                buttons: [
+                    { content: "Begin", action: "next", target: 2101 }
+                ]
+            },
+            // 其他页面将在chapter.html中定义
+        };
+        
+        // 加载chapter.html中的页面定义
+        function loadChapterPages() {
+            // 这里将在chapter.html中实现具体页面定义
+            // 由于代码长度限制，实际实现将在chapter.html中完成
+        }
+        
+        // 页面导航函数
+        function navigateTo(pageId) {
+            // 隐藏当前页面
+            document.querySelectorAll('.game-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                gameState.currentPage = pageId;
+            } else {
+                console.error(`页面ID ${pageId} 不存在`);
+            }
+        }
+        
+        // 初始化游戏
+        document.addEventListener('DOMContentLoaded', function() {
+            // 开始按钮事件
+            document.querySelector('.begin-btn').addEventListener('click', function() {
+                navigateTo(2101);
+            });
+            
+            // 加载章节页面
+            loadChapterPages();
         });
     </script>
+    
+    <!-- 加载chapter.html内容 -->
+    <script src="chapter.html"></script>
 </body>
 </html>
