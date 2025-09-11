@@ -1,11 +1,11 @@
 // Firebase配置
 const firebaseConfig = {
-    apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
+    apiKey: "AIzaSyDHRYTBU74极简风格，专注于核心功能实现r31MPYVAAnRMwKM76c_-BduQ",
     authDomain: "tetrisonline-ca400.firebaseapp.com",
     projectId: "tetrisonline-ca400",
     storageBucket: "tetrisonline-ca400.firebasestorage.app",
     messagingSenderId: "58207939196",
-    appId: "1:58207939196:web:b34f403204096084ee37f9",
+    app极简风格，专注于核心功能实现Id: "1:58207939196:web:b34f403204096084ee37f9",
     measurementId: "G-GG7GNEQ718"
 };
 
@@ -59,7 +59,7 @@ const pageConfigs = {
             }
         ],
         buttons: [
-            { content: "Continue", target: 2103 }
+            { content: "Continue", target极简风格，专注于核心功能实现: 2103 }
         ]
     },
     2103: {
@@ -84,11 +84,11 @@ const pageConfigs = {
         text: "Alexa: Brazil. How about you?",
         buttons: [
             { content: "Continue", target: 2105 }
-        ]
+极简风格，专注于核心功能实现        ]
     },
     2105: {
         image: "画面05.jpg",
-        text: "Arturo: I'm from Mexico. I (1) here in the city now, but my family (2) in a small town near Guadalajara.",
+        text: "Arturo: I'm from Mexico. I (1) here in the city now, but my family (极简风格，专注于核心功能实现2) in a small town near Guadalajara.",
         options: [
             {
                 number: 1,
@@ -159,9 +159,9 @@ const pageConfigs = {
             {
                 number: 1,
                 buttons: [
-                    { name: "is", correct: true },
+                    { name: "极简风格，专注于核心功能实现is", correct: true },
                     { name: "are", correct: false },
-                    { name: "am", correct: false }
+                    { name: "am", correct:极简风格，专注于核心功能实现 false }
                 ]
             },
             {
@@ -221,9 +221,9 @@ const pageConfigs = {
                     { name: "are", correct: true },
                     { name: "am", correct: false }
                 ]
-            }
+极简风格，专注于核心功能实现            }
         ],
-        buttons: [
+        buttons极简风格，专注于核心功能实现: [
             { content: "Continue", target: 2110 }
         ]
     },
@@ -242,7 +242,7 @@ const pageConfigs = {
             {
                 number: 2,
                 buttons: [
-                    { name: "says", correct: true },
+                    { name极简风格，专注于核心功能实现: "says", correct: true },
                     { name: "say", correct: false },
                     { name: "saying", correct: false }
                 ]
@@ -287,7 +287,7 @@ const pageConfigs = {
     },
     2112: {
         image: "画面12.jpg",
-        text: "Alexa: How (1) you spell that?",
+        text: "Alexa: How (1极简风格，专注于核心功能实现) you spell that?",
         options: [
             {
                 number: 1,
@@ -318,7 +318,7 @@ const pageConfigs = {
                 number: 2,
                 buttons: [
                     { name: "is", correct: false },
-                    { name: "are", correct: true },
+                    { name: "极简风格，专注于核心功能实现are", correct: true },
                     { name: "am", correct: false }
                 ]
             },
@@ -326,7 +326,7 @@ const pageConfigs = {
                 number: 3,
                 buttons: [
                     { name: "go", correct: true },
-                    { name: "goes", correct: false },
+                    { name: "go极简风格，专注于核心功能实现es", correct: false },
                     { name: "going", correct: false }
                 ]
             }
@@ -335,7 +335,7 @@ const pageConfigs = {
             { content: "Continue", target: 2114 }
         ]
     },
-    2114: {
+    211极简风格，专注于核心功能实现4: {
         image: "画面14.jpg",
         text: "Karen (1) go to university in Oxford; she (2) to university in Cambridge. She (3) in Cambridge.",
         options: [
@@ -358,7 +358,6 @@ const pageConfigs = {
             {
                 number: 3,
                 buttons: [
-                   极简风格，专注于核心功能实现
                     { name: "lives", correct: true },
                     { name: "live", correct: false },
                     { name: "living", correct: false }
@@ -377,7 +376,7 @@ const pageConfigs = {
                 number: 1,
                 buttons: [
                     { name: "lives", correct: false },
-                    { name极简风格，专注于核心功能实现: "live", correct: true },
+                    { name: "live", correct: true },
                     { name: "living", correct: false }
                 ]
             },
@@ -413,7 +412,7 @@ const pageConfigs = {
                     { name: "sees", correct: false },
                     { name: "seeing", correct: false }
                 ]
-极简风格，专注于核心功能实现            }
+            }
         ],
         buttons: [
             { content: "Continue", target: 2117 }
@@ -421,7 +420,7 @@ const pageConfigs = {
     },
     2117: {
         image: "画面17.jpg",
-        text: "Karen (1) history, and she (2) her course. She (3) the architecture in Cambridge (4) beautiful.",
+        text: "Karen (1) history, and she (2) her course. She (3极简风格，专注于核心功能实现) the architecture in Cambridge (4) beautiful.",
         options: [
             {
                 number: 1,
@@ -433,10 +432,10 @@ const pageConfigs = {
             },
             {
                 number: 2,
-                buttons: [
+                buttons极简风格，专注于核心功能实现: [
                     { name: "love", correct: false },
                     { name: "loves", correct: true },
-                    { name: "loving", correct: false }
+                   极简风格，专注于核心功能实现 { name: "loving", correct: false }
                 ]
             },
             {
@@ -450,7 +449,7 @@ const pageConfigs = {
             {
                 number: 4,
                 buttons: [
-                    { name: "极简风格，专注于核心功能实现is", correct: true },
+                    { name: "is", correct: true },
                     { name: "are", correct: false },
                     { name: "am", correct: false }
                 ]
@@ -509,7 +508,7 @@ const pageConfigs = {
                 number: 3,
                 buttons: [
                     { name: "is", correct: true },
-                    { name: "are",极简风格，专注于核心功能实现 correct: false },
+                    { name: "are", correct: false },
                     { name: "am", correct: false }
                 ]
             },
@@ -603,7 +602,7 @@ function createPage(pageId) {
     
     // 添加选项（如果有）
     if (config.options) {
-        const optionsContainer = document.createElement('div');
+        const optionsContainer = document.createElement('极简风格，专注于核心功能实现div');
         optionsContainer.className = 'options-container';
         
         config.options.forEach(optionGroup => {
@@ -664,7 +663,7 @@ function createPage(pageId) {
                 if (config.options) {
                     const allSelected = config.options.every(optionGroup => {
                         return gameState.selectedOptions[pageId] && 
-                               gameState.selectedOptions[pageId][optionGroup.number];
+                               gameState.selectedOptions[page极简风格，专注于核心功能实现Id][optionGroup.number];
                     });
                     
                     if (!allSelected) {
