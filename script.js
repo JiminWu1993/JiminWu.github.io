@@ -1,11 +1,11 @@
 // Firebase配置
 const firebaseConfig = {
-    apiKey: "AIzaSyDHRYTBU74极简风格，专注于核心功能实现r31MPYVAAnRMwKM76c_-BduQ",
+    apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
     authDomain: "tetrisonline-ca400.firebaseapp.com",
     projectId: "tetrisonline-ca400",
     storageBucket: "tetrisonline-ca400.firebasestorage.app",
     messagingSenderId: "58207939196",
-    app极简风格，专注于核心功能实现Id: "1:58207939196:web:b34f403204096084ee37f9",
+    appId: "1:58207939196:web:b34f403204096084ee37f9",
     measurementId: "G-GG7GNEQ718"
 };
 
