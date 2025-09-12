@@ -1,5 +1,4 @@
-// script.js
-// Firebase配置
+// Firebase配置和初始化
 const firebaseConfig = {
     apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
     authDomain: "tetrisonline-ca400.firebaseapp.com",
@@ -11,639 +10,834 @@ const firebaseConfig = {
 };
 
 // 初始化Firebase
-try {
-    firebase.initializeApp(firebaseConfig);
-    console.log("Firebase初始化成功");
-} catch (error) {
-    console.error("Firebase初始化失败:", error);
-}
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
 // 游戏状态管理
-const GameState = {
+const gameState = {
     currentScreen: 2100,
     score: 0,
-    selectedOptions: {}, // 存储每页选项 {pageId: {groupIndex: selectedValue}}
-    roomId: null // Firebase房间ID
+    selectedOptions: {},
+    roomId: null,
+    totalCorrect: 0
 };
 
-// 问题数据定义
+// 问题数据定义（从第2组到第43组按钮）
 const questions = {
-    // 画面02 (ID:2102)
-    2102: [
-        {
-            groupIndex: 0,
-            options: ["is", "am", "are"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 1,
-            options: ["calls", "call", "calling"],
-            correctAnswer: "call"
-        }
-    ],
-    // 画面03 (ID:2103)
-    2103: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "are"
-        }
-    ],
-    // 画面05 (ID:2105)
-    2105: [
-        {
-            groupIndex: 0,
-            options: ["lives", "live", "living"],
-            correctAnswer: "live"
-        },
-        {
-            groupIndex: 1,
-            options: ["lives", "live", "are living"],
-            correctAnswer: "lives"
-        }
-    ],
-    // 画面06 (ID:2106)
-    2106: [
-        {
-            groupIndex: 0,
-            options: ["loves", "love", "loving"],
-            correctAnswer: "love"
-        },
-        {
-            groupIndex: 1,
-            options: ["is", "am", "are"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 2,
-            options: ["loves", "love", "loving"],
-            correctAnswer: "loves"
-        },
-        {
-            groupIndex: 3,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        }
-    ],
-    // 画面07 (ID:2107)
-    2107: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 1,
-            options: ["looks", "look", "looking"],
-            correctAnswer: "looks"
-        }
-    ],
-    // 画面08 (ID:2108)
-    2108: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 1,
-            options: ["is", "are", "am"],
-            correctAnswer: "are"
-        },
-        {
-            groupIndex: 2,
-            options: ["has", "have", "having"],
-            correctAnswer: "have"
-        }
-    ],
-    // 画面09 (ID:2109)
-    2109: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        }
-    ],
-    // 画面10 (ID:2110)
-    2110: [
-        {
-            groupIndex: 0,
-            options: ["studies", "study", "studying"],
-            correctAnswer: "studies"
-        },
-        {
-            groupIndex: 1,
-            options: ["says", "say", "saying"],
-            correctAnswer: "says"
-        },
-        {
-            groupIndex: 2,
-            options: ["is", "are", "am"],
-            correctAnswer: "are"
-        },
-        {
-            groupIndex: 3,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        }
-    ],
-    // 画面11 (ID:2111)
-    2111: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        }
-    ],
-    // 画面12 (ID:2112)
-    2112: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "do"
-        }
-    ],
-    // 画面13 (ID:2113) - 计分
-    2113: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 1,
-            options: ["is", "are", "am"],
-            correctAnswer: "are"
-        },
-        {
-            groupIndex: 2,
-            options: ["go", "goes", "going"],
-            correctAnswer: "go"
-        }
-    ],
-    // 画面14 (ID:2114) - 计分
-    2114: [
-        {
-            groupIndex: 0,
-            options: ["don't", "isn't", "doesn't"],
-            correctAnswer: "doesn't"
-        },
-        {
-            groupIndex: 1,
-            options: ["go", "goes", "going"],
-            correctAnswer: "goes"
-        },
-        {
-            groupIndex: 2,
-            options: ["lives", "live", "living"],
-            correctAnswer: "lives"
-        }
-    ],
-    // 画面15 (ID:2115) - 计分
-    2115: [
-        {
-            groupIndex: 0,
-            options: ["lives", "live", "living"],
-            correctAnswer: "live"
-        },
-        {
-            groupIndex: 1,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        }
-    ],
-    // 画面16 (ID:2116) - 计分
-    2116: [
-        {
-            groupIndex: 0,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 1,
-            options: ["see", "sees", "seeing"],
-            correctAnswer: "see"
-        }
-    ],
-    // 画面17 (ID:2117)
-    2117: [
-        {
-            groupIndex: 0,
-            options: ["studies", "study", "studying"],
-            correctAnswer: "studies"
-        },
-        {
-            groupIndex: 1,
-            options: ["love", "loves", "loving"],
-            correctAnswer: "loves"
-        },
-        {
-            groupIndex: 2,
-            options: ["says", "say", "saying"],
-            correctAnswer: "says"
-        },
-        {
-            groupIndex: 3,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        }
-    ],
-    // 画面18 (ID:2118)
-    2118: [
-        {
-            groupIndex: 0,
-            options: ["studies", "study", "studying"],
-            correctAnswer: "study"
-        },
-        {
-            groupIndex: 1,
-            options: ["is", "are", "am"],
-            correctAnswer: "are"
-        }
-    ],
-    // 画面19 (ID:2119)
-    2119: [
-        {
-            groupIndex: 0,
-            options: ["like", "likes", "liking"],
-            correctAnswer: "like"
-        },
-        {
-            groupIndex: 1,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 2,
-            options: ["is", "are", "am"],
-            correctAnswer: "is"
-        },
-        {
-            groupIndex: 3,
-            options: ["miss", "misses", "missing"],
-            correctAnswer: "miss"
-        }
-    ],
-    // 画面20 (ID:2120)
-    2120: [
-        {
-            groupIndex: 0,
-            options: ["talk", "talks", "talking"],
-            correctAnswer: "talk"
-        },
-        {
-            groupIndex: 1,
-            options: ["visit", "visits", "visiting"],
-            correctAnswer: "visit"
-        }
-    ]
+    2102: {
+        text: "Alexa: Hi. My name (1) Alexandra Costa, but please (2) me Alexa.",
+        options: [
+            { 
+                group: 1, 
+                choices: [
+                    { id: "1-1", text: "is", correct: true },
+                    { id: "1-2", text: "am", correct: false },
+                    { id: "1-3", text: "are", correct: false }
+                ] 
+            },
+            { 
+                group: 2, 
+                choices: [
+                    { id: "2-1", text: "calls", correct: false },
+                    { id: "2-2", text: "call", correct: true },
+                    { id: "2-3", text: "calling", correct: false }
+                ] 
+            }
+        ]
+    },
+    2103: {
+        text: "Arturo: OK. Where (1) you from, Alexa?",
+        options: [
+            { 
+                group: 3, 
+                choices: [
+                    { id: "1-1", text: "is", correct: false },
+                    { id: "1-2", text: "are", correct: true },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2105: {
+        text: "Arturo: I'm from Mexico. I (1) here in the city now, but my family (2) in a small town near Guadalajara.",
+        options: [
+            { 
+                group: 4, 
+                choices: [
+                    { id: "1-1", text: "lives", correct: true },
+                    { id: "1-2", text: "live", correct: false },
+                    { id: "1-3", text: "living", correct: false }
+                ] 
+            },
+            { 
+                group: 5, 
+                choices: [
+                    { id: "2-1", text: "lives", correct: true },
+                    { id: "2-2", text: "live", correct: false },
+                    { id: "2-3", text: "are living", correct: false }
+                ] 
+            }
+        ]
+    },
+    2106: {
+        text: "Alexa: Oh, I (1) Mexico! It (2) really beautiful. My brother (3) Mexico, too. Oh, good. Soo-jin (4) here.",
+        options: [
+            { 
+                group: 6, 
+                choices: [
+                    { id: "1-1", text: "loves", correct: false },
+                    { id: "1-2", text: "love", correct: true },
+                    { id: "1-3", text: "loving", correct: false }
+                ] 
+            },
+            { 
+                group: 7, 
+                choices: [
+                    { id: "2-1", text: "is", correct: true },
+                    { id: "2-2", text: "am", correct: false },
+                    { id: "2-3", text: "are", correct: false }
+                ] 
+            },
+            { 
+                group: 8, 
+                choices: [
+                    { id: "3-1", text: "loves", correct: true },
+                    { id: "3-2", text: "love", correct: false },
+                    { id: "3-3", text: "loving", correct: false }
+                ] 
+            },
+            { 
+                group: 9, 
+                choices: [
+                    { id: "4-1", text: "is", correct: true },
+                    { id: "4-2", text: "are", correct: false },
+                    { id: "4-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2107: {
+        text: "Arturo: Who (1) Soo-jin? She (2) familiar.",
+        options: [
+            { 
+                group: 10, 
+                choices: [
+                    { id: "1-1", text: "is", correct: true },
+                    { id: "1-2", text: "are", correct: false },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 11, 
+                choices: [
+                    { id: "2-1", text: "looks", correct: true },
+                    { id: "2-2", text: "look", correct: false },
+                    { id: "2-3", text: "looking", correct: false }
+                ] 
+            }
+        ]
+    },
+    2108: {
+        text: "Alexa: She (1) my classmate. We (2) in the same business class. We (3) our class every Monday and Wednesday.",
+        options: [
+            { 
+                group: 12, 
+                choices: [
+                    { id: "1-1", text: "is", correct: false },
+                    { id: "1-2", text: "are", correct: true },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 13, 
+                choices: [
+                    { id: "2-1", text: "is", correct: false },
+                    { id: "2-2", text: "are", correct: true },
+                    { id: "2-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 14, 
+                choices: [
+                    { id: "3-1", text: "has", correct: false },
+                    { id: "3-2", text: "have", correct: true },
+                    { id: "3-3", text: "having", correct: false }
+                ] 
+            }
+        ]
+    },
+    2109: {
+        text: "Arturo: Where (1) she from?",
+        options: [
+            { 
+                group: 15, 
+                choices: [
+                    { id: "1-1", text: "is", correct: false },
+                    { id: "1-2", text: "are", correct: true },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2110: {
+        text: "Alexa: South Korea. She (1) marketing. She (2) the classes (3) very interesting. Let's go and say hello. Sorry, what (4) your last name again? Vargas?",
+        options: [
+            { 
+                group: 16, 
+                choices: [
+                    { id: "1-1", text: "studies", correct: true },
+                    { id: "1-2", text: "study", correct: false },
+                    { id: "1-3", text: "studying", correct: false }
+                ] 
+            },
+            { 
+                group: 17, 
+                choices: [
+                    { id: "2-1", text: "says", correct: true },
+                    { id: "2-2", text: "say", correct: false },
+                    { id: "2-3", text: "saying", correct: false }
+                ] 
+            },
+            { 
+                group: 18, 
+                choices: [
+                    { id: "3-1", text: "is", correct: false },
+                    { id: "3-2", text: "are", correct: true },
+                    { id: "3-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 19, 
+                choices: [
+                    { id: "4-1", text: "is", correct: true },
+                    { id: "4-2", text: "are", correct: false },
+                    { id: "4-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2111: {
+        text: "Arturo: Actually, it (1) Valdez",
+        options: [
+            { 
+                group: 20, 
+                choices: [
+                    { id: "1-1", text: "is", correct: true },
+                    { id: "1-2", text: "are", correct: false },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2112: {
+        text: "Alexa: How (1) you spell that?",
+        options: [
+            { 
+                group: 21, 
+                choices: [
+                    { id: "1-1", text: "is", correct: false },
+                    { id: "1-2", text: "are", correct: true },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2113: {
+        text: "My name's Nick. My girlfriend's name (1) Karen. We (2) students. I (3) to university in Oxford.",
+        options: [
+            { 
+                group: 22, 
+                choices: [
+                    { id: "1-1", text: "is", correct: true },
+                    { id: "1-2", text: "are", correct: false },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 23, 
+                choices: [
+                    { id: "2-1", text: "is", correct: false },
+                    { id: "2-2", text: "are", correct: true },
+                    { id: "2-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 24, 
+                choices: [
+                    { id: "3-1", text: "go", correct: true },
+                    { id: "3-2", text: "goes", correct: false },
+                    { id: "3-3", text: "going", correct: false }
+                ] 
+            }
+        ]
+    },
+    2114: {
+        text: "Karen (1) go to university in Oxford; she (2) to university in Cambridge. She (3) in Cambridge.",
+        options: [
+            { 
+                group: 25, 
+                choices: [
+                    { id: "1-1", text: "don't", correct: false },
+                    { id: "1-2", text: "isn't", correct: false },
+                    { id: "1-3", text: "doesn't", correct: true }
+                ] 
+            },
+            { 
+                group: 26, 
+                choices: [
+                    { id: "2-1", text: "go", correct: false },
+                    { id: "2-2", text: "goes", correct: true },
+                    { id: "2-3", text: "going", correct: false }
+                ] 
+            },
+            { 
+                group: 27, 
+                choices: [
+                    { id: "3-1", text: "lives", correct: true },
+                    { id: "3-2", text: "live", correct: false },
+                    { id: "3-3", text: "living", correct: false }
+                ] 
+            }
+        ]
+    },
+    2115: {
+        text: "I (1) with my parents in Woodstock, which (2) a small town near Oxford.",
+        options: [
+            { 
+                group: 28, 
+                choices: [
+                    { id: "1-1", text: "lives", correct: false },
+                    { id: "1-2", text: "live", correct: true },
+                    { id: "1-3", text: "living", correct: false }
+                ] 
+            },
+            { 
+                group: 29, 
+                choices: [
+                    { id: "2-1", text: "is", correct: true },
+                    { id: "2-2", text: "are", correct: false },
+                    { id: "2-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2116: {
+        text: "It (1) difficult sometimes because we (2) each other only on weekends.",
+        options: [
+            { 
+                group: 30, 
+                choices: [
+                    { id: "1-1", text: "is", correct: true },
+                    { id: "1-2", text: "are", correct: false },
+                    { id: "1-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 31, 
+                choices: [
+                    { id: "2-1", text: "see", correct: true },
+                    { id: "2-2", text: "sees", correct: false },
+                    { id: "2-3", text: "seeing", correct: false }
+                ] 
+            }
+        ]
+    },
+    2117: {
+        text: "Karen (1) history, and she (2) her course. She (3) the architecture in Cambridge (4) beautiful.",
+        options: [
+            { 
+                group: 32, 
+                choices: [
+                    { id: "1-1", text: "studies", correct: true },
+                    { id: "1-2", text: "study", correct: false },
+                    { id: "1-3", text: "studying", correct: false }
+                ] 
+            },
+            { 
+                group: 33, 
+                choices: [
+                    { id: "2-1", text: "love", correct: false },
+                    { id: "2-2", text: "loves", correct: true },
+                    { id: "2-极", text: "loving", correct: false }
+                ] 
+            },
+            { 
+                group: 34, 
+                choices: [
+                    { id: "3-1", text极 "says", correct: true },
+                    { id: "3-2", text: "say", correct: false },
+                    { id: "3-3", text: "saying", correct: false }
+                ] 
+            },
+            { 
+                group: 35, 
+                choices: [
+                    { id: "4-1", text: "is", correct: true },
+                    { id: "4-2", text: "are", correct: false },
+                    { id: "4-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2118: {
+        text: "I (1) philosophy and politics, so my courses (2) very different from hers.",
+        options: [
+            { 
+                group: 36, 
+                choices: [
+                    { id: "1-1", text: "studies", correct: false },
+                    { id: "1-2", text: "study", correct: true },
+                    { id: "1-3", text: "studying", correct: false }
+                ] 
+            },
+            { 
+                group: 37, 
+                choices: [
+                    { id: "2-1", text: "is", correct: false },
+                    { id: "2-2", text: "are",极 true },
+                    { id: "2-3", text: "am", correct: false }
+                ] 
+            }
+        ]
+    },
+    2119: {
+        text: "I (1) living in Woodstock because my family (2) there and it (3) quiet, but I (4) Karen a lot.",
+        options: [
+            { 
+                group: 38, 
+                choices: [
+                    { id: "1-1", text: "like", correct: true },
+                    { id: "1-2", text: "likes", correct: false },
+                    { id: "1-3", text: "liking", correct: false }
+                ] 
+            },
+            { 
+                group: 39, 
+                choices: [
+                    { id: "2-1", text: "is", correct: true },
+                    { id: "2-2", text: "are", correct: false },
+                    { id: "2-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 40, 
+                choices: [
+                    { id: "3-1", text: "is", correct: true },
+                    { id: "3-2", text: "are", correct: false },
+                    { id: "3-3", text: "am", correct: false }
+                ] 
+            },
+            { 
+                group: 41, 
+                choices: [
+                    { id: "4-1", text: "miss", correct: true },
+                    { id: "4-2", text: "misses", correct: false },
+                    { id: "4-3", text: "missing", correct: false }
+                ] 
+            }
+        ]
+    },
+    2120: {
+        text: "We (1) on the phone every night and we (2) each other whenever we can.",
+        options: [
+            { 
+                group: 42, 
+                choices: [
+                    { id: "1-1", text: "talk", correct: true },
+                    { id: "1-2", text: "talks", correct: false },
+                    { id: "1-3", text: "talking", correct: false }
+                ] 
+            },
+            { 
+                group: 43, 
+                choices: [
+                    { id: "2-1", text: "visit", correct: true },
+                    { id: "2-2", text: "visits", correct: false },
+                    { id: "2-3", text: "visiting", correct: false }
+                ] 
+            }
+        ]
+    }
 };
 
-// 显示提示框
-function showAlert(message) {
-    const alertBox = document.getElementById('alert-box');
-    if (!alertBox) {
-        console.error("提示框元素未找到");
-        return;
-    }
+// 无选项的画面文本
+const screenTexts = {
+    2100: "Welcome to the journey of English tenses",
+    2101: "Arturo: Hello, I'm Arturo Valdez.",
+    2104: "Alexa: Brazil. How about you?",
+    2121: "" // 得分画面
+};
+
+// 初始化游戏
+function initGame() {
+    // 生成唯一的房间ID（基于当前时间）
+    const now = new Date();
+    gameState.roomId = `${now.getMonth() + 1}${now.getDate()}${now.getHours()}${now.getMinutes()}`;
     
-    alertBox.textContent = message;
-    alertBox.style.display = 'block';
+    // 显示开始画面
+    showScreen(2100);
     
-    // 3秒后隐藏提示框
-    setTimeout(() => {
-        alertBox.style.display = 'none';
-    }, 3000);
+    // 添加事件监听
+    document.addEventListener('click', handleClickEvents);
 }
 
-// 创建选项按钮
-function createOptionButton(text, groupIndex, optionIndex, pageId) {
-    const button = document.createElement('button');
-    button.className = 'option-btn';
-    button.textContent = text;
-    button.dataset.groupIndex = groupIndex;
-    button.dataset.optionIndex = optionIndex;
+// 显示指定画面
+function showScreen(screenId) {
+    // 隐藏所有画面
+    const allScreens = document.querySelectorAll('.game-screen');
+    allScreens.forEach(screen => {
+        screen.classList.remove('active');
+    });
     
-    button.addEventListener('click', () => {
-        // 取消同组中其他按钮的选中状态
-        const groupButtons = document.querySelectorAll(`.option-btn[data-group-index="${groupIndex}"]`);
-        groupButtons.forEach(btn => {
+    // 显示指定画面
+    const currentScreen = document.getElementById(`screen-${screenId}`);
+    if (currentScreen) {
+        currentScreen.classList.add('active');
+        gameState.currentScreen = screenId;
+    } else {
+        createScreen(screenId);
+    }
+}
+
+// 创建游戏画面
+function createScreen(screenId) {
+    const gameContainer = document.getElementById('game-container');
+    
+    // 创建画面元素
+    const screen = document.createElement('div');
+    screen.id = `screen-${screenId}`;
+    screen.className = 'game-screen';
+    
+    // 根据画面ID创建不同内容
+    if (screenId === 2100) {
+        // 开始画面
+        const img = document.createElement('img');
+        img.src = 'images/开始画面.jpg';
+        img.className = 'game-image';
+        img.alt = 'Welcome image';
+        img.onerror = () => handleImageError(img);
+        
+        const textDisplay = document.createElement('div');
+        textDisplay.className = 'text-display';
+        textDisplay.textContent = screenTexts[screenId];
+        
+        const beginBtn = document.createElement('button');
+        beginBtn.className = 'begin-button';
+        beginBtn.textContent = 'Begin';
+        beginBtn.onclick = () => showScreen(2101);
+        
+        screen.appendChild(img);
+        screen.appendChild(textDisplay);
+        screen.appendChild(beginBtn);
+    } 
+    else if (screenId === 2121) {
+        // 得分画面
+        calculateScore();
+        
+        const scoreImg = document.createElement('img');
+        scoreImg.className = 'game-image';
+        scoreImg.alt = 'Score background';
+        // 根据得分选择图片
+        scoreImg.src = gameState.score >= 60 ? 'images/及格.jpg' : 'images/不及格.jpg';
+        scoreImg.onerror = () => handleImageError(scoreImg);
+        
+        const scoreDisplay = document.createElement('div');
+        scoreDisplay.className = 'score-display';
+        scoreDisplay.textContent = `得分: ${Math.round(gameState.score)}`;
+        
+        screen.appendChild(scoreImg);
+        screen.appendChild(scoreDisplay);
+        
+        // 保存得分到Firebase
+        saveScoreToFirebase();
+    }
+    else {
+        // 常规对话画面
+        const question = questions[screenId];
+        const text = screenTexts[screenId];
+        
+        // 添加图片
+        const img = document.createElement('img');
+        // 计算图片序号（从画面01到画面20）
+        const imageNumber = screenId - 2100;
+        const imageName = imageNumber < 10 ? `画面0${imageNumber}` : `画面${imageNumber}`;
+        img.src = `images/${imageName}.jpg`;
+        img.className = 'game-image';
+        img.alt = `Dialogue scene ${imageNumber}`;
+        img.onerror = () => handleImageError(img);
+        screen.appendChild(img);
+        
+        // 添加文字显示
+        const textDisplay = document.createElement('div');
+        textDisplay.className = 'text-display';
+        textDisplay.textContent = text || (question ? question.text : '');
+        screen.appendChild(textDisplay);
+        
+        // 添加选项按钮（如果有）
+        if (question && question.options && question.options.length > 0) {
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'options-container';
+            
+            question.options.forEach(optionGroup => {
+                const optionRow = document.createElement('div');
+                optionRow.className = 'option-row';
+                
+                // 添加行编号
+                const rowNumber = document.createElement('div');
+                rowNumber.className = 'row-number';
+                rowNumber.textContent = getGroupNumber(optionGroup.group);
+                optionRow.appendChild(rowNumber);
+                
+                // 添加选项按钮
+                optionGroup.choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'option-button';
+                    button.dataset.id = choice.id;
+                    button.dataset.correct = choice.correct;
+                    button.dataset.group = optionGroup.group;
+                    button.textContent = choice.text;
+                    optionRow.appendChild(button);
+                });
+                
+                optionsContainer.appendChild(optionRow);
+            });
+            
+            screen.appendChild(optionsContainer);
+        }
+        
+        // 添加Continue按钮
+        const continueBtn = document.createElement('button');
+        continueBtn.className = 'continue-button';
+        continueBtn.textContent = 'Continue';
+        continueBtn.onclick = () => handleContinue(screenId);
+        screen.appendChild(continueBtn);
+    }
+    
+    gameContainer.appendChild(screen);
+    screen.classList.add('active');
+    gameState.currentScreen = screenId;
+}
+
+// 处理点击事件
+function handleClickEvents(e) {
+    if (e.target.classList.contains('option-button')) {
+        const button = e.target;
+        const group = button.dataset.group;
+        const row = button.parentElement;
+        
+        // 取消同行中其他按钮的选中状态
+        const siblings = row.querySelectorAll('.option-button');
+        siblings.forEach(btn => {
             btn.classList.remove('selected');
         });
         
         // 设置当前按钮为选中状态
         button.classList.add('selected');
         
-        // 保存选择
-        if (!GameState.selectedOptions[pageId]) {
-            GameState.selectedOptions[pageId] = {};
+        // 存储选择结果
+        const screenId = gameState.currentScreen;
+        if (!gameState.selectedOptions[screenId]) {
+            gameState.selectedOptions[screenId] = {};
         }
-        GameState.selectedOptions[pageId][groupIndex] = text;
-    });
-    
-    return button;
+        
+        gameState.selectedOptions[screenId][group] = {
+            id: button.dataset.id,
+            value: button.textContent,
+            correct: button.dataset.correct === 'true'
+        };
+    }
 }
 
-// 加载问题页面
-function loadQuestionPage(pageId) {
-    const screen = document.getElementById(`screen-${pageId}`);
-    if (!screen) {
-        console.error(`页面ID ${pageId} 未找到`);
-        return;
-    }
+// 处理Continue按钮点击
+function handleContinue(screenId) {
+    const question = questions[screenId];
     
-    // 显示当前页面，隐藏其他页面
-    document.querySelectorAll('.game-screen').forEach(s => {
-        s.classList.remove('active');
-    });
-    screen.classList.add('active');
-    
-    // 如果是问题页面，设置选项按钮
-    if (questions[pageId]) {
-        const optionsContainer = screen.querySelector('.options-container');
-        if (!optionsContainer) {
-            console.error(`选项容器在页面 ${pageId} 中未找到`);
-            return;
-        }
+    // 检查是否所有选项都已选择（如果有选项的话）
+    if (question && question.options && question.options.length > 0) {
+        const selectedOptions = gameState.selectedOptions[screenId] || {};
+        let allSelected = true;
         
-        // 清空现有选项
-        optionsContainer.innerHTML = '';
-        
-        // 创建选项按钮组
-        questions[pageId].forEach((question, groupIndex) => {
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'button-group';
-            
-            // 添加组标签 (①, ②, ③...)
-            const label = document.createElement('span');
-            label.className = 'group-label';
-            // 使用Unicode圆圈数字符号
-            label.textContent = String.fromCharCode(0x2460 + groupIndex);
-            groupDiv.appendChild(label);
-            
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'options-row';
-            
-            // 创建每个选项的按钮
-            question.options.forEach((option, optionIndex) => {
-                const button = createOptionButton(option, groupIndex, optionIndex, pageId);
-                rowDiv.appendChild(button);
-            });
-            
-            groupDiv.appendChild(rowDiv);
-            optionsContainer.appendChild(groupDiv);
+        // 检查每组是否都有选择
+        question.options.forEach(optionGroup => {
+            if (!selectedOptions[optionGroup.group]) {
+                allSelected = false;
+            }
         });
         
-        // 设置继续按钮事件
-        const continueBtn = screen.querySelector('.continue-btn');
-        if (continueBtn) {
-            continueBtn.onclick = () => {
-                // 检查是否所有组都已选择
-                const allSelected = questions[pageId].every((_, groupIndex) => {
-                    return GameState.selectedOptions[pageId] && 
-                           GameState.selectedOptions[pageId][groupIndex] !== undefined;
-                });
-                
-                if (!allSelected) {
-                    showAlert("Please complete all multiple-choice questions before continuing");
-                    return;
-                }
-                
-                // 计算得分（仅对计分页面）
-                if (pageId >= 2113 && pageId <= 2116) {
-                    calculateScore(pageId);
-                }
-                
-                // 跳转到下一页
-                const nextPageId = parseInt(pageId) + 1;
-                loadQuestionPage(nextPageId);
-            };
+        if (!allSelected) {
+            showAlert('Please complete all multiple-choice questions before continuing');
+            return;
         }
+    }
+    
+    // 跳转到下一画面
+    const nextScreenId = screenId + 1;
+    if (nextScreenId <= 2121) {
+        showScreen(nextScreenId);
     }
 }
 
 // 计算得分
-function calculateScore(pageId) {
-    if (!questions[pageId] || !GameState.selectedOptions[pageId]) return;
+function calculateScore() {
+    let correctCount = 0;
     
-    questions[pageId].forEach((question, groupIndex) => {
-        const selectedOption = GameState.selectedOptions[pageId][groupIndex];
-        if (selectedOption === question.correctAnswer) {
-            GameState.score += 1;
+    // 遍历所有已保存的选择
+    for (const screenId in gameState.selectedOptions) {
+        const options = gameState.selectedOptions[screenId];
+        for (const group in options) {
+            if (options[group].correct) {
+                correctCount++;
+            }
         }
-    });
+    }
+    
+    // 计算得分：正确数量 * 4.55，然后四舍五入到整数
+    gameState.totalCorrect = correctCount;
+    gameState.score = correctCount * 4.55;
 }
 
-// 显示最终得分
-function showFinalScore() {
-    // 计算最终得分 = 正确数量 * 4.55，保留整数
-    const finalScore = Math.round(GameState.score * 4.55);
-    
-    // 保存分数到Firebase
-    saveScoreToFirebase(finalScore);
-    
-    // 显示得分页面
-    const scoreScreen = document.getElementById('screen-2121');
-    if (!scoreScreen) {
-        console.error("得分页面未找到");
-        return;
-    }
-    
-    // 设置背景图片
-    const backgroundImg = scoreScreen.querySelector('.screen-image');
-    if (backgroundImg) {
-        backgroundImg.src = finalScore >= 60 ? 'images/及格.jpg' : 'images/不及格.jpg';
-        // 添加加载错误处理
-        backgroundImg.onerror = function() {
-            console.error(`无法加载图片: ${this.src}`);
-            this.style.display = 'none';
-        };
-    }
-    
-    // 显示得分
-    const scoreDisplay = scoreScreen.querySelector('.score-value');
-    if (scoreDisplay) {
-        scoreDisplay.textContent = finalScore;
-    }
-    
-    // 显示得分页面
-    document.querySelectorAll('.game-screen').forEach(s => {
-        s.classList.remove('active');
-    });
-    scoreScreen.classList.add('active');
-}
-
-// 保存分数到Firebase
-function saveScoreToFirebase(score) {
-    try {
-        // 生成基于时间的房间ID (MMDDHHmm格式)
-        const now = new Date();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        GameState.roomId = `${month}${day}${hours}${minutes}`;
-        
-        // 获取数据库引用
-        const database = firebase.database();
-        const scoresRef = database.ref('scores/' + GameState.roomId);
-        
-        // 保存分数
-        scoresRef.set({
-            score: score,
-            timestamp: now.getTime()
-        }).then(() => {
-            console.log("分数已保存到Firebase");
-        }).catch(error => {
-            console.error("保存分数到Firebase失败:", error);
-        });
-    } catch (error) {
-        console.error("Firebase操作错误:", error);
+// 保存得分到Firebase
+function saveScoreToFirebase() {
+    if (gameState.roomId) {
+        try {
+            const scoresRef = database.ref('scores/' + gameState.roomId);
+            scoresRef.set({
+                score: Math.round(gameState.score),
+                correctAnswers: gameState.totalCorrect,
+                totalQuestions: 43, // 从第22组到第43组共22组按钮
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                console.log('Score saved to Firebase successfully');
+            }).catch((error) => {
+                console.error('Error saving score to Firebase:', error);
+            });
+        } catch (error) {
+            console.error('Firebase error:', error);
+        }
     }
 }
 
-// 初始化游戏
-function initGame() {
-    const gameContainer = document.getElementById('game-container');
-    if (!gameContainer) {
-        console.error("游戏容器未找到");
-        return;
+// 显示提示框
+function showAlert(message) {
+    // 移除现有的提示框
+    const existingAlert = document.querySelector('.alert-box');
+    if (existingAlert) {
+        document.body.removeChild(existingAlert);
     }
     
-    // 创建提示框
     const alertBox = document.createElement('div');
-    alertBox.id = 'alert-box';
     alertBox.className = 'alert-box';
-    gameContainer.appendChild(alertBox);
+    alertBox.textContent = message;
     
-    // 创建开始画面 (ID:2100)
-    const startScreen = document.createElement('div');
-    startScreen.id = 'screen-2100';
-    startScreen.className = 'game-screen active';
-    startScreen.innerHTML = `
-        <img src="images/开始画面.jpg" class="screen-image" alt="Welcome">
-        <button id="start-btn" class="continue-btn">Begin</button>
-    `;
-    gameContainer.appendChild(startScreen);
+    document.body.appendChild(alertBox);
+    alertBox.style.display = 'block';
     
-    // 设置开始按钮事件
-    const startBtn = startScreen.querySelector('#start-btn');
-    if (startBtn) {
-        startBtn.addEventListener('click', () => {
-            loadQuestionPage(2101);
-        });
-    }
-    
-    // 创建所有问题画面
-    for (let i = 2101; i <= 2120; i++) {
-        const screen = document.createElement('div');
-        screen.id = `screen-${i}`;
-        screen.className = 'game-screen';
-        
-        // 构建画面内容
-        screen.innerHTML = `
-            <img src="images/画面${i.toString().substring(2)}.jpg" class="screen-image" alt="Scene ${i}">
-            <div class="text-container">
-                ${getTextContentForScreen(i)}
-            </div>
-            <div class="options-container"></div>
-            <button class="continue-btn">Continue</button>
-        `;
-        
-        gameContainer.appendChild(screen);
-    }
-    
-    // 创建得分画面 (ID:2121)
-    const scoreScreen = document.createElement('div');
-    scoreScreen.id = 'screen-2121';
-    scoreScreen.className = 'game-screen';
-    scoreScreen.innerHTML = `
-        <img src="" class="screen-image" alt="Result">
-        <div class="score-container">
-            <div class="score-value">0</div>
-        </div>
-    `;
-    gameContainer.appendChild(scoreScreen);
-    
-    // 预加载图片处理
-    preloadImages();
+    // 3秒后隐藏提示框
+    setTimeout(() => {
+        alertBox.style.display = 'none';
+        document.body.removeChild(alertBox);
+    }, 3000);
 }
 
-// 获取各画面的文本内容
-function getTextContentForScreen(screenId) {
-    switch(screenId) {
-        case 2101: return "Arturo: Hello, I'm Arturo Valdez.";
-        case 2102: return "Alexa: Hi. My name (1) Alexandra Costa, but please (2) me Alexa.";
-        case 2103: return "Arturo: OK. Where (1) you from, Alexa?";
-        case 2104: return "Alexa: Brazil. How about you?";
-        case 2105: return "Arturo: I'm from Mexico. I (1) here in the city now, but my family (2) in a small town near Guadalajara.";
-        case 2106: return "Alexa: Oh, I (1) Mexico! It (2) really beautiful. My brother (3) Mexico, too. Oh, good. Soo-jin (4) here.";
-        case 2107: return "Arturo: Who (1) Soo-jin? She (2) familiar.";
-        case 2108: return "Alexa: She (1) my classmate. We (2) in the same business class. We (3) our class every Monday and Wednesday.";
-        case 2109: return "Arturo: Where (1) she from?";
-        case 2110: return "Alexa: South Korea. She (1) marketing. She (2) the classes (3) very interesting. Let's go and say hello. Sorry, what (4) your last name again? Vargas?";
-        case 2111: return "Arturo: Actually, it (1) Valdez";
-        case 2112: return "Alexa: How (1) you spell that?";
-        case 2113: return "My name's Nick. My girlfriend's name (1) Karen. We (2) students. I (3) to university in Oxford.";
-        case 2114: return "Karen (1) go to university in Oxford; she (2) to university in Cambridge. She (3) in Cambridge.";
-        case 2115: return "I (1) with my parents in Woodstock, which (2) a small town near Oxford.";
-        case 2116: return "It (1) difficult sometimes because we (2) each other only on weekends.";
-        case 2117: return "Karen (1) history, and she (2) her course. She (3) the architecture in Cambridge (4) beautiful.";
-        case 2118: return "I (1) philosophy and politics, so my courses (2) very different from hers.";
-        case 2119: return "I (1) living in Woodstock because my family (2) there and it (3) quiet, but I (4) Karen a lot.";
-        case 2120: return "We (1) on the phone every night and we (2) each other whenever we can.";
-        default: return "";
-    }
+// 获取组号标识
+function getGroupNumber(groupIndex) {
+    const groupNumbers = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
+    return groupNumbers[groupIndex - 1] || groupIndex;
 }
 
-// 预加载图片
-function preloadImages() {
-    const imageUrls = [
-        'images/开始画面.jpg'
-    ];
+// 图片加载错误处理
+function handleImageError(img) {
+    console.error(`无法加载图片: ${img.src}`);
+    img.style.display = 'none';
     
-    // 添加所有画面图片
-    for (let i = 1; i <= 20; i++) {
-        const num = i < 10 ? `0${i}` : i;
-        imageUrls.push(`images/画面${num}.jpg`);
-    }
-    
-    // 添加结果图片
-    imageUrls.push('images/及格.jpg');
-    imageUrls.push('images/不及格.jpg');
-    
-    // 预加载所有图片
-    imageUrls.forEach(url => {
-        const img = new Image();
-        img.src = url;
-        // 添加错误处理
-        img.onerror = function() {
-            console.error(`无法加载图片: ${url}`);
-        };
-    });
+    // 创建替代文本
+    const altText = document.createElement('div');
+    altText.className = 'image-alt-text';
+    altText.style.padding = '20px';
+    altText.style.textAlign = 'center';
+    altText.style.backgroundColor = '#333';
+    altText.style.color = '#fff';
+    altText.textContent = `图片加载失败: ${img.alt}`;
+    img.parentNode.insertBefore(altText, img.nextSibling);
 }
 
 // 页面加载完成后初始化游戏
 document.addEventListener('DOMContentLoaded', () => {
-    try {
-        initGame();
-        console.log("游戏初始化完成");
-    } catch (error) {
-        console.error("游戏初始化失败:", error);
-        showAlert("游戏初始化失败，请刷新页面重试");
+    // 预加载所有图片
+    const imageUrls = [];
+    for (let i = 0; i <= 20; i++) {
+        const imageName = i === 0 ? '开始画面' : `画面${i < 10 ? '0' + i : i}`;
+        imageUrls.push(`images/${imageName}.jpg`);
     }
+    imageUrls.push('images/及格.jpg', 'images/不及格.jpg');
+    
+    // 图片预加载
+    let loadedCount = 0;
+    const totalImages = imageUrls.length;
+    
+    imageUrls.forEach(url => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+            loadedCount++;
+            if (loadedCount === totalImages) {
+                console.log('所有图片预加载完成');
+                initGame();
+            }
+        };
+        img.onerror = () => {
+            console.error(`图片预加载失败: ${url}`);
+            loadedCount++;
+            if (loadedCount === totalImages) {
+                initGame();
+            }
+        };
+    });
+    
+    // 如果所有图片加载失败，仍然初始化游戏
+    setTimeout(() => {
+        if (loadedCount < totalImages) {
+            console.log('图片预加载超时，继续初始化游戏');
+            initGame();
+        }
+    }, 5000);
 });
 
-// 防止页面滚动和缩放
+// 防止浏览器默认行为
 document.addEventListener('touchmove', function(e) {
     if (e.scale !== 1) {
         e.preventDefault();
     }
 }, { passive: false });
 
-// 处理键盘事件（防止缩放）
-document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '0')) {
-        e.preventDefault();
+// 处理页面可见性变化
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        console.log('页面被隐藏');
+    } else {
+        console.log('页面恢复可见');
+    }
+});
+
+// 处理页面卸载
+window.addEventListener('beforeunload', function(e) {
+    // 可选：在用户离开前提示
+    // const message = '确定要离开游戏吗？您的进度可能会丢失。';
+    // e.returnValue = message;
+    // return message;
+});
+
+// 全局错误处理
+window.addEventListener('error', function(e) {
+    console.error('全局错误捕获:', e.error);
+    showAlert('发生了一个错误，请刷新页面重试。');
+});
+
+// Firebase错误处理
+database.ref('.info/connected').on('value', function(snapshot) {
+    if (snapshot.val() === true) {
+        console.log('Connected to Firebase');
+    } else {
+        console.log('Disconnected from Firebase');
     }
 });
