@@ -358,13 +358,13 @@ const questions = {
                 choices: [
                     { id: "2-1", text: "love", correct: false },
                     { id: "2-2", text: "loves", correct: true },
-                    { id: "2-极", text: "loving", correct: false }
+                    { id: "2-3", text: "loving", correct: false }
                 ] 
             },
             { 
                 group: 34, 
                 choices: [
-                    { id: "3-1", text极 "says", correct: true },
+                    { id: "3-1", text： "says", correct: true },
                     { id: "3-2", text: "say", correct: false },
                     { id: "3-3", text: "saying", correct: false }
                 ] 
@@ -394,7 +394,7 @@ const questions = {
                 group: 37, 
                 choices: [
                     { id: "2-1", text: "is", correct: false },
-                    { id: "2-2", text: "are",极 true },
+                    { id: "2-2", text: "are",correct: true },
                     { id: "2-3", text: "am", correct: false }
                 ] 
             }
