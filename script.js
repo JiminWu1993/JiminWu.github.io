@@ -42,7 +42,7 @@ const screens = {
     2102: {
         type: "question",
         image: "画面02.jpg",
-        text: "Alexa: Hi. My name (1) Alexandra Costa, but please (2) me Alexa.",
+        text: "Alexa: Hi. My name ① Alexandra Costa, but please ② me Alexa.",
         options: [
             [
                 { text: "is", correct: true },
