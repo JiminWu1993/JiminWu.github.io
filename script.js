@@ -364,7 +364,7 @@ const questions = {
             { 
                 group: 34, 
                 choices: [
-                    { id: "3-1", text： "says", correct: true },
+                    { id: "3-1", text: "says", correct: true },
                     { id: "3-2", text: "say", correct: false },
                     { id: "3-3", text: "saying", correct: false }
                 ] 
