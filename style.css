@@ -6,46 +6,54 @@
 }
 
 body {
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: "Microsoft YaHei", sans-serif;
     background-color: black;
     color: white;
     overflow: hidden;
-    height: 100vh;
-    width: 100vw;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 游戏页面通用样式 */
+.game-page {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    position: relative;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
 }
 
-/* 页面标题和进度条 */
-.page-header {
+/* 页面标题栏 */
+.page-title {
     width: 100%;
     height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 15px;
     background-color: rgba(0, 0, 0, 0.7);
-    position: absolute;
-    top: 0;
     z-index: 10;
 }
 
-.page-title {
-    font-family: 'Microsoft YaHei', sans-serif;
+.title-text {
+    font-family: "Microsoft YaHei", sans-serif;
     font-size: 18px;
-    color: white;
     font-weight: bold;
+    color: white;
 }
 
 .progress-container {
-    width: 60%;
+    width: 100px;
     height: 10px;
     background-color: #333;
     border-radius: 5px;
@@ -58,44 +66,37 @@ body {
     transition: width 0.3s ease;
 }
 
-/* 游戏内容区域 */
-.game-content {
+/* 图片区域 */
+.page-image {
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 40px; /* 为标题栏留出空间 */
-}
-
-.game-image {
-    width: 100%;
+    max-height: 40%;
     object-fit: cover;
 }
 
-.text-display {
+/* 文本区域 */
+.text-container {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
     padding: 15px;
-    text-align: center;
+    background-color: rgba(0, 0, 0, 0.8);
     font-size: 18px;
     line-height: 1.5;
+    text-align: center;
+    min-height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* 按钮组样式 */
-.buttons-container {
+/* 选项按钮区域 */
+.options-container {
     width: 100%;
-    padding: 10px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.button-group {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+.option-group {
     border: 2px solid white;
     border-radius: 8px;
     padding: 10px;
@@ -112,41 +113,36 @@ body {
     font-size: 16px;
 }
 
-.button-row {
-    width: 100%;
+.options-row {
     display: flex;
     justify-content: space-around;
-    margin: 5px 0;
+    margin-top: 10px;
 }
 
 .option-button {
-    background-color: #1E90FF; /* 蓝色 */
+    background-color: #1E90FF;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
     font-size: 16px;
+    min-width: 80px;
     cursor: pointer;
-    flex: 1;
-    margin: 0 5px;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
 
-.option-button:hover {
-    background-color: #0066CC;
-}
-
-.option-button.selected {
-    background-color: #004C99;
-    font-weight: bold;
-}
-
-.option-button.disabled {
-    background-color: #666;
+.option-button:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
-/* Continue按钮 */
+.option-button.selected {
+    background-color: #0066CC;
+    font-weight: bold;
+    transform: scale(1.05);
+}
+
+/* 继续按钮 */
 .continue-button {
     background-color: #1E90FF;
     color: white;
@@ -158,17 +154,13 @@ body {
     cursor: pointer;
 }
 
-.continue-button.disabled {
+.continue-button:disabled {
     background-color: #666;
     cursor: not-allowed;
 }
 
-/* 提示框样式 */
-.toast-hidden {
-    display: none;
-}
-
-#toast-container {
+/* 提示框 */
+.alert-box {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -177,81 +169,39 @@ body {
     background-color: yellow;
     color: black;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 10px;
     text-align: center;
     z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* 答案弹窗样式 */
-.modal-hidden {
-    display: none;
-}
-
-#answers-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 200;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: white;
-    color: black;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    max-height: 80%;
-    overflow-y: auto;
-}
-
-#correct-answers-text {
-    margin: 15px 0;
-    line-height: 1.6;
-}
-
-#confirm-answers {
-    background-color: #1E90FF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
 }
 
 /* 得分页面样式 */
-.score-background {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
+.score-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
-.score-display {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
+.score-image {
+    width: 100%;
+    max-height: 50%;
+    object-fit: cover;
+}
+
+.score-text {
+    font-size: 24px;
+    margin: 20px 0;
+    font-weight: bold;
 }
 
 .score-buttons {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    width: 80%;
     margin-top: 20px;
 }
 
@@ -260,12 +210,53 @@ body {
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 15px;
+    font-size: 18px;
     cursor: pointer;
 }
 
 .score-button.disabled {
     background-color: #666;
     cursor: not-allowed;
+}
+
+/* 答案模态框 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
+}
+
+.modal-text {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    white-space: pre-line;
+}
+
+.modal-button {
+    background-color: #1E90FF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
 }
