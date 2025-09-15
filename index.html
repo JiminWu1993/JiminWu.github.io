@@ -3,20 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>英语时态之旅</title>
+    <title>English Tenses Journey</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- 引入Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
 <body>
+    <!-- 游戏主容器 -->
     <div id="game-container">
-        <!-- 游戏内容将通过JavaScript动态生成 -->
+        <!-- 页面标题和进度条区域 -->
+        <div id="page-title">
+            <div id="page-type"></div>
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- 游戏内容区域 -->
+        <div id="game-content">
+            <img id="scene-image" src="" alt="Scene Image">
+            <div id="text-display"></div>
+            <div id="options-container"></div>
+            <button id="continue-btn">Continue</button>
+        </div>
+        
+        <!-- 提示框 -->
+        <div id="message-toast"></div>
+        
+        <!-- 得分画面专用元素 -->
+        <div id="score-screen" style="display: none;">
+            <img id="result-image" src="" alt="Result Image">
+            <div id="score-display"></div>
+            <div id="score-buttons">
+                <button id="next-chapter-btn">Next Chapter</button>
+                <button id="show-answers-btn">Show the answers</button>
+                <button id="try-again-btn">Try Again</button>
+            </div>
+        </div>
+        
+        <!-- 正确答案弹窗 -->
+        <div id="answers-modal" style="display: none;">
+            <div id="answers-content"></div>
+            <button id="confirm-answers-btn">Confirm</button>
+        </div>
     </div>
-    
-    <div id="notification" class="notification hidden">
-        <p id="notification-text"></p>
-    </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
