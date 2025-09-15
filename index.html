@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>English Tenses Journey</title>
+    <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
     <!-- 引入Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -13,8 +13,8 @@
     <!-- 游戏主容器 -->
     <div id="game-container">
         <!-- 页面标题和进度条区域 -->
-        <div id="page-title">
-            <div id="page-type"></div>
+        <div id="page-title-bar">
+            <div id="page-type">Practice</div>
             <div id="progress-container">
                 <div id="progress-bar"></div>
             </div>
@@ -29,12 +29,14 @@
         </div>
         
         <!-- 提示框 -->
-        <div id="message-toast"></div>
+        <div id="message-toast" class="hidden">
+            <div id="message-content"></div>
+        </div>
         
-        <!-- 得分画面专用元素 -->
-        <div id="score-screen" style="display: none;">
+        <!-- 得分画面 -->
+        <div id="score-screen" class="hidden">
             <img id="result-image" src="" alt="Result Image">
-            <div id="score-display"></div>
+            <div id="score-display">Your score is: <span id="final-score">0</span></div>
             <div id="score-buttons">
                 <button id="next-chapter-btn">Next Chapter</button>
                 <button id="show-answers-btn">Show the answers</button>
@@ -43,9 +45,11 @@
         </div>
         
         <!-- 正确答案弹窗 -->
-        <div id="answers-modal" style="display: none;">
-            <div id="answers-content"></div>
-            <button id="confirm-answers-btn">Confirm</button>
+        <div id="answers-modal" class="modal hidden">
+            <div class="modal-content">
+                <div id="correct-answers"></div>
+                <button id="confirm-answers-btn">Confirm</button>
+            </div>
         </div>
     </div>
 
