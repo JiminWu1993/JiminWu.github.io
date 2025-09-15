@@ -5,29 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- Firebase Realtime Database -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
     <div id="game-container">
         <!-- 游戏内容将通过JavaScript动态生成 -->
     </div>
-
-    <!-- 提示框 -->
-    <div id="toast" class="toast hidden">
-        <p id="toast-message"></p>
-    </div>
-
-    <!-- 答案显示模态框 -->
-    <div id="answer-modal" class="modal hidden">
+    
+    <!-- 正确答案弹窗 -->
+    <div id="answers-modal" class="modal">
         <div class="modal-content">
-            <h3>正确答案</h3>
-            <div id="correct-answers" class="answers-container"></div>
-            <button id="confirm-answer" class="modal-button">Confirm</button>
+            <h3>The answer of test：</h3>
+            <div id="answers-text"></div>
+            <button id="confirm-answers" class="modal-btn">Confirm</button>
         </div>
     </div>
+
+    <!-- 提示框 -->
+    <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>
 </body>
