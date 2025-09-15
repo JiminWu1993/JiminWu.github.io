@@ -21,7 +21,7 @@ const GameState = {
     SCORE: 'score'
 };
 
-// 游戏数据
+// 游戏数据 
 let currentState = GameState.START;
 let currentPageId = 2100; // 开始页面ID
 let score = 0;
