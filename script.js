@@ -21,16 +21,6 @@ const gameState = {
     score: 0,         // 当前得分
     answers: {},      // 存储用户选择的答案
     correctAnswers: { // 正确答案映射
-        2102: { group1: '1-1', group2: '2-2' },
-        2103: { group1: '1-2' },
-        2105: { group1: '1-1', group2: '2-1' },
-        2106: { group1: '1-2', group2: '2-1', group3: '3-1', group4: '4-1' },
-        2107: { group1: '1-1', group2: '2-1' },
-        2108: { group1: '1-2', group2: '2-2', group3: '3-2' },
-        2109: { group1: '1-2' },
-        2110: { group1: '1-1', group2: '2-1', group3: '3-2', group4: '4-1' },
-        2111: { group1: '1-1' },
-        2112: { group1: '1-2' },
         2113: { group1: '1-1', group2: '2-2', group3: '3-1' },
         2114: { group1: '1-3', group2: '2-2', group3: '3-1' },
         2115: { group1: '1-2', group2: '2-1' },
