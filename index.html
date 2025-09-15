@@ -6,29 +6,15 @@
     <title>英语时态之旅</title>
     <link rel="stylesheet" href="style.css">
     <!-- Firebase App (core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firebase Database -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
 <body>
     <div id="game-container">
         <!-- 游戏内容将通过JavaScript动态加载 -->
     </div>
     
-    <!-- 提示框容器 -->
-    <div id="toast-container" class="toast-hidden">
-        <div id="toast-message"></div>
-    </div>
-    
-    <!-- 正确答案弹窗 -->
-    <div id="answers-modal" class="modal-hidden">
-        <div class="modal-content">
-            <h3>正确答案</h3>
-            <div id="correct-answers-text"></div>
-            <button id="confirm-answers">Confirm</button>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
