@@ -2,19 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>英语时态之旅</title>
+    <link href="https://fonts.googleapis.com/css2?family=Microsoft+YaHei&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase App (core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- Firebase Realtime Database -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
     <div id="game-container">
-        <!-- 游戏内容将通过JavaScript动态加载 -->
+        <!-- 游戏内容将通过JavaScript动态生成 -->
     </div>
-    
+
+    <!-- 提示框 -->
+    <div id="alert-box" class="hidden">
+        <div id="alert-content"></div>
+    </div>
+
+    <!-- 答案显示框 -->
+    <div id="answers-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>正确答案</h3>
+            <div id="correct-answers"></div>
+            <button id="confirm-answers">Confirm</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
