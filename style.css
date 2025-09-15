@@ -1,300 +1,246 @@
-/* 基础样式设置 */
+/* 全局样式 */
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 body {
     font-family: 'Microsoft YaHei', sans-serif;
     background-color: black;
     color: white;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+    width: 100vw;
+    height: 100vh;
 }
 
 #game-container {
+    width: 100%;
+    height: 100%;
     position: relative;
-    width: 100vw;
-    height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    align-items: center;
 }
 
 /* 页面标题和进度条样式 */
-#page-title {
+.page-header {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
     background-color: rgba(0, 0, 0, 0.7);
-    border-bottom: 1px solid #333;
-    height: 50px;
+    position: absolute;
+    top: 0;
+    z-index: 10;
 }
 
-#page-type {
-    font-family: 'Arial Rounded MT Bold', 'Microsoft YaHei', sans-serif;
+.page-title {
     font-size: 18px;
     font-weight: bold;
     color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-#progress-container {
-    width: 120px;
+.progress-container {
+    width: 60%;
     height: 10px;
     background-color: #333;
     border-radius: 5px;
     overflow: hidden;
 }
 
-#progress-bar {
+.progress-bar {
     height: 100%;
     background-color: #4CAF50;
-    width: 0%;
+    border-radius: 5px;
     transition: width 0.3s ease;
 }
 
-/* 游戏内容区域样式 */
-#game-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    overflow-y: auto;
-}
-
-#scene-image {
-    width: 100%;
-    height: auto;
-    max-height: 40vh;
-    object-fit: contain;
-}
-
-#dialog-text {
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 8px;
-    font-size: 18px;
-    line-height: 1.5;
-    text-align: center;
-}
-
-/* 选项按钮样式 */
-#options-container {
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.option-group {
-    margin-bottom: 15px;
-    border: 1px solid white;
-    border-radius: 8px;
-    padding: 10px;
-    position: relative;
-}
-
-.group-number {
-    position: absolute;
-    left: 5px;
-    top: 5px;
-    font-size: 14px;
-    color: white;
-}
-
-.option-row {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.option-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    font-size: 16px;
-    min-width: 80px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.option-button:active {
-    transform: scale(0.95);
-}
-
-.option-button.selected {
-    background-color: #0056b3;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-/* 继续按钮样式 */
-.continue-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 12px 25px;
-    font-size: 18px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.continue-button:active {
-    background-color: #218838;
-    transform: scale(0.98);
-}
-
-.continue-button:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-}
-
-/* 提示框样式 */
-#message-toast {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    z-index: 1000;
-    transition: opacity 0.3s;
-}
-
-.toast-visible {
-    background-color: #ffcc00;
-    color: black;
-    opacity: 1;
-}
-
-.toast-hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* 得分画面样式 */
-#score-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
+/* 游戏内容区域 */
+.game-content {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    background-size: cover;
-    background-position: center;
+    justify-content: flex-start;
+    padding-top: 50px;
+    padding-bottom: 80px;
+    overflow-y: auto;
 }
 
-.hidden {
-    display: none;
+/* 图片样式 */
+.game-image {
+    width: 100%;
+    height: auto;
+    max-height: 40%;
+    object-fit: contain;
 }
 
-#score-text {
-    font-size: 24px;
-    margin-bottom: 30px;
-    text-align: center;
+/* 文本显示区域 */
+.text-display {
+    width: 100%;
     background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
+    padding: 15px;
+    margin-top: -4px; /* 消除图片和文本之间的间隙 */
+    min-height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1.5;
 }
 
-#score-buttons {
+/* 选项按钮组容器 */
+.options-container {
+    width: 100%;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.score-btn {
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #007bff;
+/* 单个选项组样式 */
+.option-group {
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+}
+
+.option-group-number {
+    position: absolute;
+    top: -12px;
+    left: 10px;
+    background-color: black;
+    padding: 0 8px;
+    font-size: 16px;
     color: white;
 }
 
-.score-btn:disabled {
-    background-color: #6c757d;
+.option-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 12px 20px;
+    background-color: #1E90FF; /* 蓝色 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 80px;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #0066CC;
+}
+
+.btn:disabled {
+    background-color: #666;
     cursor: not-allowed;
 }
 
-.score-btn:active:not(:disabled) {
-    transform: scale(0.98);
+.btn.selected {
+    background-color: #FFD700; /* 金色高亮 */
+    color: black;
+    font-weight: bold;
 }
 
-/* 正确答案弹窗样式 */
-.modal {
+.continue-btn {
+    margin: 20px auto;
+    padding: 15px 30px;
+    font-size: 18px;
+    display: block;
+}
+
+/* 提示框样式 */
+.alert-box {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    background-color: yellow;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+}
+
+/* 得分页面样式 */
+.score-page {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    z-index: 1001;
+    justify-content: center;
+    text-align: center;
 }
 
-.modal-content {
+.score-image {
+    width: 100%;
+    height: 60%;
+    object-fit: contain;
+}
+
+.score-text {
+    font-size: 24px;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.score-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 80%;
+}
+
+/* 答案显示框样式 */
+.answers-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
     background-color: white;
     color: black;
     padding: 20px;
     border-radius: 10px;
-    width: 90%;
-    max-width: 500px;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     max-height: 80%;
     overflow-y: auto;
 }
 
-.modal-content h3 {
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-#correct-answers-text {
+.answers-content {
+    font-size: 16px;
     line-height: 1.6;
     margin-bottom: 20px;
 }
 
-#confirm-answers-btn {
-    background-color: #007bff;
+.confirm-btn {
+    padding: 10px 20px;
+    background-color: #1E90FF;
     color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    display: block;
-    margin: 0 auto;
-}
-
-/* 响应式设计 */
-@media (max-height: 700px) {
-    #dialog-text {
-        font-size: 16px;
-        padding: 10px;
-    }
-    
-    .option-button {
-        padding: 8px 12px;
-        font-size: 14px;
-        min-width: 70px;
-    }
-    
-    .continue-button {
-        padding: 10px 20px;
-        font-size: 16px;
-    }
 }
