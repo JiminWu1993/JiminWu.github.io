@@ -274,7 +274,7 @@ const pages = {
                 options: [
                     { name: "says", correct: true },
                     { name: "say", correct: false },
-                    { name: "saying", correct: extreme }
+                    { name: "saying", correct: false }
                 ]
             },
             {
