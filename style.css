@@ -1,4 +1,4 @@
-/* 全局样式 */
+/* 基础样式设置 */
 * {
     margin: 0;
     padding: 0;
@@ -6,59 +6,43 @@
 }
 
 body {
-    font-family: "Microsoft YaHei", sans-serif;
+    font-family: 'Microsoft YaHei', sans-serif;
     background-color: black;
     color: white;
     overflow: hidden;
+    height: 100vh;
     touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
 }
 
 #game-container {
     position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-}
-
-/* 页面容器 */
-.page {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    display: none;
+    height: 100vh;
+    display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.page.active {
-    display: flex;
-}
-
-/* 页面标题栏 */
-.page-title {
+/* 页面标题和进度条 */
+.page-header {
     width: 100%;
-    height: 40px;
-    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px;
-    position: relative;
+    padding: 10px 15px;
+    background-color: rgba(0, 0, 0, 0.7);
     z-index: 10;
 }
 
-.title-text {
-    font-family: "Microsoft YaHei", sans-serif;
+.page-title {
+    font-family: 'Microsoft YaHei', sans-serif;
     font-size: 18px;
-    color: white;
     font-weight: bold;
+    color: white;
 }
 
 .progress-container {
-    width: 100px;
+    width: 40%;
     height: 10px;
     background-color: #333;
     border-radius: 5px;
@@ -72,71 +56,93 @@ body {
     transition: width 0.3s ease;
 }
 
-/* 图片区域 */
-.image-container {
+/* 游戏画面样式 */
+.game-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    flex-shrink: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 50px; /* 为标题留出空间 */
+    padding-bottom: 70px; /* 为按钮留出空间 */
 }
 
-.game-image {
+.screen-image {
     width: 100%;
     height: auto;
-    display: block;
+    max-height: 40%;
+    object-fit: contain;
 }
 
-/* 文本区域 */
 .text-container {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
     padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    margin-top: -4px; /* 与图片紧贴 */
+}
+
+.dialogue-text {
     font-size: 18px;
     line-height: 1.5;
-    flex-shrink: 0;
+    text-align: center;
 }
 
-/* 选项按钮区域 */
-.options-container {
+/* 按钮组样式 */
+.buttons-container {
     width: 100%;
-    padding: 15px;
-    flex-grow: 1;
-    overflow-y: auto;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.option-group {
-    margin-bottom: 15px;
+.button-row {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    position: relative;
     border: 2px solid white;
     border-radius: 8px;
-    padding: 10px;
-    position: relative;
+    padding: 10px 5px 10px 35px; /* 左侧留出编号空间 */
 }
 
-.group-label {
+.button-row::before {
+    content: "";
     position: absolute;
-    top: -12px;
     left: 10px;
-    background-color: black;
-    padding: 0 5px;
-    font-size: 16px;
+    top: 50%;
+    transform: translateY(-50%);
     color: white;
+    font-size: 18px;
+    font-weight: bold;
 }
 
-.options-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
+.button-row:nth-child(1)::before { content: "①"; }
+.button-row:nth-child(2)::before { content: "②"; }
+.button-row:nth-child(3)::before { content: "③"; }
+.button-row:nth-child(4)::before { content: "④"; }
 
 .option-button {
     flex: 1;
     margin: 0 5px;
     padding: 10px 5px;
-    background-color: #1E90FF;
+    background-color: #1E90FF; /* 蓝色 */
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 16px;
+    font-family: 'Microsoft YaHei', sans-serif;
     cursor: pointer;
     transition: all 0.2s;
+}
+
+.option-button.selected {
+    background-color: #0066CC; /* 更深的蓝色 */
+    font-weight: bold;
 }
 
 .option-button:disabled {
@@ -144,25 +150,19 @@ body {
     cursor: not-allowed;
 }
 
-.option-button.selected {
-    background-color: #0066CC;
-    font-weight: bold;
-    transform: scale(1.05);
-}
-
-/* 继续按钮 */
+/* Continue按钮样式 */
 .continue-button {
-    width: 100%; /* 关键属性：使按钮宽度与父容器相同 */
-    box-sizing: border-box; /* 确保padding和border包含在宽度内 */
-    background-color: #007bff;
+    width: 100%;
+    padding: 15px;
+    background-color: #1E90FF; /* 蓝色 */
     color: white;
     border: none;
-    border-radius: 6px;
-    padding: 15px 0; /* 垂直padding，水平自动 */
+    border-radius: 0;
     font-size: 18px;
+    font-family: 'Microsoft YaHei', sans-serif;
     cursor: pointer;
-    margin-top: 20px;
-    transition: all 0.3s ease;
+    position: absolute;
+    bottom: 0;
 }
 
 .continue-button:disabled {
@@ -170,44 +170,88 @@ body {
     cursor: not-allowed;
 }
 
-/* 开始页面样式 */
-#page-2100 {
-    justify-content: center;
+/* 提示框样式 */
+.toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    padding: 20px;
+    background-color: yellow;
+    color: black;
     text-align: center;
+    border-radius: 10px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.start-title {
-    font-size: 24px;
-    margin-bottom: 30px;
-    font-weight: bold;
+.toast.hidden {
+    display: none;
 }
 
-.start-button {
-    padding: 15px 40px;
+/* 模态框样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    width: 85%;
+    max-height: 80%;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+
+.answers-container {
+    margin: 15px 0;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.modal-button {
+    padding: 10px 20px;
     background-color: #1E90FF;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 20px;
+    border-radius: 5px;
     cursor: pointer;
+    font-family: 'Microsoft YaHei', sans-serif;
+    margin-top: 10px;
 }
 
 /* 得分页面样式 */
 .score-container {
     text-align: center;
-    padding: 20px;
+    margin-top: 20px;
 }
 
 .score-text {
     font-size: 24px;
-    margin: 20px 0;
+    margin-bottom: 20px;
 }
 
 .score-buttons {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    margin-top: 30px;
+    width: 100%;
+    padding: 0 15px;
 }
 
 .score-button {
@@ -215,98 +259,13 @@ body {
     background-color: #1E90FF;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     font-size: 18px;
+    font-family: 'Microsoft YaHei', sans-serif;
     cursor: pointer;
 }
 
-.score-button:disabled {
+.score-button.disabled {
     background-color: #666;
     cursor: not-allowed;
-}
-
-/* 答案模态框 */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 100;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #ffeb3b;
-    color: black;
-    padding: 20px;
-    border-radius: 10px;
-    width: 90%;
-    max-height: 80%;
-    overflow-y: auto;
-}
-
-.modal-text {
-    font-size: 16px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.modal-confirm {
-    padding: 10px 20px;
-    background-color: #1E90FF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    display: block;
-    margin: 0 auto;
-}
-
-/* 提示框样式 */
-.toast-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    width: 80%;
-}
-
-.toast {
-    background-color: #ffeb3b;
-    color: black;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 10px;
-    animation: fadeInOut 3s forwards;
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-/* 响应式调整 */
-@media (max-height: 700px) {
-    .text-container {
-        padding: 10px;
-        font-size: 16px;
-    }
-    
-    .options-container {
-        padding: 10px;
-    }
-    
-    .option-button {
-        padding: 8px 5px;
-        font-size: 14px;
-    }
 }
