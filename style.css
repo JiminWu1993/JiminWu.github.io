@@ -1,4 +1,4 @@
-/* 基础样式重置 */
+/* 基础样式设置 */
 * {
     margin: 0;
     padding: 0;
@@ -14,33 +14,28 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* 游戏主容器 */
 #game-container {
     position: relative;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
-/* 页面标题和进度条 */
-#page-title-bar {
+/* 页面标题和进度条样式 */
+#page-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-bottom: 1px solid #333;
     height: 50px;
 }
 
 #page-type {
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: 'Arial Rounded MT Bold', 'Microsoft YaHei', sans-serif;
     font-size: 18px;
     font-weight: bold;
     color: white;
@@ -56,12 +51,12 @@ body {
 
 #progress-bar {
     height: 100%;
-    width: 0%;
     background-color: #4CAF50;
+    width: 0%;
     transition: width 0.3s ease;
 }
 
-/* 游戏内容区域 */
+/* 游戏内容区域样式 */
 #game-content {
     flex: 1;
     display: flex;
@@ -78,84 +73,86 @@ body {
     object-fit: contain;
 }
 
-#text-display {
+#dialog-text {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(255, 255, 255, 0.1);
     padding: 15px;
-    margin-top: 5px;
+    margin: 10px 0;
     border-radius: 8px;
     font-size: 18px;
     line-height: 1.5;
     text-align: center;
 }
 
+/* 选项按钮样式 */
 #options-container {
     width: 100%;
-    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .option-group {
+    margin-bottom: 15px;
     border: 1px solid white;
     border-radius: 8px;
     padding: 10px;
-    margin-bottom: 15px;
     position: relative;
 }
 
 .group-number {
     position: absolute;
-    top: -12px;
-    left: 10px;
-    background-color: black;
-    padding: 0 8px;
+    left: 5px;
+    top: 5px;
+    font-size: 14px;
     color: white;
-    font-size: 16px;
 }
 
-.options-row {
+.option-row {
     display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+    justify-content: space-around;
+    margin-top: 20px;
 }
 
-.option-btn {
-    flex: 1;
-    margin: 0 5px;
-    padding: 10px 5px;
-    background-color: #1E90FF;
+.option-button {
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
-    font-family: 'Microsoft YaHei', sans-serif;
+    padding: 10px 15px;
     font-size: 16px;
+    min-width: 80px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.option-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+.option-button:active {
+    transform: scale(0.95);
 }
 
-.option-btn.selected {
-    background-color: #0066CC;
+.option-button.selected {
+    background-color: #0056b3;
     font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-#continue-btn {
-    margin-top: 20px;
-    padding: 12px 25px;
-    background-color: #1E90FF;
+/* 继续按钮样式 */
+.continue-button {
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
-    font-family: 'Microsoft YaHei', sans-serif;
+    padding: 12px 25px;
     font-size: 18px;
+    margin-top: 10px;
     cursor: pointer;
 }
 
-#continue-btn:disabled {
-    background-color: #555;
+.continue-button:active {
+    background-color: #218838;
+    transform: scale(0.98);
+}
+
+.continue-button:disabled {
+    background-color: #6c757d;
     cursor: not-allowed;
 }
 
@@ -166,111 +163,138 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%;
-    background-color: yellow;
-    color: black;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: opacity 0.3s;
+}
+
+.toast-visible {
+    background-color: #ffcc00;
+    color: black;
+    opacity: 1;
+}
+
+.toast-hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* 得分画面样式 */
 #score-screen {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: black;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    z-index: 50;
-    padding: 20px;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
 }
 
-#result-image {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    margin-bottom: 30px;
+.hidden {
+    display: none;
 }
 
-#score-display {
+#score-text {
     font-size: 24px;
     margin-bottom: 30px;
     text-align: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
 }
 
 #score-buttons {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 100%;
-    max-width: 300px;
 }
 
-#score-buttons button {
-    padding: 15px;
+.score-btn {
+    padding: 12px 25px;
     font-size: 18px;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
-    font-family: 'Microsoft YaHei', sans-serif;
-}
-
-#next-chapter-btn, #show-answers-btn {
-    background-color: #1E90FF;
+    background-color: #007bff;
     color: white;
 }
 
-#try-again-btn {
-    background-color: #444;
-    color: white;
-}
-
-#next-chapter-btn:disabled, #show-answers-btn:disabled {
-    background-color: #555;
+.score-btn:disabled {
+    background-color: #6c757d;
     cursor: not-allowed;
 }
 
-/* 模态框样式 */
+.score-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+/* 正确答案弹窗样式 */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 100;
+    align-items: center;
+    z-index: 1001;
 }
 
 .modal-content {
-    background-color: #222;
+    background-color: white;
+    color: black;
     padding: 20px;
     border-radius: 10px;
     width: 90%;
     max-width: 500px;
-    max-height: 80vh;
+    max-height: 80%;
     overflow-y: auto;
 }
 
-#correct-answers {
-    margin-bottom: 20px;
+.modal-content h3 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#correct-answers-text {
     line-height: 1.6;
+    margin-bottom: 20px;
 }
 
 #confirm-answers-btn {
-    padding: 10px 20px;
-    background-color: #1E90FF;
+    background-color: #007bff;
     color: white;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-family: 'Microsoft YaHei', sans-serif;
+    display: block;
+    margin: 0 auto;
+}
+
+/* 响应式设计 */
+@media (max-height: 700px) {
+    #dialog-text {
+        font-size: 16px;
+        padding: 10px;
+    }
+    
+    .option-button {
+        padding: 8px 12px;
+        font-size: 14px;
+        min-width: 70px;
+    }
+    
+    .continue-button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
 }
