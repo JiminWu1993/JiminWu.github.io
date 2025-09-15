@@ -15,8 +15,19 @@
         <!-- 游戏内容将通过JavaScript动态生成 -->
     </div>
 
-    <!-- 提示框容器 -->
-    <div id="toast-container" class="toast-container"></div>
+    <!-- 提示框 -->
+    <div id="toast" class="toast hidden">
+        <p id="toast-message"></p>
+    </div>
+
+    <!-- 答案显示模态框 -->
+    <div id="answer-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>正确答案</h3>
+            <div id="correct-answers" class="answers-container"></div>
+            <button id="confirm-answer" class="modal-button">Confirm</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
