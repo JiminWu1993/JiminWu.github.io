@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>英语时态之旅</title>
+    <title>English Tenses Game</title>
     <link rel="stylesheet" href="style.css">
     <!-- 引入Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 </head>
 <body>
     <!-- 游戏主容器 -->
     <div id="game-container">
         <!-- 页面标题和进度条区域 -->
-        <div id="page-title-bar">
-            <div id="page-type">Practice</div>
+        <div id="page-title">
+            <div id="page-type"></div>
             <div id="progress-container">
                 <div id="progress-bar"></div>
             </div>
@@ -22,32 +22,39 @@
         
         <!-- 游戏内容区域 -->
         <div id="game-content">
+            <!-- 图片显示区域 -->
             <img id="scene-image" src="" alt="Scene Image">
-            <div id="text-display"></div>
+            
+            <!-- 对话文本显示区域 -->
+            <div id="dialog-text"></div>
+            
+            <!-- 选项按钮容器 -->
             <div id="options-container"></div>
-            <button id="continue-btn">Continue</button>
+            
+            <!-- 继续按钮 -->
+            <button id="continue-btn" class="continue-button">Continue</button>
         </div>
         
         <!-- 提示框 -->
-        <div id="message-toast" class="hidden">
-            <div id="message-content"></div>
+        <div id="message-toast" class="toast-hidden">
+            <div id="toast-content"></div>
         </div>
         
-        <!-- 得分画面 -->
+        <!-- 得分画面专用元素 -->
         <div id="score-screen" class="hidden">
-            <img id="result-image" src="" alt="Result Image">
-            <div id="score-display">Your score is: <span id="final-score">0</span></div>
+            <div id="score-text">Your score is: <span id="final-score">0</span></div>
             <div id="score-buttons">
-                <button id="next-chapter-btn">Next Chapter</button>
-                <button id="show-answers-btn">Show the answers</button>
-                <button id="try-again-btn">Try Again</button>
+                <button id="next-chapter-btn" class="score-btn">Next Chapter</button>
+                <button id="show-answers-btn" class="score-btn">Show the Answers</button>
+                <button id="try-again-btn" class="score-btn">Try Again</button>
             </div>
         </div>
         
         <!-- 正确答案弹窗 -->
         <div id="answers-modal" class="modal hidden">
             <div class="modal-content">
-                <div id="correct-answers"></div>
+                <h3>Correct Answers</h3>
+                <div id="correct-answers-text"></div>
                 <button id="confirm-answers-btn">Confirm</button>
             </div>
         </div>
