@@ -194,12 +194,14 @@ body {
     color: black;
     padding: 20px;
     border-radius: 5px;
-    text-align: center;
+    text-align: left;  /* 改为左对齐 */
     z-index: 100;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     display: none;
     font-weight: bold;
-    white-space: pre-line; /* 新增：允许换行符生效 */
+    white-space: pre-line; /* 确保换行符生效 */
+    /* 可选：添加左边距让文字不贴边 */
+    padding-left: 30px;
 }
 
 .answers-modal {
