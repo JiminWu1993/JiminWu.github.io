@@ -884,8 +884,15 @@ function checkAnswersAndShowHint(targetScreen) {
             // 找到正确答案
             const correctOption = optionGroup.choices.find(choice => choice.correct);
             if (correctOption) {
-                // 提取问题中的编号（如①）
-                const questionNumber = screenData.text.match(/[①-⑳]/)?.[0] || "";
+                // 根据选项组的ID确定对应的编号
+                // 假设选项组ID格式为"option-group-1", "option-group-2"等
+                const groupNumber = optionGroup.id.replace('option-group-', '');
+                
+                // 将数字转换为对应的圆圈数字符号
+                const numberSymbols = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩',
+                                     '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳'];
+                const questionNumber = numberSymbols[parseInt(groupNumber) - 1] || groupNumber;
+                
                 hintMessage += `${questionNumber} ${correctOption.content}\n`;
             }
         }
