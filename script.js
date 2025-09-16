@@ -863,9 +863,7 @@ function calculateScore() {
 function checkAnswersAndShowHint(targetScreen) {
     const screenData = gameData.screens[gameData.currentScreen];
     
-    // 重要：添加安全检查，确保页面数据和options存在
     if (!screenData || !screenData.options || screenData.options.length === 0) {
-        // 如果没有选项，直接跳转（适用于没有选择题的页面）
         navigateTo(parseInt(targetScreen));
         return;
     }
@@ -873,40 +871,53 @@ function checkAnswersAndShowHint(targetScreen) {
     let hasWrongAnswer = false;
     let hintMessage = "";
     
+    // 添加调试信息
+    console.log('=== 调试信息 ===');
+    console.log('当前页面选项组:', screenData.options);
+    
     // 检查每个选项组
     screenData.options.forEach(optionGroup => {
+        console.log('处理选项组:', optionGroup.id);
+        
         const selectedOption = gameData.selectedOptions[optionGroup.id];
         
-        // 如果没有选择或选择错误
         if (!selectedOption || !selectedOption.correct) {
             hasWrongAnswer = true;
             
-            // 找到正确答案
             const correctOption = optionGroup.choices.find(choice => choice.correct);
             if (correctOption) {
-                // 从选项组ID中提取数字（支持多种ID格式）
+                // 直接从选项组ID提取数字（更简单的方法）
                 let groupNumber = 0;
                 
-                // 尝试从ID中提取数字（支持 group1, option-group-1, q1 等格式）
+                // 方法1：直接提取数字
                 const numberMatch = optionGroup.id.match(/\d+/);
                 if (numberMatch) {
                     groupNumber = parseInt(numberMatch[0]);
-                } else {
-                    // 如果无法提取数字，使用选项组在数组中的索引
-                    groupNumber = screenData.options.indexOf(optionGroup) + 1;
+                    console.log('从ID提取的数字:', groupNumber);
                 }
                 
-                // 将数字转换为对应的圆圈数字符号
+                // 方法2：如果方法1失败，使用数组索引
+                if (groupNumber === 0) {
+                    groupNumber = screenData.options.indexOf(optionGroup) + 1;
+                    console.log('使用数组索引:', groupNumber);
+                }
+                
+                // 数字到符号的映射
                 const numberSymbols = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩',
                                      '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳'];
-                const questionNumber = numberSymbols[groupNumber - 1] || `[${groupNumber}]`;
+                
+                const questionNumber = groupNumber <= numberSymbols.length ? numberSymbols[groupNumber - 1] : `[${groupNumber}]`;
+                
+                console.log('最终显示的符号:', questionNumber);
                 
                 hintMessage += `${questionNumber} ${correctOption.content}\n`;
             }
         }
     });
     
-    // 根据检查结果显示不同的提示
+    console.log('最终提示信息:', hintMessage);
+    console.log('================');
+    
     if (hasWrongAnswer) {
         showAlert(`The correct answer is:\n${hintMessage.trim()}`, targetScreen);
     } else {
