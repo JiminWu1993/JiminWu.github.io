@@ -5,146 +5,54 @@
 }
 
 body {
-    font-family: "Microsoft YaHei", sans-serif;
+    font-family: 'Microsoft YaHei', sans-serif;
     background-color: black;
     color: white;
     overflow: hidden;
+    height: 100vh;
     touch-action: manipulation;
 }
 
 #game-container {
     position: relative;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     overflow: hidden;
 }
 
-.page {
+.game-screen {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     display: none;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
 }
 
-.page.active {
+.active {
     display: flex;
-}
-
-.page-image {
-    width: 100%;
-    height: auto;
-    max-height: 50%;
-    object-fit: contain;
-}
-
-.text-container {
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 15px;
-    min-height: 20%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 18px;
-    line-height: 1.5;
-}
-
-.buttons-container {
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.button-row {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    margin-bottom: 10px;
-    position: relative;
-    border: 1px solid white;
-    padding: 10px 10px 10px 40px;
-    border-radius: 5px;
-}
-
-.button-row::before {
-    content: "";
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.button-row:nth-child(1)::before { content: "①"; }
-.button-row:nth-child(2)::before { content: "②"; }
-.button-row:nth-child(3)::before { content: "③"; }
-.button-row:nth-child(4)::before { content: "④"; }
-
-.option-btn {
-    background-color: #1E90FF;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 16px;
-    min-width: 80px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.option-btn.selected {
-    background-color: #0066CC;
-    font-weight: bold;
-    transform: scale(1.05);
-}
-
-.continue-btn {
-    background-color: #1E90FF;
-    color: white;
-    border: none;
-    padding: 15px;
-    width: 100%;
-    font-size: 18px;
-    border-radius: 5px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.continue-btn:disabled {
-    background-color: #666;
-    cursor: not-allowed;
 }
 
 .page-title {
     width: 100%;
-    padding: 10px 15px;
+    height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.8);
-    position: absolute;
-    top: 0;
+    padding: 0 15px;
+    background-color: rgba(0, 0, 0, 0.7);
     z-index: 10;
 }
 
-.page-type {
-    font-family: "Microsoft YaHei", sans-serif;
+.page-title-text {
+    font-family: 'Microsoft YaHei', cursive;
     font-size: 18px;
-    font-weight: bold;
     color: white;
 }
 
 .progress-container {
-    width: 40%;
+    width: 60%;
     height: 10px;
     background-color: #333;
     border-radius: 5px;
@@ -154,60 +62,144 @@ body {
 .progress-bar {
     height: 100%;
     background-color: #4CAF50;
-    transition: width 0.3s;
+    transition: width 0.3s ease;
 }
 
-/* 开始页面样式 */
-#page-2100 {
+.screen-image {
+    width: 100%;
+    max-height: 40vh;
+    object-fit: cover;
+}
+
+.text-container {
+    width: 100%;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    min-height: 20vh;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 30px;
+    text-align: center;
+    line-height: 1.5;
+    font-size: 18px;
 }
 
-.start-btn {
+.buttons-container {
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: rgba(0, 0, 0, 0.9);
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    position: relative;
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 10px 10px 10px 40px;
+}
+
+.button-row-number {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.option-button {
+    flex: 1;
+    padding: 12px 5px;
     background-color: #1E90FF;
     color: white;
     border: none;
-    padding: 15px 40px;
-    font-size: 20px;
-    border-radius: 8px;
+    border-radius: 5px;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 16px;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* 得分页面样式 */
-.score-container {
+.option-button:hover {
+    background-color: #0066CC;
+}
+
+.option-button.selected {
+    background-color: #FFD700;
+    color: black;
+    font-weight: bold;
+}
+
+.continue-button {
     width: 100%;
-    height: 100%;
+    padding: 15px;
+    background-color: #1E90FF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.continue-button:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+}
+
+.score-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    text-align: center;
+    padding: 20px;
+}
+
+.score-image {
+    width: 100%;
+    max-height: 50vh;
+    object-fit: contain;
+    margin-bottom: 20px;
 }
 
 .score-text {
     font-size: 24px;
-    margin-top: 20px;
+    margin-bottom: 30px;
 }
 
 .score-buttons {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 80%;
-    margin-top: 20px;
 }
 
-.score-btn {
+.score-button {
+    width: 100%;
+    padding: 15px;
     background-color: #1E90FF;
     color: white;
     border: none;
-    padding: 15px;
+    border-radius: 5px;
+    font-family: 'Microsoft YaHei', sans-serif;
     font-size: 18px;
-    border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
 }
 
-.score-btn:disabled {
+.score-button:disabled {
     background-color: #666;
     cursor: not-allowed;
 }
@@ -230,24 +222,30 @@ body {
     margin: 10% auto;
     padding: 20px;
     width: 80%;
-    border-radius: 8px;
-    max-height: 70%;
+    border-radius: 10px;
+    max-height: 70vh;
     overflow-y: auto;
+}
+
+.modal-content h3 {
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 #answers-text {
     white-space: pre-line;
     line-height: 1.6;
-    margin: 15px 0;
+    margin-bottom: 20px;
 }
 
-.modal-btn {
+#confirm-answers {
+    padding: 10px 20px;
     background-color: #1E90FF;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 16px;
     border-radius: 5px;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 16px;
     cursor: pointer;
     display: block;
     margin: 0 auto;
@@ -260,14 +258,14 @@ body {
     background-color: yellow;
     color: black;
     text-align: center;
-    border-radius: 8px;
+    border-radius: 5px;
     padding: 16px;
     position: fixed;
     z-index: 100;
     left: 10%;
     top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px;
+    font-size: 17px;
+    font-weight: bold;
 }
 
 .toast.show {
