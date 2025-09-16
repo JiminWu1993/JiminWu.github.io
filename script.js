@@ -19,20 +19,27 @@ let gameState = {
     selectedOptions: {},
     testScore: 0,
     isFirstAttempt: true,
-    roomId: null
+    roomId: generateRoomId()
 };
 
-// 页面定义
-const pages = {
+// 生成房间ID (月日时分)
+function generateRoomId() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return month + day + hours + minutes;
+}
+
+// 游戏数据
+const gameData = {
     2100: {
         type: "start",
         image: "开始画面.jpg",
         text: "Welcome to the journey of English tenses",
         buttons: [
-            {
-                text: "Begin",
-                action: () => navigateTo(2101)
-            }
+            { text: "Begin", target: 2101 }
         ]
     },
     2101: {
@@ -40,10 +47,7 @@ const pages = {
         image: "画面01.jpg",
         text: "Arturo: Hello, I'm Arturo Valdez.",
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2102)
-            }
+            { text: "Continue", target: 2102 }
         ]
     },
     2102: {
@@ -53,7 +57,7 @@ const pages = {
         options: [
             {
                 id: "1",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "am", correct: false },
                     { text: "are", correct: false }
@@ -61,7 +65,7 @@ const pages = {
             },
             {
                 id: "2",
-                buttons: [
+                choices: [
                     { text: "calls", correct: false },
                     { text: "call", correct: true },
                     { text: "calling", correct: false }
@@ -69,11 +73,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2103),
-                validate: () => validateOptions(2102)
-            }
+            { text: "Continue", target: 2103 }
         ]
     },
     2103: {
@@ -83,7 +83,7 @@ const pages = {
         options: [
             {
                 id: "3",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -91,11 +91,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2104),
-                validate: () => validateOptions(2103)
-            }
+            { text: "Continue", target: 2104 }
         ]
     },
     2104: {
@@ -103,10 +99,7 @@ const pages = {
         image: "画面04.jpg",
         text: "Alexa: Brazil. How about you?",
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2105)
-            }
+            { text: "Continue", target: 2105 }
         ]
     },
     2105: {
@@ -116,7 +109,7 @@ const pages = {
         options: [
             {
                 id: "4",
-                buttons: [
+                choices: [
                     { text: "lives", correct: true },
                     { text: "live", correct: false },
                     { text: "living", correct: false }
@@ -124,7 +117,7 @@ const pages = {
             },
             {
                 id: "5",
-                buttons: [
+                choices: [
                     { text: "lives", correct: true },
                     { text: "live", correct: false },
                     { text: "are living", correct: false }
@@ -132,11 +125,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2106),
-                validate: () => validateOptions(2105)
-            }
+            { text: "Continue", target: 2106 }
         ]
     },
     2106: {
@@ -146,7 +135,7 @@ const pages = {
         options: [
             {
                 id: "6",
-                buttons: [
+                choices: [
                     { text: "loves", correct: false },
                     { text: "love", correct: true },
                     { text: "loving", correct: false }
@@ -154,7 +143,7 @@ const pages = {
             },
             {
                 id: "7",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "am", correct: false },
                     { text: "are", correct: false }
@@ -162,7 +151,7 @@ const pages = {
             },
             {
                 id: "8",
-                buttons: [
+                choices: [
                     { text: "loves", correct: true },
                     { text: "love", correct: false },
                     { text: "loving", correct: false }
@@ -170,7 +159,7 @@ const pages = {
             },
             {
                 id: "9",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -178,11 +167,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2107),
-                validate: () => validateOptions(2106)
-            }
+            { text: "Continue", target: 2107 }
         ]
     },
     2107: {
@@ -192,7 +177,7 @@ const pages = {
         options: [
             {
                 id: "10",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -200,7 +185,7 @@ const pages = {
             },
             {
                 id: "11",
-                buttons: [
+                choices: [
                     { text: "looks", correct: true },
                     { text: "look", correct: false },
                     { text: "looking", correct: false }
@@ -208,11 +193,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2108),
-                validate: () => validateOptions(2107)
-            }
+            { text: "Continue", target: 2108 }
         ]
     },
     2108: {
@@ -222,7 +203,7 @@ const pages = {
         options: [
             {
                 id: "12",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -230,7 +211,7 @@ const pages = {
             },
             {
                 id: "13",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -238,7 +219,7 @@ const pages = {
             },
             {
                 id: "14",
-                buttons: [
+                choices: [
                     { text: "has", correct: false },
                     { text: "have", correct: true },
                     { text: "having", correct: false }
@@ -246,11 +227,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2109),
-                validate: () => validateOptions(2108)
-            }
+            { text: "Continue", target: 2109 }
         ]
     },
     2109: {
@@ -260,7 +237,7 @@ const pages = {
         options: [
             {
                 id: "15",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -268,11 +245,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2110),
-                validate: () => validateOptions(2109)
-            }
+            { text: "Continue", target: 2110 }
         ]
     },
     2110: {
@@ -282,7 +255,7 @@ const pages = {
         options: [
             {
                 id: "16",
-                buttons: [
+                choices: [
                     { text: "studies", correct: true },
                     { text: "study", correct: false },
                     { text: "studying", correct: false }
@@ -290,7 +263,7 @@ const pages = {
             },
             {
                 id: "17",
-                buttons: [
+                choices: [
                     { text: "says", correct: true },
                     { text: "say", correct: false },
                     { text: "saying", correct: false }
@@ -298,7 +271,7 @@ const pages = {
             },
             {
                 id: "18",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -306,7 +279,7 @@ const pages = {
             },
             {
                 id: "19",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -314,11 +287,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2111),
-                validate: () => validateOptions(2110)
-            }
+            { text: "Continue", target: 2111 }
         ]
     },
     2111: {
@@ -328,7 +297,7 @@ const pages = {
         options: [
             {
                 id: "20",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -336,11 +305,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2112),
-                validate: () => validateOptions(2111)
-            }
+            { text: "Continue", target: 2112 }
         ]
     },
     2112: {
@@ -350,7 +315,7 @@ const pages = {
         options: [
             {
                 id: "21",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -358,11 +323,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => navigateTo(2113),
-                validate: () => validateOptions(2112)
-            }
+            { text: "Continue", target: 2113 }
         ]
     },
     2113: {
@@ -372,7 +333,7 @@ const pages = {
         options: [
             {
                 id: "22",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -380,7 +341,7 @@ const pages = {
             },
             {
                 id: "23",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -388,7 +349,7 @@ const pages = {
             },
             {
                 id: "24",
-                buttons: [
+                choices: [
                     { text: "go", correct: true },
                     { text: "goes", correct: false },
                     { text: "going", correct: false }
@@ -396,14 +357,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2113);
-                    navigateTo(2114);
-                },
-                validate: () => validateOptions(2113)
-            }
+            { text: "Continue", target: 2114 }
         ]
     },
     2114: {
@@ -413,7 +367,7 @@ const pages = {
         options: [
             {
                 id: "25",
-                buttons: [
+                choices: [
                     { text: "don't", correct: false },
                     { text: "isn't", correct: false },
                     { text: "doesn't", correct: true }
@@ -421,7 +375,7 @@ const pages = {
             },
             {
                 id: "26",
-                buttons: [
+                choices: [
                     { text: "go", correct: false },
                     { text: "goes", correct: true },
                     { text: "going", correct: false }
@@ -429,7 +383,7 @@ const pages = {
             },
             {
                 id: "27",
-                buttons: [
+                choices: [
                     { text: "lives", correct: true },
                     { text: "live", correct: false },
                     { text: "living", correct: false }
@@ -437,14 +391,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2114);
-                    navigateTo(2115);
-                },
-                validate: () => validateOptions(2114)
-            }
+            { text: "Continue", target: 2115 }
         ]
     },
     2115: {
@@ -454,7 +401,7 @@ const pages = {
         options: [
             {
                 id: "28",
-                buttons: [
+                choices: [
                     { text: "lives", correct: false },
                     { text: "live", correct: true },
                     { text: "living", correct: false }
@@ -462,7 +409,7 @@ const pages = {
             },
             {
                 id: "29",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -470,14 +417,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2115);
-                    navigateTo(2116);
-                },
-                validate: () => validateOptions(2115)
-            }
+            { text: "Continue", target: 2116 }
         ]
     },
     2116: {
@@ -487,7 +427,7 @@ const pages = {
         options: [
             {
                 id: "30",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -495,7 +435,7 @@ const pages = {
             },
             {
                 id: "31",
-                buttons: [
+                choices: [
                     { text: "see", correct: true },
                     { text: "sees", correct: false },
                     { text: "seeing", correct: false }
@@ -503,14 +443,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2116);
-                    navigateTo(2117);
-                },
-                validate: () => validateOptions(2116)
-            }
+            { text: "Continue", target: 2117 }
         ]
     },
     2117: {
@@ -520,7 +453,7 @@ const pages = {
         options: [
             {
                 id: "32",
-                buttons: [
+                choices: [
                     { text: "studies", correct: true },
                     { text: "study", correct: false },
                     { text: "studying", correct: false }
@@ -528,7 +461,7 @@ const pages = {
             },
             {
                 id: "33",
-                buttons: [
+                choices: [
                     { text: "love", correct: false },
                     { text: "loves", correct: true },
                     { text: "loving", correct: false }
@@ -536,7 +469,7 @@ const pages = {
             },
             {
                 id: "34",
-                buttons: [
+                choices: [
                     { text: "says", correct: true },
                     { text: "say", correct: false },
                     { text: "saying", correct: false }
@@ -544,7 +477,7 @@ const pages = {
             },
             {
                 id: "35",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -552,14 +485,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2117);
-                    navigateTo(2118);
-                },
-                validate: () => validateOptions(2117)
-            }
+            { text: "Continue", target: 2118 }
         ]
     },
     2118: {
@@ -569,7 +495,7 @@ const pages = {
         options: [
             {
                 id: "36",
-                buttons: [
+                choices: [
                     { text: "studies", correct: false },
                     { text: "study", correct: true },
                     { text: "studying", correct: false }
@@ -577,7 +503,7 @@ const pages = {
             },
             {
                 id: "37",
-                buttons: [
+                choices: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
                     { text: "am", correct: false }
@@ -585,14 +511,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2118);
-                    navigateTo(2119);
-                },
-                validate: () => validateOptions(2118)
-            }
+            { text: "Continue", target: 2119 }
         ]
     },
     2119: {
@@ -602,7 +521,7 @@ const pages = {
         options: [
             {
                 id: "38",
-                buttons: [
+                choices: [
                     { text: "like", correct: true },
                     { text: "likes", correct: false },
                     { text: "liking", correct: false }
@@ -610,7 +529,7 @@ const pages = {
             },
             {
                 id: "39",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -618,7 +537,7 @@ const pages = {
             },
             {
                 id: "40",
-                buttons: [
+                choices: [
                     { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
@@ -626,7 +545,7 @@ const pages = {
             },
             {
                 id: "41",
-                buttons: [
+                choices: [
                     { text: "miss", correct: true },
                     { text: "misses", correct: false },
                     { text: "missing", correct: false }
@@ -634,14 +553,7 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2119);
-                    navigateTo(2120);
-                },
-                validate: () => validateOptions(2119)
-            }
+            { text: "Continue", target: 2120 }
         ]
     },
     2120: {
@@ -651,7 +563,7 @@ const pages = {
         options: [
             {
                 id: "42",
-                buttons: [
+                choices: [
                     { text: "talk", correct: true },
                     { text: "talks", correct: false },
                     { text: "talking", correct: false }
@@ -659,7 +571,7 @@ const pages = {
             },
             {
                 id: "43",
-                buttons: [
+                choices: [
                     { text: "visit", correct: true },
                     { text: "visits", correct: false },
                     { text: "visiting", correct: false }
@@ -667,32 +579,42 @@ const pages = {
             }
         ],
         buttons: [
-            {
-                text: "Continue",
-                action: () => {
-                    calculateScore(2120);
-                    saveScoreToFirebase();
-                    navigateTo(2121);
-                },
-                validate: () => validateOptions(2120)
+            { 
+                text: "Continue", 
+                target: 2121,
+                action: function() {
+                    // 计算得分并保存到数据库
+                    calculateScore();
+                    saveScoreToDatabase();
+                }
             }
         ]
     },
     2121: {
         type: "score",
         buttons: [
-            {
-                text: "Next Chapter",
-                action: () => {},
-                condition: () => gameState.testScore >= 60 || !gameState.isFirstAttempt
+            { 
+                text: "Next Chapter", 
+                action: function() {
+                    // 根据条件判断是否可以点击
+                    if (gameState.testScore >= 60 || !gameState.isFirstAttempt) {
+                        // 实际项目中这里应该有跳转逻辑
+                        showToast("Next chapter is not implemented in this demo");
+                    } else {
+                        showToast("You need to score at least 60 on your first attempt");
+                    }
+                }
             },
-            {
-                text: "Show the answers",
-                action: () => showAnswers()
+            { 
+                text: "Show the answers", 
+                action: function() {
+                    showAnswers();
+                }
             },
-            {
-                text: "Try Again",
-                action: () => {
+            { 
+                text: "Try Again", 
+                action: function() {
+                    // 重置测试状态
                     resetTest();
                     navigateTo(2113);
                 }
@@ -703,38 +625,31 @@ const pages = {
 
 // 初始化游戏
 function initGame() {
-    // 创建所有页面
-    createAllPages();
-    
-    // 显示开始页面
-    showPage(2100);
-    
-    // 添加事件监听器
-    document.getElementById('confirm-answers').addEventListener('click', hideAnswers);
-    
-    // 生成房间ID
-    generateRoomId();
+    createAllScreens();
+    navigateTo(2100);
+    setupEventListeners();
 }
 
-// 创建所有页面
-function createAllPages() {
-    const gameContainer = document.getElementById('game-container');
+// 创建所有游戏画面
+function createAllScreens() {
+    const container = document.getElementById('game-container');
     
-    for (const pageId in pages) {
-        const page = document.createElement('div');
-        page.id = `page-${pageId}`;
-        page.className = 'page';
+    // 为每个页面创建屏幕
+    for (const pageId in gameData) {
+        const screen = document.createElement('div');
+        screen.id = `screen-${pageId}`;
+        screen.className = 'game-screen';
         
-        const pageData = pages[pageId];
+        const pageData = gameData[pageId];
         
-        // 添加页面标题和进度条（非开始和得分页面）
-        if (pageId != 2100 && pageId != 2121) {
+        // 创建页面标题和进度条
+        if (pageData.type !== "start" && pageData.type !== "score") {
             const titleBar = document.createElement('div');
             titleBar.className = 'page-title';
             
-            const pageType = document.createElement('div');
-            pageType.className = 'page-type';
-            pageType.textContent = pageData.type === 'practice' ? 'Practice' : 'Test';
+            const titleText = document.createElement('div');
+            titleText.className = 'page-title-text';
+            titleText.textContent = pageData.type === "practice" ? "Practice" : "Test";
             
             const progressContainer = document.createElement('div');
             progressContainer.className = 'progress-container';
@@ -744,30 +659,30 @@ function createAllPages() {
             progressBar.id = `progress-${pageId}`;
             
             progressContainer.appendChild(progressBar);
-            titleBar.appendChild(pageType);
+            titleBar.appendChild(titleText);
             titleBar.appendChild(progressContainer);
             
-            page.appendChild(titleBar);
+            screen.appendChild(titleBar);
         }
         
-        // 添加图片
+        // 创建图片
         if (pageData.image) {
             const img = document.createElement('img');
-            img.className = 'page-image';
+            img.className = 'screen-image';
             img.src = `images/${pageData.image}`;
-            img.alt = 'Game scene';
-            page.appendChild(img);
+            img.alt = `Page ${pageId} image`;
+            screen.appendChild(img);
         }
         
-        // 添加文本容器
+        // 创建文本容器
         if (pageData.text) {
             const textContainer = document.createElement('div');
             textContainer.className = 'text-container';
             textContainer.innerHTML = formatTextWithPlaceholders(pageData.text);
-            page.appendChild(textContainer);
+            screen.appendChild(textContainer);
         }
         
-        // 添加选项按钮（如果有）
+        // 创建选项按钮容器
         if (pageData.options) {
             const buttonsContainer = document.createElement('div');
             buttonsContainer.className = 'buttons-container';
@@ -776,15 +691,21 @@ function createAllPages() {
                 const buttonRow = document.createElement('div');
                 buttonRow.className = 'button-row';
                 
-                optionGroup.buttons.forEach(btn => {
+                const rowNumber = document.createElement('div');
+                rowNumber.className = 'button-row-number';
+                rowNumber.textContent = getNumberSymbol(index);
+                buttonRow.appendChild(rowNumber);
+                
+                optionGroup.choices.forEach((choice, choiceIndex) => {
                     const button = document.createElement('button');
-                    button.className = 'option-btn';
-                    button.textContent = btn.text;
-                    button.dataset.correct = btn.correct;
+                    button.className = 'option-button';
+                    button.textContent = choice.text;
                     button.dataset.groupId = optionGroup.id;
+                    button.dataset.choiceIndex = choiceIndex;
+                    button.dataset.correct = choice.correct;
                     
-                    button.addEventListener('click', () => {
-                        selectOption(pageId, optionGroup.id, button);
+                    button.addEventListener('click', function() {
+                        selectOption(optionGroup.id, choiceIndex, pageId);
                     });
                     
                     buttonRow.appendChild(button);
@@ -793,88 +714,79 @@ function createAllPages() {
                 buttonsContainer.appendChild(buttonRow);
             });
             
-            page.appendChild(buttonsContainer);
+            screen.appendChild(buttonsContainer);
         }
         
-        // 添加继续按钮（如果有）
+        // 创建继续按钮
         if (pageData.buttons) {
-            const buttonsContainer = pageData.options ? 
-                document.createElement('div') : 
-                document.createElement('div');
-            
-            if (!pageData.options) {
-                buttonsContainer.className = 'buttons-container';
-            }
-            
-            pageData.buttons.forEach(btnData => {
+            pageData.buttons.forEach(buttonData => {
                 const button = document.createElement('button');
-                button.className = 'continue-btn';
-                button.textContent = btnData.text;
+                button.className = pageData.type === "score" ? 'score-button' : 'continue-button';
+                button.textContent = buttonData.text;
                 
-                if (btnData.condition) {
-                    button.disabled = !btnData.condition();
-                }
-                
-                button.addEventListener('click', () => {
-                    if (btnData.validate && !btnData.validate()) {
+                button.addEventListener('click', function() {
+                    // 检查是否所有选项都已选择（如果有选项）
+                    if (pageData.options && !areAllOptionsSelected(pageId)) {
                         showToast("Please complete all multiple-choice questions before continuing");
                         return;
                     }
                     
-                    if (btnData.action) {
-                        btnData.action();
+                    // 如果有特殊动作，执行它
+                    if (buttonData.action) {
+                        buttonData.action();
+                    }
+                    
+                    // 跳转到目标页面
+                    if (buttonData.target) {
+                        navigateTo(buttonData.target);
                     }
                 });
                 
-                buttonsContainer.appendChild(button);
+                screen.appendChild(button);
             });
-            
-            page.appendChild(buttonsContainer);
         }
         
-        // 得分页面特殊处理
-        if (pageId == 2121) {
-            const scoreContainer = document.createElement('div');
-            scoreContainer.className = 'score-container';
-            
+        // 对于得分屏幕，添加特殊布局
+        if (pageData.type === "score") {
             const scoreImage = document.createElement('img');
-            scoreImage.className = 'page-image';
+            scoreImage.className = 'score-image';
             scoreImage.id = 'score-image';
-            scoreImage.alt = 'Score result';
+            screen.appendChild(scoreImage);
             
             const scoreText = document.createElement('div');
             scoreText.className = 'score-text';
             scoreText.id = 'score-text';
+            screen.appendChild(scoreText);
             
             const scoreButtons = document.createElement('div');
             scoreButtons.className = 'score-buttons';
             
-            pageData.buttons.forEach(btnData => {
+            pageData.buttons.forEach(buttonData => {
                 const button = document.createElement('button');
-                button.className = 'score-btn';
-                button.textContent = btnData.text;
+                button.className = 'score-button';
+                button.textContent = buttonData.text;
                 
-                if (btnData.condition) {
-                    button.disabled = !btnData.condition();
+                // 特殊处理"Next Chapter"按钮
+                if (buttonData.text === "Next Chapter") {
+                    button.id = "next-chapter-btn";
+                    if (gameState.testScore < 60 && gameState.isFirstAttempt) {
+                        button.disabled = true;
+                    }
                 }
                 
-                button.addEventListener('click', () => {
-                    if (btnData.action) {
-                        btnData.action();
+                button.addEventListener('click', function() {
+                    if (buttonData.action) {
+                        buttonData.action();
                     }
                 });
                 
                 scoreButtons.appendChild(button);
             });
             
-            scoreContainer.appendChild(scoreImage);
-            scoreContainer.appendChild(scoreText);
-            scoreContainer.appendChild(scoreButtons);
-            
-            page.appendChild(scoreContainer);
+            screen.appendChild(scoreButtons);
         }
         
-        gameContainer.appendChild(page);
+        container.appendChild(screen);
     }
 }
 
@@ -885,79 +797,41 @@ function formatTextWithPlaceholders(text) {
     });
 }
 
-// 显示指定页面
-function showPage(pageId) {
-    // 隐藏所有页面
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    // 显示当前页面
-    const currentPage = document.getElementById(`page-${pageId}`);
-    currentPage.classList.add('active');
-    
-    // 更新进度条
-    updateProgressBar(pageId);
-    
-    gameState.currentPage = pageId;
-}
-
-// 更新进度条
-function updateProgressBar(pageId) {
-    const pageData = pages[pageId];
-    if (!pageData || pageId == 2100 || pageId == 2121) return;
-    
-    let progress = 0;
-    
-    if (pageData.type === 'practice') {
-        // 练习页面进度：N/13
-        const practicePages = [2101, 2102, 2103, 2104, 2105, 2106, 2107, 2108, 2109, 2110, 2111, 2112];
-        const currentIndex = practicePages.indexOf(parseInt(pageId));
-        progress = (currentIndex + 1) / 13;
-    } else if (pageData.type === 'test') {
-        // 测试页面进度：M/7
-        const testPages = [2113, 2114, 2115, 2116, 2117, 2118, 2119, 2120];
-        const currentIndex = testPages.indexOf(parseInt(pageId));
-        progress = (currentIndex + 1) / 8;
-    }
-    
-    const progressBar = document.getElementById(`progress-${pageId}`);
-    if (progressBar) {
-        progressBar.style.width = `${progress * 100}%`;
-    }
-}
-
-// 导航到指定页面
-function navigateTo(pageId) {
-    showPage(pageId);
+// 获取数字符号
+function getNumberSymbol(index) {
+    const symbols = ["①", "②", "③", "④"];
+    return symbols[index] || "①";
 }
 
 // 选择选项
-function selectOption(pageId, groupId, button) {
-    // 取消同组中其他按钮的选中状态
-    const buttons = document.querySelectorAll(`#page-${pageId} button[data-group-id="${groupId}"]`);
-    buttons.forEach(btn => {
-        btn.classList.remove('selected');
-    });
-    
-    // 设置当前按钮为选中状态
-    button.classList.add('selected');
-    
+function selectOption(groupId, choiceIndex, pageId) {
     // 保存选择
     if (!gameState.selectedOptions[pageId]) {
         gameState.selectedOptions[pageId] = {};
     }
+    gameState.selectedOptions[pageId][groupId] = choiceIndex;
     
-    gameState.selectedOptions[pageId][groupId] = button.dataset.correct === 'true';
+    // 更新UI
+    const buttons = document.querySelectorAll(`#screen-${pageId} .option-button[data-group-id="${groupId}"]`);
+    buttons.forEach(button => {
+        button.classList.remove('selected');
+    });
+    
+    const selectedButton = document.querySelector(`#screen-${pageId} .option-button[data-group-id="${groupId}"][data-choice-index="${choiceIndex}"]`);
+    selectedButton.classList.add('selected');
 }
 
-// 验证选项是否全部完成
-function validateOptions(pageId) {
-    const pageData = pages[pageId];
+// 检查是否所有选项都已选择
+function areAllOptionsSelected(pageId) {
+    const pageData = gameData[pageId];
     if (!pageData.options) return true;
     
+    if (!gameState.selectedOptions[pageId]) {
+        return false;
+    }
+    
     for (const optionGroup of pageData.options) {
-        if (!gameState.selectedOptions[pageId] || !gameState.selectedOptions[pageId][optionGroup.id]) {
+        if (gameState.selectedOptions[pageId][optionGroup.id] === undefined) {
             return false;
         }
     }
@@ -965,121 +839,194 @@ function validateOptions(pageId) {
     return true;
 }
 
-// 计算得分（测试页面）
-function calculateScore(pageId) {
-    if (pageId < 2113 || pageId > 2120) return;
+// 导航到指定页面
+function navigateTo(pageId) {
+    // 隐藏所有屏幕
+    const screens = document.getElementsByClassName('game-screen');
+    for (let i = 0; i < screens.length; i++) {
+        screens[i].classList.remove('active');
+    }
     
-    const pageData = pages[pageId];
-    if (!pageData.options) return;
+    // 显示目标屏幕
+    const targetScreen = document.getElementById(`screen-${pageId}`);
+    if (targetScreen) {
+        targetScreen.classList.add('active');
+        
+        // 更新进度条
+        updateProgressBar(pageId);
+        
+        // 如果是得分屏幕，更新得分显示
+        if (pageId == 2121) {
+            updateScoreScreen();
+        }
+    }
     
-    for (const optionGroup of pageData.options) {
-        if (gameState.selectedOptions[pageId] && 
-            gameState.selectedOptions[pageId][optionGroup.id] === true) {
-            gameState.testScore++;
+    // 更新当前页面状态
+    gameState.currentPage = pageId;
+}
+
+// 更新进度条
+function updateProgressBar(pageId) {
+    const pageData = gameData[pageId];
+    if (!pageData || pageData.type === "start" || pageData.type === "score") {
+        return;
+    }
+    
+    const progressBar = document.getElementById(`progress-${pageId}`);
+    if (!progressBar) return;
+    
+    let progress = 0;
+    
+    if (pageData.type === "practice") {
+        // 计算练习进度 (1-12页)
+        const practicePages = [2101, 2102, 2103, 2104, 2105, 2106, 2107, 2108, 2109, 2110, 2111, 2112];
+        const currentIndex = practicePages.indexOf(parseInt(pageId));
+        if (currentIndex !== -1) {
+            progress = ((currentIndex + 1) / practicePages.length) * 100;
+        }
+    } else if (pageData.type === "test") {
+        // 计算测试进度 (13-20页)
+        const testPages = [2113, 2114, 2115, 2116, 2117, 2118, 2119, 2120];
+        const currentIndex = testPages.indexOf(parseInt(pageId));
+        if (currentIndex !== -1) {
+            progress = ((currentIndex + 1) / testPages.length) * 100;
+        }
+    }
+    
+    progressBar.style.width = `${progress}%`;
+}
+
+// 计算得分
+function calculateScore() {
+    let correctCount = 0;
+    const testPages = [2113, 2114, 2115, 2116, 2117, 2118, 2119, 2120];
+    
+    testPages.forEach(pageId => {
+        const pageData = gameData[pageId];
+        if (pageData.options && gameState.selectedOptions[pageId]) {
+            pageData.options.forEach(optionGroup => {
+                const selectedChoiceIndex = gameState.selectedOptions[pageId][optionGroup.id];
+                if (selectedChoiceIndex !== undefined) {
+                    const selectedChoice = optionGroup.choices[selectedChoiceIndex];
+                    if (selectedChoice.correct) {
+                        correctCount++;
+                    }
+                }
+            });
+        }
+    });
+    
+    // 计算得分 (每个正确选项得4.55分，保留到个位)
+    gameState.testScore = Math.round(correctCount * 4.55);
+    return gameState.testScore;
+}
+
+// 保存得分到数据库
+function saveScoreToDatabase() {
+    const scoreData = {
+        score: gameState.testScore,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        isFirstAttempt: gameState.isFirstAttempt
+    };
+    
+    database.ref('scores/' + gameState.roomId).set(scoreData)
+        .catch(error => {
+            console.error("Error saving score to database: ", error);
+        });
+}
+
+// 更新得分屏幕
+function updateScoreScreen() {
+    const scoreImage = document.getElementById('score-image');
+    const scoreText = document.getElementById('score-text');
+    const nextChapterBtn = document.getElementById('next-chapter-btn');
+    
+    if (scoreImage) {
+        scoreImage.src = gameState.testScore >= 60 ? 'images/及格.jpg' : 'images/不及格.jpg';
+    }
+    
+    if (scoreText) {
+        scoreText.textContent = `Your score is : ${gameState.testScore}`;
+    }
+    
+    if (nextChapterBtn) {
+        if (gameState.testScore < 60 && gameState.isFirstAttempt) {
+            nextChapterBtn.disabled = true;
+        } else {
+            nextChapterBtn.disabled = false;
         }
     }
 }
 
-// 保存得分到Firebase
-function saveScoreToFirebase() {
-    if (!gameState.roomId) {
-        generateRoomId();
-    }
-    
-    const finalScore = Math.round(gameState.testScore * 4.55);
-    
-    database.ref('scores/' + gameState.roomId).set({
-        score: finalScore,
-        timestamp: Date.now()
-    }).then(() => {
-        updateScoreDisplay(finalScore);
-    }).catch(error => {
-        console.error("Error saving score: ", error);
-        updateScoreDisplay(finalScore);
-    });
-}
-
-// 更新得分显示
-function updateScoreDisplay(score) {
-    const scoreImage = document.getElementById('score-image');
-    const scoreText = document.getElementById('score-text');
-    
-    if (scoreImage) {
-        scoreImage.src = score >= 60 ? 'images/及格.jpg' : 'images/不及格.jpg';
-    }
-    
-    if (scoreText) {
-        scoreText.textContent = `Your score is : ${score}`;
-    }
-    
-    // 更新Next Chapter按钮状态
-    const nextChapterBtn = document.querySelector('#page-2121 .score-btn:first-child');
-    if (nextChapterBtn) {
-        nextChapterBtn.disabled = !(score >= 60 || !gameState.isFirstAttempt);
-    }
-}
-
-// 显示正确答案
+// 显示答案
 function showAnswers() {
     const answersText = document.getElementById('answers-text');
-    answersText.innerHTML = `The answer of test：
-My name's Nick.My girlfriend's name is Karen. 
-We're students. I go to university in Oxford. Karen doesn't go to university in Oxford; 	she goes to university in Cambridge. 
-She lives in Cambridge. I live with my parents in Woodstock, which is a small town near 	Oxford. 
-It's difficult sometimes because we see each other only on weekends. 
-Karen studies history, and she loves her course. She says the architecture in Cambridge 	is beautiful.
-I study philosophy and politics, so my courses are very different from hers. 
-I like living in Woodstock because my family is there and it's quiet, but I miss Karen a 	lot. 
-We talk on the phone every night and we visit each other whenever we can.`;
+    const answersModal = document.getElementById('answers-modal');
     
-    document.getElementById('answers-modal').style.display = 'block';
-}
-
-// 隐藏正确答案
-function hideAnswers() {
-    document.getElementById('answers-modal').style.display = 'none';
+    if (answersText) {
+        answersText.textContent = `My name's Nick. My girlfriend's name is Karen. 
+We're students. I go to university in Oxford. Karen doesn't go to university in Oxford; 
+she goes to university in Cambridge. 
+She lives in Cambridge. I live with my parents in Woodstock, which is a small town near Oxford. 
+It's difficult sometimes because we see each other only on weekends. 
+Karen studies history, and she loves her course. She says the architecture in Cambridge is beautiful.
+I study philosophy and politics, so my courses are very different from hers. 
+I like living in Woodstock because my family is there and it's quiet, but I miss Karen a lot. 
+We talk on the phone every night and we visit each other whenever we can.`;
+    }
+    
+    if (answersModal) {
+        answersModal.style.display = 'block';
+    }
 }
 
 // 重置测试
 function resetTest() {
-    // 清除测试选项
-    for (let i = 2113; i <= 2120; i++) {
-        if (gameState.selectedOptions[i]) {
-            delete gameState.selectedOptions[i];
+    // 清除测试页面的选择
+    const testPages = [2113, 2114, 2115, 2116, 2117, 2118, 2119, 2120];
+    testPages.forEach(pageId => {
+        if (gameState.selectedOptions[pageId]) {
+            delete gameState.selectedOptions[pageId];
         }
-    }
-    
-    // 重置测试得分
-    gameState.testScore = 0;
-    gameState.isFirstAttempt = false;
-    
-    // 重置UI选项
-    document.querySelectorAll('.option-btn.selected').forEach(btn => {
-        btn.classList.remove('selected');
     });
-}
-
-// 生成房间ID
-function generateRoomId() {
-    const now = new Date();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
     
-    gameState.roomId = month + day + hours + minutes;
+    // 重置UI选择状态
+    const optionButtons = document.querySelectorAll('.option-button');
+    optionButtons.forEach(button => {
+        button.classList.remove('selected');
+    });
+    
+    // 标记不是第一次尝试
+    gameState.isFirstAttempt = false;
+    gameState.testScore = 0;
 }
 
 // 显示提示信息
 function showToast(message) {
     const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = 'toast show';
-    
-    setTimeout(() => {
-        toast.className = toast.className.replace('show', '');
-    }, 3000);
+    if (toast) {
+        toast.textContent = message;
+        toast.className = 'toast show';
+        
+        setTimeout(function() {
+            toast.className = toast.className.replace('show', '');
+        }, 3000);
+    }
 }
 
-// 页面加载完成后初始化游戏
+// 设置事件监听器
+function setupEventListeners() {
+    // 确认答案按钮
+    const confirmAnswersBtn = document.getElementById('confirm-answers');
+    if (confirmAnswersBtn) {
+        confirmAnswersBtn.addEventListener('click', function() {
+            const answersModal = document.getElementById('answers-modal');
+            if (answersModal) {
+                answersModal.style.display = 'none';
+            }
+        });
+    }
+}
+
+// 当页面加载完成后初始化游戏
 document.addEventListener('DOMContentLoaded', initGame);
