@@ -871,14 +871,8 @@ function checkAnswersAndShowHint(targetScreen) {
     let hasWrongAnswer = false;
     let hintMessage = "";
     
-    // 添加调试信息
-    console.log('=== 调试信息 ===');
-    console.log('当前页面选项组:', screenData.options);
-    
     // 检查每个选项组
     screenData.options.forEach(optionGroup => {
-        console.log('处理选项组:', optionGroup.id);
-        
         const selectedOption = gameData.selectedOptions[optionGroup.id];
         
         if (!selectedOption || !selectedOption.correct) {
@@ -886,38 +880,27 @@ function checkAnswersAndShowHint(targetScreen) {
             
             const correctOption = optionGroup.choices.find(choice => choice.correct);
             if (correctOption) {
-                // 直接从选项组ID提取数字（更简单的方法）
+                // 从选项组ID中提取数字
                 let groupNumber = 0;
-                
-                // 方法1：直接提取数字
                 const numberMatch = optionGroup.id.match(/\d+/);
                 if (numberMatch) {
                     groupNumber = parseInt(numberMatch[0]);
-                    console.log('从ID提取的数字:', groupNumber);
-                }
-                
-                // 方法2：如果方法1失败，使用数组索引
-                if (groupNumber === 0) {
+                } else {
                     groupNumber = screenData.options.indexOf(optionGroup) + 1;
-                    console.log('使用数组索引:', groupNumber);
                 }
                 
-                // 数字到符号的映射
+                // 将数字转换为对应的圆圈数字符号
                 const numberSymbols = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩',
                                      '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳'];
+                const questionNumber = numberSymbols[groupNumber - 1] || `[${groupNumber}]`;
                 
-                const questionNumber = groupNumber <= numberSymbols.length ? numberSymbols[groupNumber - 1] : `[${groupNumber}]`;
-                
-                console.log('最终显示的符号:', questionNumber);
-                
+                // 每个答案单独一行
                 hintMessage += `${questionNumber} ${correctOption.content}\n`;
             }
         }
     });
     
-    console.log('最终提示信息:', hintMessage);
-    console.log('================');
-    
+    // 修改提示框显示格式
     if (hasWrongAnswer) {
         showAlert(`The correct answer is:\n${hintMessage.trim()}`, targetScreen);
     } else {
