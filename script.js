@@ -961,6 +961,17 @@ function tryAgain() {
     // 重置测试分数
     gameData.testScore = 0;
     gameData.isFirstAttempt = false;
+
+    // 重置所有测试屏幕的按钮状态
+    for (let i = 2113; i <= 2120; i++) {
+        const screen = document.getElementById(`screen-${i}`);
+        if (screen) {
+            const buttons = screen.querySelectorAll('.option-button');
+            buttons.forEach(button => {
+                button.classList.remove('selected');
+            });
+        }
+    }
     
     // 导航到测试开始画面
     navigateTo(2113);
