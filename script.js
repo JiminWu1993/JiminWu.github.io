@@ -714,18 +714,29 @@ function createAllScreens() {
             button.addEventListener('click', function() {
                 const targetScreen = this.getAttribute('data-target');
                 if (targetScreen) {
-                    // 检查是否所有选项都已选择
-                    if (isCurrentScreenHasOptions() && !areAllOptionsSelected()) {
-                        showAlert("Please complete all multiple-choice questions before continuing");
-                        return;
+                    const currentScreenData = gameData.screens[gameData.currentScreen];
+                    
+                    // 检查是否所有选项都已选择（只在有选项的页面检查）
+                    if (currentScreenData && currentScreenData.options && currentScreenData.options.length > 0) {
+                        if (!areAllOptionsSelected()) {
+                            showAlert("Please complete all multiple-choice questions before continuing");
+                            return;
+                        }
                     }
                     
-                    // 计算得分（如果是计分屏幕）
-                    if (gameData.screens[gameData.currentScreen]?.isScoring) {
+                    // 如果是练习页面(2101-2112)
+                    if (gameData.currentScreen >= 2101 && gameData.currentScreen <= 2112) {
+                        checkAnswersAndShowHint(targetScreen);
+                    } 
+                    // 如果是测试页面且是计分屏幕
+                    else if (currentScreenData && currentScreenData.isScoring) {
                         calculateScore();
+                        navigateTo(parseInt(targetScreen));
                     }
-                    
-                    navigateTo(parseInt(targetScreen));
+                    // 其他情况直接跳转
+                    else {
+                        navigateTo(parseInt(targetScreen));
+                    }
                 }
             });
         }
@@ -852,8 +863,8 @@ function calculateScore() {
 function checkAnswersAndShowHint(targetScreen) {
     const screenData = gameData.screens[gameData.currentScreen];
     
-    // 添加安全检查，确保options存在
-    if (!screenData || !screenData.options) {
+    // 重要：添加安全检查，确保页面数据和options存在
+    if (!screenData || !screenData.options || screenData.options.length === 0) {
         // 如果没有选项，直接跳转（适用于没有选择题的页面）
         navigateTo(parseInt(targetScreen));
         return;
