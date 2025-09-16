@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>English Tenses Journey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语时态之旅</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Microsoft+YaHei&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,53 +13,31 @@
         <!-- 开始画面 -->
         <div id="screen-2100" class="screen active">
             <div class="image-container">
-                <img src="images/开始画面.jpg" alt="Start Screen" class="screen-image">
+                <img src="images/开始画面.jpg" alt="开始画面" onerror="handleImageError(this, '开始画面')">
             </div>
             <div class="text-container">
-                Welcome to the journey of English tenses
+                <p>Welcome to the journey of English tenses</p>
             </div>
-            <button id="begin-button" class="continue-button">Begin</button>
+            <button id="begin-button" class="action-button">Begin</button>
         </div>
-
+        
         <!-- 其他画面将通过JavaScript动态生成 -->
         
-        <!-- 得分画面 -->
-        <div id="screen-2121" class="screen">
-            <div class="image-container">
-                <img id="result-image" src="" alt="Result" class="screen-image">
-            </div>
-            <div class="score-display">
-                Your score is: <span id="final-score">0</span>
-            </div>
-            <div class="score-buttons">
-                <button id="next-chapter-button" class="score-button">Next Chapter</button>
-                <button id="show-answers-button" class="score-button">Show the answers</button>
-                <button id="try-again-button" class="score-button">Try Again</button>
-            </div>
-        </div>
-
         <!-- 提示框 -->
-        <div id="alert-box" class="alert-box">
-            Please complete all multiple-choice questions before continuing
-        </div>
-
-        <!-- 答案显示模态框 -->
+        <div id="alert-box" class="alert-box"></div>
+        
+        <!-- 答案显示框 -->
         <div id="answers-modal" class="answers-modal">
-            <div class="answers-content">
-                The answer of test：
-                My name's Nick. My girlfriend's name is Karen. 
-                We're students. I go to university in Oxford. Karen doesn't go to university in Oxford; she goes to university in Cambridge. 
-                She lives in Cambridge. I live with my parents in Woodstock, which is a small town near Oxford. 
-                It's difficult sometimes because we see each other only on weekends. 
-                Karen studies history, and she loves her course. She says the architecture in Cambridge is beautiful.
-                I study philosophy and politics, so my courses are very different from hers. 
-                I like living in Woodstock because my family is there and it's quiet, but I miss Karen a lot. 
-                We talk on the phone every night and we visit each other whenever we can.
-            </div>
-            <button id="confirm-answers-button" class="confirm-button">Confirm</button>
+            <div id="answers-content" class="answers-content"></div>
+            <button id="confirm-answers" class="modal-button">Confirm</button>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- 主游戏脚本 -->
     <script src="script.js"></script>
 </body>
 </html>
