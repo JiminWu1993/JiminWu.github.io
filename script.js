@@ -859,7 +859,7 @@ function calculateScore() {
     }
 }
 
-// 检查答案并显示提示（最终修复版）
+// 检查答案并显示提示（修复版-对应填空位置）
 function checkAnswersAndShowHint(targetScreen) {
     const screenData = gameData.screens[gameData.currentScreen];
     
@@ -872,7 +872,7 @@ function checkAnswersAndShowHint(targetScreen) {
     let hasWrongAnswer = false;
     let hintMessage = "";
 
-    // 处理每个选项组
+    // 处理每个选项组，按页面中的填空顺序
     screenData.options.forEach((optionGroup, index) => {
         const selectedOption = gameData.selectedOptions[optionGroup.id];
         
@@ -882,21 +882,9 @@ function checkAnswersAndShowHint(targetScreen) {
             const correctOption = optionGroup.choices.find(choice => choice.correct);
             
             if (correctOption) {
-                // 智能编号处理（支持4种ID格式）
-                let groupNumber;
-                if (optionGroup.id.match(/group(\d+)/)) {       // 匹配 group1, group2 等
-                    groupNumber = parseInt(optionGroup.id.match(/group(\d+)/)[1]);
-                } 
-                else if (optionGroup.id.match(/option-(\d+)/)) { // 匹配 option-1, option-2 等
-                    groupNumber = parseInt(optionGroup.id.match(/option-(\d+)/)[1]);
-                }
-                else if (optionGroup.id.match(/q(\d+)/)) {       // 匹配 q1, q2 等
-                    groupNumber = parseInt(optionGroup.id.match(/q(\d+)/)[1]);
-                }
-                else {                                          // 默认使用索引+1
-                    groupNumber = index + 1;
-                }
-
+                // 直接使用选项组在页面中的顺序（对应填空位置）
+                const groupNumber = index + 1;
+                
                 // 转换为圆圈数字
                 const circledNumbers = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩',
                                       '⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
@@ -907,6 +895,14 @@ function checkAnswersAndShowHint(targetScreen) {
             }
         }
     });
+
+    // 最终提示格式（确保换行）
+    if (hasWrongAnswer) {
+        showAlert(`The correct answer is:\n${hintMessage.trim()}`, targetScreen);
+    } else {
+        showAlert("Correct", targetScreen);
+    }
+}
 
     // 最终提示格式（确保换行）
     if (hasWrongAnswer) {
