@@ -1,6 +1,6 @@
 // Firebase配置
 const firebaseConfig = {
-    apiKey: "AIzaSyDHRYTBU74r31极速MPYVAAnRMwKM76c_-BduQ",
+    apiKey: "AIzaSyDHRYTBU74r31MPYVAAnRMwKM76c_-BduQ",
     authDomain: "tetrisonline-ca400.firebaseapp.com",
     projectId: "tetrisonline-ca400",
     storageBucket: "tetrisonline-ca400.firebasestorage.app",
@@ -57,7 +57,7 @@ const screenConfigs = {
                 buttons: [
                     { text: "calls", correct: false },
                     { text: "call", correct: true },
-                    {极速 text: "calling", correct: false }
+                    { text: "calling", correct: false }
                 ]
             }
         ],
@@ -254,7 +254,7 @@ const screenConfigs = {
                 number: "②",
                 buttons: [
                     { text: "says", correct: true },
-                    { text极速: "say", correct: false },
+                    { text: "say", correct: false },
                     { text: "saying", correct: false }
                 ]
             },
@@ -263,7 +263,7 @@ const screenConfigs = {
                 buttons: [
                     { text: "is", correct: false },
                     { text: "are", correct: true },
-                    { text: "am", correct:极速 false }
+                    { text: "am", correct: false }
                 ]
             },
             {
@@ -298,7 +298,7 @@ const screenConfigs = {
         ],
         isPractice: true
     },
-    211极速2: { // 画面12
+    2112: { // 画面12
         image: "画面12.jpg",
         text: "Alexa: How   ①   you spell that?",
         options: [
@@ -428,7 +428,7 @@ const screenConfigs = {
                     { text: "see", correct: true },
                     { text: "sees", correct: false },
                     { text: "seeing", correct: false }
-极速                ]
+                ]
             }
         ],
         buttons: [
@@ -467,7 +467,7 @@ const screenConfigs = {
             {
                 number: "④",
                 buttons: [
-                    { text: "极速is", correct: true },
+                    { text: "is", correct: true },
                     { text: "are", correct: false },
                     { text: "am", correct: false }
                 ]
@@ -484,7 +484,7 @@ const screenConfigs = {
         options: [
             {
                 number: "①",
-               极速 buttons: [
+                buttons: [
                     { text: "studies", correct: false },
                     { text: "study", correct: true },
                     { text: "studying", correct: false }
@@ -792,7 +792,7 @@ function updateProgressBar(screenId) {
     if (config.isPractice) {
         // 练习屏幕进度：N/13
         const practiceScreens = [2101, 2102, 2103, 2104, 2105, 2106, 2107, 2108, 2109, 2110, 2111, 2112];
-        const currentIndex = practice极速Screens.indexOf(parseInt(screenId));
+        const currentIndex = practiceScreens.indexOf(parseInt(screenId));
         if (currentIndex !== -1) {
             progress = (currentIndex + 1) / practiceScreens.length * 100;
         }
@@ -805,7 +805,7 @@ function updateProgressBar(screenId) {
         }
     }
     
-    const progressBar = document.querySelector(`#screen-${screen极速Id} .progress-bar`);
+    const progressBar = document.querySelector(`#screen-${screenId} .progress-bar`);
     if (progressBar) {
         progressBar.style.width = `${progress}%`;
     }
