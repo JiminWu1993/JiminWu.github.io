@@ -887,18 +887,28 @@ function updateScoreScreen() {
     // 更新屏幕显示
     const scoreScreen = document.getElementById('screen-2121');
     
-    // 设置背景图片
-    const backgroundImage = gameData.score >= 60 ? "及格.jpg" : "不及格.jpg";
-    scoreScreen.style.backgroundImage = `url('images/${backgroundImage}')`;
-    scoreScreen.style.backgroundSize = 'cover';
-    scoreScreen.style.backgroundPosition = 'center';
+    // 清空屏幕
+    scoreScreen.innerHTML = '';
     
-    // 添加得分显示
+    // 1. 创建图片容器（不再是背景）
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'result-image-container';
+    
+    // 创建图片元素
+    const resultImage = document.createElement('img');
+    resultImage.src = `images/${gameData.score >= 60 ? "及格.jpg" : "不及格.jpg"}`;
+    resultImage.alt = 'Result';
+    resultImage.className = 'result-image';
+    
+    // 将图片添加到容器
+    imageContainer.appendChild(resultImage);
+    
+    // 2. 创建得分显示
     const scoreDisplay = document.createElement('div');
     scoreDisplay.className = 'score-display';
     scoreDisplay.textContent = `Your score is : ${gameData.score}`;
     
-    // 添加按钮容器
+    // 3. 创建按钮容器
     const buttonsContainer = document.createElement('div');
     buttonsContainer.className = 'result-buttons';
     
@@ -928,10 +938,10 @@ function updateScoreScreen() {
     buttonsContainer.appendChild(showAnswersBtn);
     buttonsContainer.appendChild(tryAgainBtn);
     
-    // 清空屏幕并添加新内容
-    scoreScreen.innerHTML = '';
-    scoreScreen.appendChild(scoreDisplay);
-    scoreScreen.appendChild(buttonsContainer);
+    // 将元素按顺序添加到屏幕
+    scoreScreen.appendChild(imageContainer);    // 图片在最上面
+    scoreScreen.appendChild(scoreDisplay);      // 得分在中间
+    scoreScreen.appendChild(buttonsContainer);   // 按钮在最下面
 }
 
 // 保存分数到Firebase
