@@ -894,7 +894,7 @@ function checkAnswersAndShowHint(targetScreen) {
                 hintMessage += `${displayNumber} ${correctOption.content}\n`;
             }
         }
-    });
+    };
 
     // 最终提示格式（确保换行）
     if (hasWrongAnswer) {
