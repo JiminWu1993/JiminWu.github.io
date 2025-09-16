@@ -859,62 +859,68 @@ function calculateScore() {
     }
 }
 
-// 检查答案并显示提示
+// 检查答案并显示提示（最终修复版）
 function checkAnswersAndShowHint(targetScreen) {
     const screenData = gameData.screens[gameData.currentScreen];
     
-    if (!screenData || !screenData.options || screenData.options.length === 0) {
+    // 安全检测：无选项则直接跳转
+    if (!screenData?.options?.length) {
         navigateTo(parseInt(targetScreen));
         return;
     }
-    
+
     let hasWrongAnswer = false;
     let hintMessage = "";
-    
-    // 检查每个选项组
-    screenData.options.forEach(optionGroup => {
+
+    // 处理每个选项组
+    screenData.options.forEach((optionGroup, index) => {
         const selectedOption = gameData.selectedOptions[optionGroup.id];
         
+        // 仅处理未选择或错误的选择
         if (!selectedOption || !selectedOption.correct) {
             hasWrongAnswer = true;
-            
             const correctOption = optionGroup.choices.find(choice => choice.correct);
+            
             if (correctOption) {
-                // 从选项组ID中提取数字
-                let groupNumber = 0;
-                const numberMatch = optionGroup.id.match(/\d+/);
-                if (numberMatch) {
-                    groupNumber = parseInt(numberMatch[0]);
-                } else {
-                    groupNumber = screenData.options.indexOf(optionGroup) + 1;
+                // 智能编号处理（支持4种ID格式）
+                let groupNumber;
+                if (optionGroup.id.match(/group(\d+)/)) {       // 匹配 group1, group2 等
+                    groupNumber = parseInt(optionGroup.id.match(/group(\d+)/)[1]);
+                } 
+                else if (optionGroup.id.match(/option-(\d+)/)) { // 匹配 option-1, option-2 等
+                    groupNumber = parseInt(optionGroup.id.match(/option-(\d+)/)[1]);
                 }
-                
-                // 将数字转换为对应的圆圈数字符号
-                const numberSymbols = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩',
-                                     '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳'];
-                const questionNumber = numberSymbols[groupNumber - 1] || `[${groupNumber}]`;
+                else if (optionGroup.id.match(/q(\d+)/)) {       // 匹配 q1, q2 等
+                    groupNumber = parseInt(optionGroup.id.match(/q(\d+)/)[1]);
+                }
+                else {                                          // 默认使用索引+1
+                    groupNumber = index + 1;
+                }
+
+                // 转换为圆圈数字
+                const circledNumbers = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩',
+                                      '⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
+                const displayNumber = circledNumbers[groupNumber - 1] || groupNumber;
                 
                 // 每个答案单独一行
-                hintMessage += `${questionNumber} ${correctOption.content}\n`;
+                hintMessage += `${displayNumber} ${correctOption.content}\n`;
             }
         }
     });
-    
-    // 修改提示框显示格式
+
+    // 最终提示格式（确保换行）
     if (hasWrongAnswer) {
         showAlert(`The correct answer is:\n${hintMessage.trim()}`, targetScreen);
     } else {
         showAlert("Correct", targetScreen);
     }
 }
-
 // 显示提示框
 function showAlert(message, targetScreen) {
     const alertBox = document.getElementById('alert-box');
-    alertBox.textContent = message;
+    alertBox.textContent = message; // 这里会自动处理pre-line
     alertBox.style.display = 'block';
     
-    // 3秒后隐藏提示框并跳转
     setTimeout(() => {
         alertBox.style.display = 'none';
         if (targetScreen) {
