@@ -859,7 +859,7 @@ function calculateScore() {
     }
 }
 
-// 检查答案并显示提示（修复版-对应填空位置）
+/// 检查答案并显示提示（修复版-对应填空位置）
 function checkAnswersAndShowHint(targetScreen) {
     const screenData = gameData.screens[gameData.currentScreen];
     
@@ -894,7 +894,7 @@ function checkAnswersAndShowHint(targetScreen) {
                 hintMessage += `${displayNumber} ${correctOption.content}\n`;
             }
         }
-    };
+    });
 
     // 最终提示格式（确保换行）
     if (hasWrongAnswer) {
@@ -904,13 +904,6 @@ function checkAnswersAndShowHint(targetScreen) {
     }
 }
 
-    // 最终提示格式（确保换行）
-    if (hasWrongAnswer) {
-        showAlert(`The correct answer is:\n${hintMessage.trim()}`, targetScreen);
-    } else {
-        showAlert("Correct", targetScreen);
-    }
-}
 // 显示提示框
 function showAlert(message, targetScreen) {
     const alertBox = document.getElementById('alert-box');
