@@ -873,7 +873,7 @@ function checkAnswersAndShowHint(targetScreen) {
     let hasWrongAnswer = false;
     let hintMessage = "";
     
-    // 检查每个选项组（现在有安全判断了）
+    // 检查每个选项组
     screenData.options.forEach(optionGroup => {
         const selectedOption = gameData.selectedOptions[optionGroup.id];
         
@@ -884,14 +884,22 @@ function checkAnswersAndShowHint(targetScreen) {
             // 找到正确答案
             const correctOption = optionGroup.choices.find(choice => choice.correct);
             if (correctOption) {
-                // 根据选项组的ID确定对应的编号
-                // 假设选项组ID格式为"option-group-1", "option-group-2"等
-                const groupNumber = optionGroup.id.replace('option-group-', '');
+                // 从选项组ID中提取数字（支持多种ID格式）
+                let groupNumber = 0;
+                
+                // 尝试从ID中提取数字（支持 group1, option-group-1, q1 等格式）
+                const numberMatch = optionGroup.id.match(/\d+/);
+                if (numberMatch) {
+                    groupNumber = parseInt(numberMatch[0]);
+                } else {
+                    // 如果无法提取数字，使用选项组在数组中的索引
+                    groupNumber = screenData.options.indexOf(optionGroup) + 1;
+                }
                 
                 // 将数字转换为对应的圆圈数字符号
                 const numberSymbols = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩',
                                      '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳'];
-                const questionNumber = numberSymbols[parseInt(groupNumber) - 1] || groupNumber;
+                const questionNumber = numberSymbols[groupNumber - 1] || `[${groupNumber}]`;
                 
                 hintMessage += `${questionNumber} ${correctOption.content}\n`;
             }
