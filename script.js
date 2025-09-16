@@ -720,12 +720,14 @@ function createAllScreens() {
                         return;
                     }
                     
-                    // 计算得分（如果是计分屏幕）
-                    if (gameData.screens[gameData.currentScreen]?.isScoring) {
-                        calculateScore();
+                    // 如果是练习页面且不是开始画面
+                    if (gameData.currentScreen >= 2101 && gameData.currentScreen <= 2112) {
+                        // 检查答案并显示提示
+                        checkAnswersAndShowHint(targetScreen);
+                    } else {
+                        // 测试页面直接跳转
+                        navigateTo(parseInt(targetScreen));
                     }
-                    
-                    navigateTo(parseInt(targetScreen));
                 }
             });
         }
