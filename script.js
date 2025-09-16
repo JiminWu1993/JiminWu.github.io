@@ -460,8 +460,8 @@ const gameData = {
                 {
                     id: "group32",
                     choices: [
-                        { id: "1-极简", content: "studies", correct: true },
-                        { id: "1-2", content极简: "study", correct: false },
+                        { id: "1-1", content: "studies", correct: true },
+                        { id: "1-2", content: "study", correct: false },
                         { id: "1-3", content: "studying", correct: false }
                     ]
                 },
@@ -470,7 +470,7 @@ const gameData = {
                     choices: [
                         { id: "2-1", content: "love", correct: false },
                         { id: "2-2", content: "loves", correct: true },
-                        { id: "2-3", content: "loving", correct:极简 false }
+                        { id: "2-3", content: "loving", correct: false }
                     ]
                 },
                 {
@@ -512,7 +512,7 @@ const gameData = {
                 {
                     id: "group37",
                     choices: [
-                       极简 { id: "2-1", content: "is", correct: false },
+                        { id: "2-1", content: "is", correct: false },
                         { id: "2-2", content: "are", correct: true },
                         { id: "2-3", content: "am", correct: false }
                     ]
@@ -577,7 +577,7 @@ const gameData = {
                     id: "group42",
                     choices: [
                         { id: "1-1", content: "talk", correct: true },
-                        { id: "1-2", content: "tal极简ks", correct: false },
+                        { id: "1-2", content: "talks", correct: false },
                         { id: "1-3", content: "talking", correct: false }
                     ]
                 },
