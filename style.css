@@ -5,54 +5,66 @@
 }
 
 body {
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: 'Montserrat', 'Microsoft YaHei', sans-serif;
     background-color: black;
     color: white;
-    overflow: hidden;
     height: 100vh;
-    touch-action: manipulation;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #game-container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.game-screen {
-    position: absolute;
     width: 100%;
     height: 100%;
-    display: none;
+    position: relative;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
 }
 
-.active {
+.screen {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+}
+
+.screen.active {
     display: flex;
 }
 
-.page-title {
+.title-bar {
     width: 100%;
     height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px;
+    padding: 0 10px;
+    margin-bottom: 10px;
     background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
     z-index: 10;
 }
 
-.page-title-text {
-    font-family: 'Microsoft YaHei', cursive;
+.screen-type {
+    font-weight: bold;
     font-size: 18px;
     color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .progress-container {
-    width: 60%;
+    width: 100px;
     height: 10px;
     background-color: #333;
     border-radius: 5px;
@@ -62,71 +74,77 @@ body {
 .progress-bar {
     height: 100%;
     background-color: #4CAF50;
-    transition: width 0.3s ease;
+    border-radius: 5px;
+    transition: width 0.极速3s ease;
+}
+
+.image-container {
+    width: 100%;
+    height: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .screen-image {
     width: 100%;
-    max-height: 40vh;
-    object-fit: cover;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
 }
 
 .text-container {
-    width: 100%;
+    width: 极速100%;
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 15px;
-    background-color: rgba(0, 0, 0, 0.8);
-    min-height: 20vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    line-height: 1.5;
+    border-radius: 5px;
+    margin-bottom: 10px;
     font-size: 18px;
+    line-height: 1.5;
+    text-align: center;
 }
 
 .buttons-container {
     width: 100%;
-    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    background-color: rgba(0, 0, 0, 0.9);
-    flex-grow: 1;
-    overflow-y: auto;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .button-row {
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    gap: 10px;
+    gap: 5px;
     position: relative;
     border: 1px solid white;
     border-radius: 5px;
-    padding: 10px 10px 10px 40px;
+    padding: 10px 10px 10px 35px;
 }
 
-.button-row-number {
+.button-row::before {
+    content: attr(data-number);
     position: absolute;
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: white;
     font-size: 16px;
-    font-weight: bold;
 }
 
 .option-button {
     flex: 1;
-    padding: 12px 5px;
+    padding: 10px 5px;
     background-color: #1E90FF;
     color: white;
     border: none;
     border-radius: 5px;
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: 'Montserrat', 'Microsoft YaHei', sans-serif;
     font-size: 16px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .option-button:hover {
@@ -134,8 +152,7 @@ body {
 }
 
 .option-button.selected {
-    background-color: #FFD700;
-    color: black;
+    background-color: #004C99;
     font-weight: bold;
 }
 
@@ -146,11 +163,17 @@ body {
     color: white;
     border: none;
     border-radius: 5px;
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: '极速Montserrat', 'Microsoft YaHei', sans-serif;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 10px;
+    transition: background-color 0.2s ease;
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+.continue-button:hover {
+    background-color: #0066CC;
 }
 
 .continue-button:disabled {
@@ -158,32 +181,47 @@ body {
     cursor: not-allowed;
 }
 
-.score-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+.alert-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    background-color: yellow;
+    color: black;
     padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: none;
 }
 
-.score-image {
-    width: 100%;
-    max-height: 50vh;
-    object-fit: contain;
-    margin-bottom: 20px;
+.alert-box.active {
+    display: block;
+    animation: fadeInOut 3s forwards;
 }
 
-.score-text {
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
+.score-display {
     font-size: 24px;
-    margin-bottom: 30px;
+    font-weight: bold;
+    margin: 20px 0;
+    text-align: center;
 }
 
 .score-buttons {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .score-button {
@@ -193,7 +231,7 @@ body {
     color: white;
     border: none;
     border-radius: 5px;
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: 'Montserrat', 'Microsoft YaHei', sans-serif;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
@@ -204,81 +242,41 @@ body {
     cursor: not-allowed;
 }
 
-/* 弹窗样式 */
-.modal {
-    display: none;
+.answers-modal {
     position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.modal-content {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
     background-color: yellow;
     color: black;
-    margin: 10% auto;
     padding: 20px;
-    width: 80%;
     border-radius: 10px;
-    max-height: 70vh;
-    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: none;
 }
 
-.modal-content h3 {
-    margin-bottom: 15px;
-    text-align: center;
+.answers-modal.active {
+    display: block;
 }
 
-#answers-text {
+.answers-content {
     white-space: pre-line;
-    line-height: 1.6;
+    line-height: 1.5;
     margin-bottom: 20px;
+    font-size: 16px;
 }
 
-#confirm-answers {
+.confirm极速-button {
     padding: 10px 20px;
     background-color: #1E90FF;
     color: white;
-    border: none;
+    border极速: none;
     border-radius: 5px;
-    font-family: 'Microsoft YaHei', sans-serif;
+    font-family: 'Montserrat', 'Microsoft YaHei', sans-serif;
     font-size: 16px;
     cursor: pointer;
-    display: block;
     margin: 0 auto;
-}
-
-/* 提示框样式 */
-.toast {
-    visibility: hidden;
-    min-width: 80%;
-    background-color: yellow;
-    color: black;
-    text-align: center;
-    border-radius: 5px;
-    padding: 16px;
-    position: fixed;
-    z-index: 100;
-    left: 10%;
-    top: 50%;
-    font-size: 17px;
-    font-weight: bold;
-}
-
-.toast.show {
-    visibility: visible;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@keyframes fadein {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-@keyframes fadeout {
-    from {opacity: 1;}
-    to {opacity: 0;}
+    display: block;
 }
