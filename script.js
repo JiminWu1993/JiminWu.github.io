@@ -850,15 +850,50 @@ function calculateScore() {
     }
 }
 
+// 检查答案并显示提示
+function checkAnswersAndShowHint(targetScreen) {
+    const screenData = gameData.screens[gameData.currentScreen];
+    let hasWrongAnswer = false;
+    let hintMessage = "";
+    
+    // 检查每个选项组
+    screenData.options.forEach(optionGroup => {
+        const selectedOption = gameData.selectedOptions[optionGroup.id];
+        
+        // 如果没有选择或选择错误
+        if (!selectedOption || !selectedOption.correct) {
+            hasWrongAnswer = true;
+            
+            // 找到正确答案
+            const correctOption = optionGroup.choices.find(choice => choice.correct);
+            if (correctOption) {
+                // 提取问题中的编号（如①）
+                const questionNumber = screenData.text.match(/[①-⑳]/)?.[0] || "";
+                hintMessage += `${questionNumber} ${correctOption.content}\n`;
+            }
+        }
+    });
+    
+    // 根据检查结果显示不同的提示
+    if (hasWrongAnswer) {
+        showAlert(`The correct answer is:\n${hintMessage.trim()}`, targetScreen);
+    } else {
+        showAlert("Correct", targetScreen);
+    }
+}
+
 // 显示提示框
-function showAlert(message) {
+function showAlert(message, targetScreen) {
     const alertBox = document.getElementById('alert-box');
     alertBox.textContent = message;
     alertBox.style.display = 'block';
     
-    // 3秒后隐藏提示框
+    // 3秒后隐藏提示框并跳转
     setTimeout(() => {
         alertBox.style.display = 'none';
+        if (targetScreen) {
+            navigateTo(parseInt(targetScreen));
+        }
     }, 3000);
 }
 
